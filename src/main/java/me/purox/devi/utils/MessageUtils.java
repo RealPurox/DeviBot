@@ -7,6 +7,19 @@ import net.dv8tion.jda.core.utils.PermissionUtil;
 
 public class MessageUtils {
 
+    public static boolean deleteMessage(Message message) {
+        MessageChannel channel = message.getChannel();
+        if (channel instanceof TextChannel) {
+            if (((TextChannel) channel).getGuild() != null) {
+                if (PermissionUtil.checkPermission((TextChannel) channel, ((TextChannel) channel).getGuild().getSelfMember(), Permission.MESSAGE_MANAGE)) {
+                    message.delete().queue();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean addReactions(Message message, String... emote) {
         MessageChannel channel = message.getChannel();
         if(channel instanceof TextChannel){

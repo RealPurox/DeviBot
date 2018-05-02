@@ -36,6 +36,7 @@ public class DeviGuild {
         document.append("embeds", new HashMap<>());
         document.append("muted", new HashMap<>());
         document.append("banned", new HashMap<>());
+        document.append("auto_mod_ignored_roles", new ArrayList<>());
         devi.getDatabaseManager().saveToDatabase("guilds", document, id);
         return document;
     }
@@ -48,6 +49,7 @@ public class DeviGuild {
         document.append("embeds", embeds);
         document.append("muted", muted);
         document.append("banned", banned);
+        document.append("auto_mod_ignored_roles", autoModIgnoredRoles);
         devi.getDatabaseManager().saveToDatabase("guilds", document, id);
     }
 
@@ -162,5 +164,9 @@ public class DeviGuild {
 
     public Document getEmbeds() {
         return embeds;
+    }
+
+    public List<String> getAutoModIgnoredRoles() {
+        return autoModIgnoredRoles;
     }
 }

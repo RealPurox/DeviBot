@@ -5,6 +5,10 @@ import me.purox.devi.commands.info.HelpCommand;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.guild.SettingsCommand;
 import me.purox.devi.commands.guild.modlog.ModLogCommand;
+import me.purox.devi.commands.music.JoinCommand;
+import me.purox.devi.commands.music.LeaveCommand;
+import me.purox.devi.commands.music.PlayCommand;
+import me.purox.devi.commands.music.QueueCommand;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
@@ -36,6 +40,11 @@ public class CommandHandler {
         registerCommand("unmute", new UnmuteCommand(devi));
         registerCommand("banlist", new BanlistCommand(devi));
         registerCommand("mutelist", new MutelistCommand(devi));
+        //  - music commands
+        registerCommand("join", new JoinCommand(devi));
+        registerCommand("leave", new LeaveCommand(devi));
+        registerCommand("play", new PlayCommand(devi));
+        registerCommand("queue", new QueueCommand(devi));
     }
 
     private void registerCommand(String commandName, Command command){

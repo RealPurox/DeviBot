@@ -88,7 +88,7 @@ public class AutoModCommand implements Command {
 
             // missed args
             if (args.length < 2) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "automod <list | add | remove>`"));
+                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "automod roles <list | add | remove>`"));
                 return;
             }
 

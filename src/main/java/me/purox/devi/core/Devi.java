@@ -16,6 +16,7 @@ import me.purox.devi.database.DatabaseManager;
 import me.purox.devi.listener.CommandListener;
 import me.purox.devi.listener.MessageListener;
 import me.purox.devi.listener.ReadyListener;
+import me.purox.devi.music.MusicManager;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -26,6 +27,7 @@ import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,7 @@ import java.util.function.Consumer;
 public class Devi {
 
     private Settings settings;
+    private MusicManager musicManager;
     private DatabaseManager databaseManager;
     private CommandHandler commandHandler;
     private ModLogManager modLogManager;
@@ -49,6 +52,7 @@ public class Devi {
         // init handlers / managers / settings
         this.commandHandler = new CommandHandler(this);
         this.settings = new Settings();
+        this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
 
@@ -255,5 +259,9 @@ public class Devi {
 
     public List<String> getAdmins() {
         return admins;
+    }
+
+    public MusicManager getMusicManager() {
+        return musicManager;
     }
 }

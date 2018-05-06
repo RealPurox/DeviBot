@@ -1,16 +1,12 @@
 package me.purox.devi.listener;
 
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.guild.DeviGuild;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReadyListener extends ListenerAdapter {
 
@@ -30,11 +26,20 @@ public class ReadyListener extends ListenerAdapter {
             if (!devi.getSettings().isDevBot()) {
                 devi.startStatsPusher();
             }
+
+            for (Guild guild : event.getJDA().getGuilds()) {
+                // load all guild settings real quick so we can make sure they all have data stored in the database
+                new DeviGuild(guild.getId(), devi);
+                // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.
+                if (guild.getSelfMember().getVoiceState().inVoiceChannel()) {
+                    guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
+                }
+            }
         }
 
         Guild staffGuild = jda.getGuildById("392264119102996480");
         if (staffGuild != null) {
-            System.out.println(staffGuild.getEmotes());
+            if (devi.getSettings().isDevBot()) System.out.println(staffGuild.getEmotes());
             Role adminRole = staffGuild.getRolesByName("Administrator", false).get(0);
             staffGuild.getMembersWithRoles(adminRole).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
         }

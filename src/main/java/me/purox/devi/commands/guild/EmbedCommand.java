@@ -25,7 +25,7 @@ public class EmbedCommand implements Command {
         this.devi = devi;
     }
 
-    private List<String> stringKeys = Arrays.asList("authorname", "authorurl", "authoriconurl", "footertext", "footericonurl", "description", "imageurl", "thumbnailurl", "title", "titleurl");
+    private List<String> stringKeys  = Arrays.asList("authorname", "authorurl", "authoriconurl", "footertext", "footericonurl", "description", "imageurl", "thumbnailurl", "title", "titleurl");
     private List<String> integerKeys = Arrays.asList("colorred", "colorgreen", "colorblue");
 
     //embed create DONE

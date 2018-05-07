@@ -5,10 +5,7 @@ import me.purox.devi.commands.info.HelpCommand;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.guild.SettingsCommand;
 import me.purox.devi.commands.guild.modlog.ModLogCommand;
-import me.purox.devi.commands.music.JoinCommand;
-import me.purox.devi.commands.music.LeaveCommand;
-import me.purox.devi.commands.music.PlayCommand;
-import me.purox.devi.commands.music.QueueCommand;
+import me.purox.devi.commands.music.*;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
@@ -45,6 +42,11 @@ public class CommandHandler {
         registerCommand("leave", new LeaveCommand(devi));
         registerCommand("play", new PlayCommand(devi));
         registerCommand("queue", new QueueCommand(devi));
+        registerCommand("pause", new PauseCommand(devi));
+        registerCommand("resume", new ResumeCommand(devi));
+        registerCommand("current", new CurrentCommand(devi));
+        registerCommand("skip", new SkipCommand(devi));
+        registerCommand("shuffle", new ShuffleCommand(devi));
     }
 
     private void registerCommand(String commandName, Command command){

@@ -35,11 +35,12 @@ public class MusicManager {
         this.devi = devi;
     }
 
-    public AudioPlayer createPlayer(Guild guild) {
+    private AudioPlayer createPlayer(Guild guild) {
         AudioPlayer player = manager.createPlayer();
         TrackManager trackManager = new TrackManager(devi, player);
 
         player.addListener(trackManager);
+        player.setVolume(35);
 
         guild.getAudioManager().setSendingHandler(new PlayerSendHandler(player));
         audioPlayer.put(guild, new AbstractMap.SimpleEntry<>(player, trackManager));

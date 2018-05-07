@@ -6,7 +6,7 @@
 
     <groupId>me.purox.devi</groupId>
     <artifactId>Devi</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-aa-beta</version>
 
     <build>
         <plugins>
@@ -20,6 +20,8 @@
             </plugin>
         </plugins>
     </build>
+
+
 
     <dependencies>
         <dependency>

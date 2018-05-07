@@ -1,5 +1,7 @@
 package me.purox.devi.commands.handler;
 
+import me.purox.devi.commands.dev.PerformanceCommand;
+import me.purox.devi.commands.dev.ReloadCommand;
 import me.purox.devi.commands.guild.automod.AutoModCommand;
 import me.purox.devi.commands.info.HelpCommand;
 import me.purox.devi.commands.mod.*;
@@ -22,6 +24,10 @@ public class CommandHandler {
 
     public CommandHandler(Devi devi) {
         this.devi = devi;
+        //dev commands // only add to 'commands' so they don't appear in !help
+        commands.put("performance", new PerformanceCommand(devi));
+        commands.put("reload", new ReloadCommand(devi));
+
         //info commands
         registerCommand("help", new HelpCommand(devi));
 

@@ -27,7 +27,6 @@ import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import javax.security.auth.login.LoginException;
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -72,7 +71,8 @@ public class Devi {
         }
     }
 
-    public void boot() {
+    public void boot(String[] args) {
+        if (Arrays.asList(args).contains("--devi")) this.settings.setDevBot(false);
         // connect to database and load translations
         databaseManager.connect();
         loadTranslations();
@@ -112,7 +112,7 @@ public class Devi {
         }
     }
 
-    private void loadTranslations() {
+    public void loadTranslations() {
         // connect to translations database
         MongoDatabase securityDatabase = databaseManager.getClient().getDatabase("website");
         MongoCollection<Document> translations = securityDatabase.getCollection("translations");
@@ -169,8 +169,8 @@ public class Devi {
             headers.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
             headers.put("Content-Type", "application/json");
 
-            String response = Unirest.post("http://www.devibot.net/api/stats").headers(headers).body(object).asString().getBody();
-            return response.equals("Authorization successful");
+            String response = Unirest.post("https://www.devibot.net/api/stats").headers(headers).body(object).asString().getBody();
+            return response.equals("{\"message\":\"Authorization successful\"}");
         } catch (UnirestException e) {
             e.printStackTrace();
             return false;

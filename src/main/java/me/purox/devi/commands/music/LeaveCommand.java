@@ -49,7 +49,7 @@ public class LeaveCommand implements Command {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 0;
+        return 143;
     }
 
     @Override

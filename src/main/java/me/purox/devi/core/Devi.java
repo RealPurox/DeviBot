@@ -172,7 +172,8 @@ public class Devi {
             String response = Unirest.post("https://www.devibot.net/api/stats").headers(headers).body(object).asString().getBody();
             return response.equals("{\"message\":\"Authorization successful\"}");
         } catch (UnirestException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            //^^^^ this shit just spams the console when the website is offline
             return false;
         }
     }

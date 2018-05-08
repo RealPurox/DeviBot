@@ -25,9 +25,6 @@ public class LeaveCommand implements Command {
         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
         String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
 
-        System.out.println(devi.getMusicManager());
-        System.out.println(devi.getMusicManager().getManager(event.getGuild()));
-        System.out.println(devi.getMusicManager().getManager(event.getGuild()).getAudioPlayer());
         if (!devi.getMusicManager().getManager(event.getGuild()).getAudioPlayer().isPaused() && !devi.getMusicManager().isIdle(event.getGuild())){
             MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 112, "`" + prefix + "stop`"));
             return;
@@ -39,6 +36,8 @@ public class LeaveCommand implements Command {
         }
 
         event.getGuild().getAudioManager().closeAudioConnection();
+        devi.getMusicManager().getManager(event.getGuild()).clearQueue();
+        devi.getMusicManager().getAudioPlayers().remove(event.getGuild());
         MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 114));
     }
 

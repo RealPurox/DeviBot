@@ -45,7 +45,7 @@ public class ResumeCommand implements Command {
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("stop");
+        return null;
     }
 
     @Override

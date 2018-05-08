@@ -143,4 +143,12 @@ public class MusicManager {
         message += " - " + devi.getTranslation(language, 88) + ": " + trackInfo.author + "\n";
         return message + "\n";
     }
+
+    public AudioPlayerManager getAudioPlayerManager() {
+        return manager;
+    }
+
+    public Map<Guild, Map.Entry<AudioPlayer, TrackManager>> getAudioPlayers() {
+        return audioPlayer;
+    }
 }

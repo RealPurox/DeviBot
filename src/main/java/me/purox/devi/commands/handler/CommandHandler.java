@@ -43,6 +43,7 @@ public class CommandHandler {
         registerCommand("unmute", new UnmuteCommand(devi));
         registerCommand("banlist", new BanlistCommand(devi));
         registerCommand("mutelist", new MutelistCommand(devi));
+        //registerCommand("purge", new PurgeCommand(devi));
         //  - music commands
         registerCommand("join", new JoinCommand(devi));
         registerCommand("leave", new LeaveCommand(devi));

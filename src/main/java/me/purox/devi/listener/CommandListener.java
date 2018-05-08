@@ -22,7 +22,7 @@ public class CommandListener extends ListenerAdapter {
         String prefix = devi.getSettings().getDefaultPrefix();
 
         //custom prefix
-        if(event.getChannelType() == ChannelType.TEXT && event.getGuild() != null) {
+        if(!devi.getSettings().isDevBot() && event.getChannelType() == ChannelType.TEXT && event.getGuild() != null) {
             DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
             prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
         }

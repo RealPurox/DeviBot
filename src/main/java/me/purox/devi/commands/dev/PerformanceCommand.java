@@ -37,6 +37,7 @@ public class PerformanceCommand implements Command {
         builder.addField("Free Memory (MB)", String.valueOf(freeMemory), false);
         builder.addField("Allocated Memory (MB)", String.valueOf(allocatedMemory), false);
         builder.addField("Max Memory (MB)", String.valueOf(maxMemory), false);
+        builder.addField("Music Player" , String.valueOf(devi.getMusicManager().getAudioPlayers().size()), false);
 
         MessageUtils.sendMessage(event.getChannel(), builder.build());
     }

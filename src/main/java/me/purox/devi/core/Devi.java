@@ -17,6 +17,7 @@ import me.purox.devi.listener.CommandListener;
 import me.purox.devi.listener.MessageListener;
 import me.purox.devi.listener.ReadyListener;
 import me.purox.devi.music.MusicManager;
+import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -48,12 +49,13 @@ public class Devi {
     private Jedis redisSender;
 
     public Devi() {
-        // init handlers / managers / settings
+        // init handlers / managers / settings / utils
         this.commandHandler = new CommandHandler(this);
         this.settings = new Settings();
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
+        new MessageUtils(this);
 
         // create cache loader.
         this.deviGuildLoadingCache = CacheBuilder.newBuilder()
@@ -77,17 +79,19 @@ public class Devi {
         databaseManager.connect();
         loadTranslations();
 
+        // subscribe to redis, make a new thread because this shit's blocking
+        Thread redisThread = new Thread(() -> {
+            redisSender = new Jedis("54.38.182.128");
+            redisSender.auth(settings.getDeviAPIAuthorizazion());
+
+            Jedis receiverRedis = new Jedis("54.38.182.128");
+            receiverRedis.auth(settings.getDeviAPIAuthorizazion());
+            receiverRedis.subscribe(getJedisPubSub(), "devi_update");
+        });
+        redisThread.setName("Devi Redis Thread");
+        redisThread.start();
+
         try {
-            // subscribe to redis, make a new thread because this shit's blocking
-            new Thread(() -> {
-                redisSender = new Jedis("54.38.182.128");
-                redisSender.auth(settings.getDeviAPIAuthorizazion());
-
-                Jedis receiverRedis = new Jedis("54.38.182.128");
-                receiverRedis.auth(settings.getDeviAPIAuthorizazion());
-                receiverRedis.subscribe(getJedisPubSub(), "devi_update");
-            }).start();
-
             //create builder
             DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder();
             builder.setToken(settings.getBotToken());

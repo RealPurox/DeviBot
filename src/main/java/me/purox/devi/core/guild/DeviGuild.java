@@ -169,4 +169,8 @@ public class DeviGuild {
     public List<String> getAutoModIgnoredRoles() {
         return autoModIgnoredRoles;
     }
+
+    public Devi getDevi() {
+        return devi;
+    }
 }

@@ -1,11 +1,20 @@
 package me.purox.devi.utils;
 
+import me.purox.devi.core.Devi;
+import me.purox.devi.core.Language;
+import me.purox.devi.core.guild.DeviGuild;
+import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 public class MessageUtils {
+
+    private static Devi devi;
+    public MessageUtils(Devi devi) {
+        MessageUtils.devi = devi;
+    }
 
     public static boolean deleteMessage(Message message) {
         MessageChannel channel = message.getChannel();
@@ -78,7 +87,14 @@ public class MessageUtils {
         if(channel instanceof TextChannel){
             if(((TextChannel)channel).getGuild() != null){
                 if(PermissionUtil.checkPermission((TextChannel) channel, ((TextChannel)channel).getGuild().getSelfMember(), Permission.MESSAGE_WRITE)){
-                    if (message == null) return channel.sendMessage(embed).complete();
+                    if (message == null) {
+                        if (!PermissionUtil.checkPermission((TextChannel) channel, ((TextChannel)channel).getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+                            DeviGuild deviGuild = devi.getDeviGuild(((TextChannel) channel).getGuild().getId());
+                            Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+                            return MessageUtils.sendMessage(channel, ":warning: **" + devi.getTranslation(language, 150) + "**");
+                        }
+                        return channel.sendMessage(embed).complete();
+                    }
                     else return channel.sendMessage(message).complete();
                 }
             }

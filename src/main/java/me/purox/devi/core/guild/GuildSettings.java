@@ -1,5 +1,6 @@
 package me.purox.devi.core.guild;
 import me.purox.devi.core.DeviEmote;
+import net.dv8tion.jda.core.entities.Guild;
 
 import java.util.HashMap;
 
@@ -107,7 +108,8 @@ public class GuildSettings {
     }
 
     private void logSettingUpdate(Settings settings, Object value) {
-        System.out.println("[INFO] Set " + settings.name() + " to " + value + " in guild " + deviGuild.getId());
+        Guild guild = deviGuild.getDevi().getShardManager().getGuildById(deviGuild.getId());
+        System.out.println("[INFO] Set " + settings.name() + " to " + value + " in guild " + deviGuild.getId() + " (" + (guild == null ? "N/A" : guild.getName()) + ")");
     }
 
     public void setStringValue(Settings settings, String value) {

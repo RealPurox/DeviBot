@@ -27,7 +27,7 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
+            <state relative-caret-position="221">
               <caret line="18" selection-start-line="18" selection-end-line="18" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -39,12 +39,10 @@
       <file leaf-file-name="MessageUtils.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/utils/MessageUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
+            <state relative-caret-position="1394">
               <caret line="91" selection-start-line="91" selection-end-line="91" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#393#394#0" expanded="true" />
-                <element signature="e#424#425#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -62,18 +60,12 @@
       <file leaf-file-name="Devi.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/core/Devi.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
+            <state relative-caret-position="1003">
+              <caret line="92" selection-start-line="92" selection-end-line="92" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2504#2700#0" expanded="true" />
-                <element signature="e#2699#2700#0" expanded="true" />
                 <element signature="method#getTranslation#0;class#Devi#0" />
                 <element signature="method#getJedisPubSub#0;class#Devi#0" />
-                <element signature="e#10086#10087#0" expanded="true" />
-                <element signature="e#10117#10118#0" expanded="true" />
-                <element signature="e#10494#10495#0" expanded="true" />
-                <element signature="e#10523#10524#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -91,8 +83,8 @@
       <file leaf-file-name="PerformanceCommand.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/commands/dev/PerformanceCommand.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="377">
-              <caret line="42" column="5" lean-forward="true" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
+            <state relative-caret-position="544">
+              <caret line="42" column="5" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -100,7 +92,7 @@
       <file leaf-file-name="DeviGuild.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/core/guild/DeviGuild.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
+            <state relative-caret-position="2550">
               <caret line="173" column="8" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="20" />
               <folding>
                 <element signature="e#6458#6459#0" expanded="true" />
@@ -110,11 +102,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GuildSettings.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GuildSettings.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/core/guild/GuildSettings.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="85">
-              <caret line="112" column="5" lean-forward="true" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+              <caret line="112" column="5" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AutoModListener.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/commands/guild/automod/AutoModListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="213">
+              <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -213,7 +214,6 @@
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/commands/guild/SettingsCommand.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/commands/music/QueueCommand.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/commands/music/CurrentCommand.java" />
-        <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/commands/guild/automod/AutoModListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/commands/music/SkipCommand.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/commands/music/ShuffleCommand.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
@@ -238,6 +238,7 @@
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/core/Devi.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/core/guild/DeviGuild.java" />
         <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/core/guild/GuildSettings.java" />
+        <option value="$PROJECT_DIR$/src/main/java/me/purox/devi/commands/guild/automod/AutoModListener.java" />
       </list>
     </option>
   </component>
@@ -270,7 +271,7 @@
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="279" />
     <option name="y" value="192" />
     <option name="width" value="1082" />
@@ -304,6 +305,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -355,6 +359,27 @@
               <item name="devi" type="462c0819:PsiDirectoryNode" />
               <item name="commands" type="462c0819:PsiDirectoryNode" />
               <item name="dev" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DeviBot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DeviBot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="devi" type="462c0819:PsiDirectoryNode" />
+              <item name="commands" type="462c0819:PsiDirectoryNode" />
+              <item name="guild" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DeviBot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DeviBot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="devi" type="462c0819:PsiDirectoryNode" />
+              <item name="commands" type="462c0819:PsiDirectoryNode" />
+              <item name="guild" type="462c0819:PsiDirectoryNode" />
+              <item name="automod" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="DeviBot" type="b2602c69:ProjectViewProjectNode" />
@@ -427,9 +452,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -563,18 +585,17 @@
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49946696" weight="0.23093683" />
-      <window_info anchor="bottom" id="Messages" order="11" weight="0.3278867" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info id="Image Layers" order="2" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.510661" side_tool="true" weight="0.3191721" />
       <window_info anchor="right" id="Maven Projects" order="4" weight="0.32995737" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.48933902" visible="true" weight="0.3191721" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.48933902" weight="0.3191721" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.32934782" />
       <window_info id="Capture Tool" order="3" />
       <window_info id="Designer" order="4" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49468893" visible="true" weight="0.21695095" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49468893" visible="true" weight="0.21908316" />
       <window_info anchor="bottom" id="JProfiler" order="10" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -588,6 +609,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32934782" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.3278867" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -633,13 +655,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="191">
           <caret line="117" selection-start-line="117" selection-end-line="117" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/commands/guild/automod/AutoModListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-216">
-          <caret line="27" column="45" lean-forward="true" selection-start-line="27" selection-start-column="45" selection-end-line="27" selection-end-column="45" />
         </state>
       </provider>
     </entry>
@@ -696,9 +711,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="595">
           <caret line="52" selection-start-line="52" selection-end-line="52" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -924,7 +936,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
+        <state relative-caret-position="221">
           <caret line="18" selection-start-line="18" selection-end-line="18" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -934,30 +946,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/utils/MessageUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
+        <state relative-caret-position="1394">
           <caret line="91" selection-start-line="91" selection-end-line="91" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#393#394#0" expanded="true" />
-            <element signature="e#424#425#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/core/Devi.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
+        <state relative-caret-position="1003">
+          <caret line="92" selection-start-line="92" selection-end-line="92" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2504#2700#0" expanded="true" />
-            <element signature="e#2699#2700#0" expanded="true" />
             <element signature="method#getTranslation#0;class#Devi#0" />
             <element signature="method#getJedisPubSub#0;class#Devi#0" />
-            <element signature="e#10086#10087#0" expanded="true" />
-            <element signature="e#10117#10118#0" expanded="true" />
-            <element signature="e#10494#10495#0" expanded="true" />
-            <element signature="e#10523#10524#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -971,14 +975,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/commands/dev/PerformanceCommand.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="42" column="5" lean-forward="true" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
+        <state relative-caret-position="544">
+          <caret line="42" column="5" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/core/guild/DeviGuild.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
+        <state relative-caret-position="2550">
           <caret line="173" column="8" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="20" />
           <folding>
             <element signature="e#6458#6459#0" expanded="true" />
@@ -990,7 +994,14 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/core/guild/GuildSettings.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
-          <caret line="112" column="5" lean-forward="true" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+          <caret line="112" column="5" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/me/purox/devi/commands/guild/automod/AutoModListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
         </state>
       </provider>
     </entry>

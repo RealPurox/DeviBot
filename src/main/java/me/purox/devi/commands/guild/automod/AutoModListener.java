@@ -30,11 +30,14 @@ public class AutoModListener extends ListenerAdapter {
         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
         AtomicBoolean hasIgnoredRole = new AtomicBoolean(false);
-        event.getMember().getRoles().forEach(r -> {
-            if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
-                hasIgnoredRole.set(true);
-            }
-        });
+
+        if (!event.getMember().getRoles().isEmpty()) {
+            event.getMember().getRoles().forEach(r -> {
+                if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
+                    hasIgnoredRole.set(true);
+                }
+            });
+        }
 
         if (!hasIgnoredRole.get() && !event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
             //anti advertisement

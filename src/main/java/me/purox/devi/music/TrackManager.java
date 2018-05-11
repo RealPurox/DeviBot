@@ -90,7 +90,7 @@ public class TrackManager extends AudioEventAdapter {
                 .setDescription("**" + devi.getTranslation(language, 86) + "**")
                 .addField(devi.getTranslation(language, 87), track.getInfo().title, false)
                 .addField(devi.getTranslation(language, 88), track.getInfo().author, false)
-                .addField(devi.getTranslation(language, 89), devi.getMusicManager().getTimestamp(track.getInfo().length), false)
+                .addField(devi.getTranslation(language, 89), devi.getMusicManager().getTimestamp(track.getInfo().length, language), false)
                 .addField(devi.getTranslation(language, 90), "[" + devi.getTranslation(language, 91) + "](" + track.getInfo().uri + ")", false)
                 .build());
     }

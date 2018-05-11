@@ -27,9 +27,9 @@ public class CommandListener extends ListenerAdapter {
             prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
         }
 
-        if (message.startsWith(prefix)) {
+        if (!event.getAuthor().isBot() && message.startsWith(prefix)) {
             CommandHandler commandHandler = devi.getCommandHandler();
-            String invoke = message.split("[ ,\n]")[0].toLowerCase().substring(prefix.length());
+            String invoke = message.split(" ")[0].toLowerCase().substring(prefix.length());
             if (commandHandler.getCommands().containsKey(invoke)) {
                 commandHandler.handleCommand(prefix, message, event);
             }

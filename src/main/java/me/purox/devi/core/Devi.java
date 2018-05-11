@@ -65,7 +65,8 @@ public class Devi {
                     @Override
                     public DeviGuild load(String s) {
                         return createDeviGuild(s);
-                    }});
+                    }
+                });
 
         // register languages
         for (Language language : Language.values()) {

@@ -43,7 +43,7 @@ public class CommandHandler {
         registerCommand("unmute", new UnmuteCommand(devi));
         registerCommand("banlist", new BanlistCommand(devi));
         registerCommand("mutelist", new MutelistCommand(devi));
-        //registerCommand("purge", new PurgeCommand(devi));
+        registerCommand("purge", new PurgeCommand(devi));
         //  - music commands
         registerCommand("join", new JoinCommand(devi));
         registerCommand("leave", new LeaveCommand(devi));
@@ -54,6 +54,7 @@ public class CommandHandler {
         registerCommand("current", new CurrentCommand(devi));
         registerCommand("skip", new SkipCommand(devi));
         registerCommand("shuffle", new ShuffleCommand(devi));
+        registerCommand("unshuffle", new UnShuffleCommand(devi));
     }
 
     private void registerCommand(String commandName, Command command){

@@ -29,7 +29,7 @@ public class Settings {
         return devBot;
     }
 
-    public void setDevBot(boolean devBot) {
+    void setDevBot(boolean devBot) {
         this.devBot = devBot;
     }
 }

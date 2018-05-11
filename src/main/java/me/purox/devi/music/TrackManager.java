@@ -25,7 +25,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackManager extends AudioEventAdapter {
 
     private final AudioPlayer audioPlayer;
-    private final Queue<AudioInfo> queue;
+    private Queue<AudioInfo> queue;
+    private Queue<AudioInfo> oldQueue = new LinkedBlockingQueue<>();
     private Devi devi;
 
     public TrackManager(Devi devi, AudioPlayer audioPlayer) {
@@ -61,12 +62,18 @@ public class TrackManager extends AudioEventAdapter {
 
     public void shuffleQueue() {
         List<AudioInfo> currentQueue = new ArrayList<>(this.queue);
+        oldQueue = new LinkedBlockingQueue<>();
+        oldQueue.addAll(currentQueue);
         AudioInfo currentAudioInfo = currentQueue.get(0);
         currentQueue.remove(0);
         Collections.shuffle(currentQueue);
         currentQueue.add(0, currentAudioInfo);
         clearQueue();
         this.queue.addAll(currentQueue);
+    }
+
+    public void unShuffleQueue() {
+        this.queue = oldQueue;
     }
 
     @Override

@@ -22,7 +22,7 @@ public class DatabaseManager {
         String uri = devi.getSettings().getMongoToken();
         MongoClientURI clientURI = new MongoClientURI(uri);
         this.client = new MongoClient(clientURI);
-        this.database = client.getDatabase("devi");
+        this.database = client.getDatabase(devi.getSettings().isDevBot() ? "devi_dev" : "devi");
     }
 
     public MongoClient getClient() {

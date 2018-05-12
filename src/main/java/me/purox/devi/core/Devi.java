@@ -48,6 +48,9 @@ public class Devi {
     private LoadingCache<String, DeviGuild> deviGuildLoadingCache;
     private Jedis redisSender;
 
+    private int songsPlayed = 0;
+    private int commandsExecuted = 0;
+
     public Devi() {
         // init handlers / managers / settings / utils
         this.commandHandler = new CommandHandler(this);
@@ -80,7 +83,7 @@ public class Devi {
         databaseManager.connect();
         loadTranslations();
 
-        // subscribe to redis, make a new thread because this shit's blocking
+        // subscribe to redis channel
         Thread redisThread = new Thread(() -> {
             redisSender = new Jedis("54.38.182.128");
             redisSender.auth(settings.getDeviAPIAuthorizazion());
@@ -98,8 +101,8 @@ public class Devi {
             builder.setToken(settings.getBotToken());
             builder.setAutoReconnect(true);
 
-            // make the dev bot listen to code because I am a cool kid >-<
-            builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.playing("devibot.net"));
+            // make the dev bot listen to code | display website on main bot
+            builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.watching("devibot.net"));
 
             //add event listeners
             builder.addEventListeners(new CommandListener(this));
@@ -134,21 +137,21 @@ public class Devi {
         });
     }
 
+
     public void startStatsPusher(){
-        TimerTask timerTask = new TimerTask() {
+        TimerTask tenSecTask = new TimerTask() {
             @Override
             public void run() {
-                if(!pushStats()) {
-                    System.out.println("Failed to push stats.");
-                }
+                pushStats();
             }
         };
+
         Timer timer = new Timer();
-        timer.schedule(timerTask, 0, 10000);
+        timer.schedule(tenSecTask, 0, 10000);
     }
 
-    private boolean pushStats() {
-        if (settings.isDevBot()) return false;
+    private void pushStats() {
+        if (settings.isDevBot()) return;
         try {
             JSONObject object = new JSONObject();
 
@@ -175,11 +178,9 @@ public class Devi {
             headers.put("Content-Type", "application/json");
 
             String response = Unirest.post("https://www.devibot.net/api/stats").headers(headers).body(object).asString().getBody();
-            return response.equals("{\"message\":\"Authorization successful\"}");
         } catch (UnirestException e) {
             //e.printStackTrace();
             //^^^^ this shit just spams the console when the website is offline
-            return false;
         }
     }
 
@@ -269,5 +270,26 @@ public class Devi {
 
     public MusicManager getMusicManager() {
         return musicManager;
+    }
+
+    public int getSongsPlayed() {
+        return songsPlayed;
+    }
+
+    public int getCommandsExecuted() {
+        return commandsExecuted;
+    }
+
+    public void increaseSongsPlayed() {
+        songsPlayed++;
+    }
+
+    public void increaseCommandsExecuted() {
+        commandsExecuted++;
+    }
+
+    public void resetStats() {
+        commandsExecuted = 0;
+        songsPlayed = 0;
     }
 }

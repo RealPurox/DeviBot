@@ -87,6 +87,7 @@ public class CommandHandler {
         }
 
         //all good, run that shit
+        devi.increaseCommandsExecuted();
         command.execute(container.getInvoke(), container.getArgs(), container.getEvent());
     }
 

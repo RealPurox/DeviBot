@@ -78,6 +78,8 @@ public class TrackManager extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        devi.increaseSongsPlayed();
+
         AudioInfo info = this.queue.element();
         VoiceChannel voiceChannel = info.getChannel();
         info.getChannel().getGuild().getAudioManager().openAudioConnection(voiceChannel);

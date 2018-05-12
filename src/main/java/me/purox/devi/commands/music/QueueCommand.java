@@ -49,7 +49,7 @@ public class QueueCommand implements Command {
         if (page < 1) page = 0;
 
         String sb = "";
-        sb += devi.getTranslation(language, 119) + ": " + devi.getMusicManager().getTimestamp(raw.stream().mapToLong(info -> info.getTrack().getDuration()).sum()) + "\n";
+        sb += devi.getTranslation(language, 119) + ": " + devi.getMusicManager().getTimestamp(raw.stream().mapToLong(info -> info.getTrack().getDuration()).sum(), language) + "\n";
         sb += devi.getTranslation(language, 120) + ": " + raw.size() + "\n\n";
         if (!pages.isEmpty()) {
             for (AudioInfo audioInfo : pages.get(page)) {

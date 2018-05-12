@@ -75,12 +75,14 @@ public class JoinCommand implements Command {
         try {
             event.getGuild().getAudioManager().setConnectionListener(listener);
             event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
-        } catch (Exception e ) {
-            if (e instanceof IllegalArgumentException) MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 100));
-            else if (e instanceof UnsupportedOperationException) MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 103));
-            else if (e instanceof GuildUnavailableException) MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 104));
-            else if (e instanceof InsufficientPermissionException) MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 102));
-            else e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 100));
+        } catch (UnsupportedOperationException e) {
+            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 103));
+        } catch (GuildUnavailableException e) {
+            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 104));
+        } catch (InsufficientPermissionException e) {
+            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 102));
         }
     }
 

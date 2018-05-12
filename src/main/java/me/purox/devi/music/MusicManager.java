@@ -84,7 +84,7 @@ public class MusicManager {
                         .setDescription("**" + devi.getTranslation(language, 92) + "**")
                         .addField(devi.getTranslation(language, 87), audioTrack.getInfo().title, false)
                         .addField(devi.getTranslation(language, 88), audioTrack.getInfo().author, false)
-                        .addField(devi.getTranslation(language, 89), getTimestamp(audioTrack.getInfo().length), false)
+                        .addField(devi.getTranslation(language, 89), getTimestamp(audioTrack.getInfo().length, language), false)
                         .build());
 
             }
@@ -105,7 +105,7 @@ public class MusicManager {
                             .setDescription("**" + devi.getTranslation(language, 93) + "**")
                             .addField(devi.getTranslation(language, 94), audioPlaylist.getName(), false)
                             .addField(devi.getTranslation(language, 95), String.valueOf(audioPlaylist.getTracks().size()), false)
-                            .addField(devi.getTranslation(language, 89), getTimestamp(length), false)
+                            .addField(devi.getTranslation(language, 89), getTimestamp(length, language), false)
                             .build());
                 }
             }
@@ -126,26 +126,22 @@ public class MusicManager {
         getPlayer(g).stopTrack();
     }
 
-    public String getTimestamp(long milis) {
-        long seconds = milis / 1000;
-        long hours = Math.floorDiv(seconds, 3600);
-        seconds = seconds - (hours * 3600);
-        long minutes = Math.floorDiv(seconds, 60);
-        seconds = seconds - (minutes * 60);
-        return (hours == 0 ? "" : (hours < 100 ? String.format("%02d", hours) : hours + ":")) + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+    public String getTimestamp(long milliseconds, Language language) {
+        int seconds = (int) (milliseconds / 1000) % 60 ;
+        int minutes = (int) ((milliseconds / (1000*60)) % 60);
+        int hours   = (int) ((milliseconds / (1000*60*60)) % 24);
+        return  (hours == 0 ? "" : hours + " " + devi.getTranslation(language, 158) + ", ") +
+                (minutes == 0 ? "" :minutes + " " + devi.getTranslation(language, 159) + ", ") +
+                (seconds + " " + devi.getTranslation(language, 160));
     }
 
 
     public String buildQueueMessage(AudioInfo info, Language language) {
         AudioTrackInfo trackInfo = info.getTrack().getInfo();
         String message = "**" + trackInfo.title + "**\n";
-        message += " - " + devi.getTranslation(language, 98) + ": " + getTimestamp(trackInfo.length) + "\n";
+        message += " - " + devi.getTranslation(language, 98) + ": " + getTimestamp(trackInfo.length, language) + "\n";
         message += " - " + devi.getTranslation(language, 88) + ": " + trackInfo.author + "\n";
         return message + "\n";
-    }
-
-    public AudioPlayerManager getAudioPlayerManager() {
-        return manager;
     }
 
     public Map<Guild, Map.Entry<AudioPlayer, TrackManager>> getAudioPlayers() {

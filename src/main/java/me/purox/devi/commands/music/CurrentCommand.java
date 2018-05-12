@@ -37,7 +37,7 @@ public class CurrentCommand implements Command {
         builder.setColor(new Color(34, 113, 126));
         builder.setAuthor(devi.getTranslation(language, 130), null, "https://i.pinimg.com/736x/9d/83/17/9d8317162494a004969b79c85d88b5c1--music-logo-dj-music.jpg");
         builder.addField(devi.getTranslation(language, 87), player.getPlayingTrack().getInfo().title, false);
-        builder.addField(devi.getTranslation(language, 98), devi.getMusicManager().getTimestamp(player.getPlayingTrack().getPosition()) + "/" + devi.getMusicManager().getTimestamp(player.getPlayingTrack().getDuration()), false);
+        builder.addField(devi.getTranslation(language, 98), devi.getMusicManager().getTimestamp(player.getPlayingTrack().getPosition(), language) + "/" + devi.getMusicManager().getTimestamp(player.getPlayingTrack().getDuration(), language), false);
 
         MessageUtils.sendMessage(event.getChannel(), builder.build());
     }

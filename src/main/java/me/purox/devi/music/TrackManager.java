@@ -25,7 +25,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackManager extends AudioEventAdapter {
 
     private final AudioPlayer audioPlayer;
-    private final Queue<AudioInfo> queue;
+    private Queue<AudioInfo> queue;
+    private Queue<AudioInfo> oldQueue = new LinkedBlockingQueue<>();
     private Devi devi;
 
     public TrackManager(Devi devi, AudioPlayer audioPlayer) {
@@ -61,6 +62,8 @@ public class TrackManager extends AudioEventAdapter {
 
     public void shuffleQueue() {
         List<AudioInfo> currentQueue = new ArrayList<>(this.queue);
+        oldQueue = new LinkedBlockingQueue<>();
+        oldQueue.addAll(currentQueue);
         AudioInfo currentAudioInfo = currentQueue.get(0);
         currentQueue.remove(0);
         Collections.shuffle(currentQueue);
@@ -69,8 +72,14 @@ public class TrackManager extends AudioEventAdapter {
         this.queue.addAll(currentQueue);
     }
 
+    public void unShuffleQueue() {
+        this.queue = oldQueue;
+    }
+
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        devi.increaseSongsPlayed();
+
         AudioInfo info = this.queue.element();
         VoiceChannel voiceChannel = info.getChannel();
         info.getChannel().getGuild().getAudioManager().openAudioConnection(voiceChannel);
@@ -83,7 +92,7 @@ public class TrackManager extends AudioEventAdapter {
                 .setDescription("**" + devi.getTranslation(language, 86) + "**")
                 .addField(devi.getTranslation(language, 87), track.getInfo().title, false)
                 .addField(devi.getTranslation(language, 88), track.getInfo().author, false)
-                .addField(devi.getTranslation(language, 89), devi.getMusicManager().getTimestamp(track.getInfo().length), false)
+                .addField(devi.getTranslation(language, 89), devi.getMusicManager().getTimestamp(track.getInfo().length, language), false)
                 .addField(devi.getTranslation(language, 90), "[" + devi.getTranslation(language, 91) + "](" + track.getInfo().uri + ")", false)
                 .build());
     }

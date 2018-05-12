@@ -48,8 +48,8 @@ public class Devi {
     private LoadingCache<String, DeviGuild> deviGuildLoadingCache;
     private Jedis redisSender;
 
-    private int songsPlayed = 0;
-    private int commandsExecuted = 0;
+    private int songsPlayed;
+    private int commandsExecuted;
 
     public Devi() {
         // init handlers / managers / settings / utils
@@ -59,6 +59,9 @@ public class Devi {
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
         new MessageUtils(this);
+
+        songsPlayed = 0;
+        commandsExecuted = 0;
 
         // create cache loader.
         this.deviGuildLoadingCache = CacheBuilder.newBuilder()

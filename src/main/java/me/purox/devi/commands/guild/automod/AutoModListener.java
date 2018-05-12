@@ -25,13 +25,13 @@ public class AutoModListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getGuild() == null) return;
+        if (event.getGuild() == null || event.getMember() == null) return;
         DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
         AtomicBoolean hasIgnoredRole = new AtomicBoolean(false);
 
-        if (event.getMember() != null && !event.getMember().getRoles().isEmpty()) {
+        if (!event.getMember().getRoles().isEmpty()) {
             event.getMember().getRoles().forEach(r -> {
                 if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
                     hasIgnoredRole.set(true);

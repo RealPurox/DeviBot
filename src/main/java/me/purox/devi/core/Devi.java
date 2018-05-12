@@ -28,6 +28,7 @@ import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import javax.security.auth.login.LoginException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -142,48 +143,62 @@ public class Devi {
 
 
     public void startStatsPusher(){
-        TimerTask tenSecTask = new TimerTask() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
+        TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                pushStats();
+                if (!pushStats()) {
+                    System.out.println(simpleDateFormat.format(new Date(System.currentTimeMillis())) + " FAILED TO PUSH STATS");
+                }
             }
         };
 
         Timer timer = new Timer();
-        timer.schedule(tenSecTask, 0, 10000);
+        timer.schedule(timerTask, 0, 120000);
     }
 
-    private void pushStats() {
-        if (settings.isDevBot()) return;
+    private boolean pushStats() {
+        if (settings.isDevBot()) return false;
         try {
-            JSONObject object = new JSONObject();
-
             // 0 = shards; 1 = guilds; 2 = users; 3 = channels;
             long[] data = new long[5];
+            /*shards*/   data[0] = shardManager.getShards().size();
+            /*guilds*/   shardManager.getShards().forEach(jda -> data[1] += jda.getGuilds().size());
+            /*users*/    shardManager.getShards().forEach(jda -> jda.getGuilds().forEach(guild -> data[2] += guild.getMembers().size()));
+            /*channels*/ shardManager.getShards().forEach(jda -> data[3] += (jda.getPrivateChannels().size() + jda.getTextChannels().size() + jda.getVoiceChannels().size()));
+            /*ping*/     data[4] = (long) shardManager.getAveragePing();
 
-            data[0] = shardManager.getShards().size();
-            object.put("shards", data[0]);
+            //website
+            JSONObject websiteObject = new JSONObject();
 
-            shardManager.getShards().forEach(jda -> data[1] += jda.getGuilds().size());
-            object.put("guilds", data[1]);
+            websiteObject.put("shards", data[0]);
+            websiteObject.put("guilds", data[1]);
+            websiteObject.put("users", data[2]);
+            websiteObject.put("channels", data[3]);
+            websiteObject.put("average_ping", shardManager.getAveragePing());
 
-            shardManager.getShards().forEach(jda -> jda.getGuilds().forEach(guild -> data[2] += guild.getMembers().size()));
-            object.put("users", data[2]);
+            HashMap<String, String> deviHeaders = new HashMap<>();
+            deviHeaders.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
+            deviHeaders.put("Content-Type", "application/json");
 
-            shardManager.getShards().forEach(jda -> data[3] += (jda.getPrivateChannels().size() + jda.getTextChannels().size() + jda.getVoiceChannels().size()));
-            object.put("channels", data[3]);
+            int websiteStatus = Unirest.post("https://www.devibot.net/api/stats")
+                    .headers(deviHeaders)
+                    .body(websiteObject)
+                    .asJson().getStatus();
 
-            data[4] = (long) shardManager.getAveragePing();
-            object.put("average_ping", shardManager.getAveragePing());
+            //discordbots.org
+            HashMap<String, String> discordBotsOrgHeaders = new HashMap<>();
+            discordBotsOrgHeaders.put("Authorization", settings.getDiscordBotsDotOrgToken());
 
-            HashMap<String, String> headers = new HashMap<>();
-            headers.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
-            headers.put("Content-Type", "application/json");
+           int discordBotsStatus = Unirest.post("https://discordbots.org/api/bots/354361427731152907/stats")
+                    .headers(discordBotsOrgHeaders)
+                    .field("server_count", data[1])
+                    .asJson().getStatus();
 
-            String response = Unirest.post("https://www.devibot.net/api/stats").headers(headers).body(object).asString().getBody();
+            return (websiteStatus == 200 || websiteStatus == 301) && (discordBotsStatus == 200 || discordBotsStatus == 301);
         } catch (UnirestException e) {
-            //e.printStackTrace();
-            //^^^^ this shit just spams the console when the website is offline
+            e.printStackTrace();
+            return false;
         }
     }
 

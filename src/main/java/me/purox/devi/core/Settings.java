@@ -25,6 +25,10 @@ public class Settings {
         return System.getenv("DEVI_AUTH");
     }
 
+    String getDiscordBotsDotOrgToken() {
+        return System.getenv("DISCORD_BOTS_ORG_TOKEN");
+    }
+
     public boolean isDevBot() {
         return devBot;
     }

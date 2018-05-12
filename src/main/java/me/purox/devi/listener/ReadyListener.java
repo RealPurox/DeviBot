@@ -44,10 +44,7 @@ public class ReadyListener extends ListenerAdapter {
 
         //last shard booted
         if(jda.getShardInfo().getShardId() == jda.getShardInfo().getShardTotal() - 1) {
-
-            if (!devi.getSettings().isDevBot()) {
-                devi.startStatsPusher();
-            }
+            devi.startStatsPusher();
 
             for (Guild guild : event.getJDA().getGuilds()) {
                 // load all guild settings real quick so we can make sure they all have data stored in the database

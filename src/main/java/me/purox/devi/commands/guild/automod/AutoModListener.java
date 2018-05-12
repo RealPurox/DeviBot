@@ -31,7 +31,7 @@ public class AutoModListener extends ListenerAdapter {
 
         AtomicBoolean hasIgnoredRole = new AtomicBoolean(false);
 
-        if (event.getMember().getRoles() != null && !event.getMember().getRoles().isEmpty()) {
+        if (event.getMember() != null && !event.getMember().getRoles().isEmpty()) {
             event.getMember().getRoles().forEach(r -> {
                 if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
                     hasIgnoredRole.set(true);

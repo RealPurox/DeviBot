@@ -1,6 +1,7 @@
 package me.purox.devi.commands.info;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -25,10 +26,10 @@ public class HelpCommand  implements Command {
     }
 
     @Override
-    public void execute(String command, String[] args, MessageReceivedEvent event) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
+    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
+        DeviGuild deviGuild = sender.isConsoleSender() ? null : devi.getDeviGuild(event.getGuild().getId());
+        Language language = deviGuild == null ? Language.ENGLISH : Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+        String prefix = deviGuild == null ? devi.getSettings().getDefaultPrefix() : deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
 
         List<String> raw = new ArrayList<>(devi.getCommandHandler().getUnmodifiedCommands().keySet());
         List<List<String>> pages = JavaUtils.chopList(raw, 5);
@@ -51,14 +52,14 @@ public class HelpCommand  implements Command {
 
         for (String c : pages.get(page - 1)) {
             Command cmd = devi.getCommandHandler().getUnmodifiedCommands().get(c);
-            builder.appendDescription("**" + deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX) + c + "**\n");
+            builder.appendDescription("**" + prefix + c + "**\n");
             builder.appendDescription(" - " + (devi.getTranslation(language, 34, devi.getTranslation(language, cmd.getDescriptionTranslationID()))) + "\n");
             builder.appendDescription(" - " + (devi.getTranslation(language, 35, (cmd.getPermission() == null ? "N/A" : cmd.getPermission().name()))) + "\n");
             builder.appendDescription(" - " + (devi.getTranslation(language, 36, (cmd.getAliases() == null ? "N/A" :
                     "`" + cmd.getAliases().stream().collect(Collectors.joining("`, `")) + "`"))) + "\n\n");
         }
 
-        MessageUtils.sendMessage(event.getChannel(), builder.build());
+        sender.reply(builder.build());
     }
 
 

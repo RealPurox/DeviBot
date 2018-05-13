@@ -1,6 +1,7 @@
 package me.purox.devi.commands.dev;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
@@ -16,10 +17,10 @@ public class ReloadCommand implements Command {
     }
 
     @Override
-    public void execute(String command, String[] args, MessageReceivedEvent event) {
-        if (!devi.getAdmins().contains(event.getAuthor().getId()) && !event.getAuthor().getId().equals("161494492422078464")) return;
+    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
+        if (event != null && !devi.getAdmins().contains(sender.getId()) && !event.getAuthor().getId().equals("161494492422078464") && !sender.isConsoleSender()) return;
         devi.loadTranslations();
-        MessageUtils.sendMessage(event.getChannel(), "Translations reloaded");
+        sender.reply("Translations reloaded");
     }
 
     @Override

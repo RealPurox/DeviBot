@@ -1,6 +1,8 @@
 package me.purox.devi.commands.dev;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandSender;
+import me.purox.devi.commands.handler.ConsoleCommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -19,8 +21,8 @@ public class PerformanceCommand implements Command {
     }
 
     @Override
-    public void execute(String command, String[] args, MessageReceivedEvent event) {
-        if (!devi.getAdmins().contains(event.getAuthor().getId())) return;
+    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
+        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleSender()) return;
 
         Runtime runtime = Runtime.getRuntime();
         int mb = 1024 * 1024;
@@ -42,7 +44,7 @@ public class PerformanceCommand implements Command {
         builder.addField("Songs Played", String.valueOf(devi.getSongsPlayed()), false);
         devi.resetStats();
 
-        MessageUtils.sendMessage(event.getChannel(), builder.build());
+        sender.reply(builder.build());
     }
 
     @Override

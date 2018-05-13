@@ -14,17 +14,27 @@ import me.purox.devi.core.Language;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 
 public class CommandHandler {
 
     private Devi devi;
+    private ConsoleCommandSender consoleCommandSender;
     private LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
     private LinkedHashMap<String, Command> unmodifiedCommands = new LinkedHashMap<>();
 
     public CommandHandler(Devi devi) {
         this.devi = devi;
-        //dev commands // only add to 'commands' so they don't appear in !help
+        this.consoleCommandSender = new ConsoleCommandSenderImpl(devi);
+
+        /*
+            REGISTER COMMANDS
+         */
+
+        //dev commands || only add them to commands so they don't appear in !help
         commands.put("performance", new PerformanceCommand(devi));
         commands.put("reload", new ReloadCommand(devi));
 
@@ -68,12 +78,12 @@ public class CommandHandler {
         }
     }
 
-    public void handleCommand(String prefix, String raw, MessageReceivedEvent event){
+    public void handleCommand(String prefix, String raw, MessageReceivedEvent event, CommandSender commandSender){
         CommandParser.CommandContainer container = CommandParser.parseCommand(raw, event);
-        Command command = commands.get(raw.toLowerCase().split( "[ ,\n]")[0].substring(prefix.length()));
+        Command command = commands.get(raw.toLowerCase().split( " ")[0].substring(prefix.length()));
 
         //perms check
-        if (event.getGuild() != null && command.getPermission() != null) {
+        if (event != null && event.getGuild() != null && command.getPermission() != null) {
             if (!event.getMember().hasPermission(event.getTextChannel(), command.getPermission()) && !devi.getAdmins().contains(event.getAuthor().getId())) {
                 MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(Language.getLanguage(devi.getDeviGuild(event.getGuild().getId()).getSettings().getStringValue(GuildSettings.Settings.LANGUAGE)), 31));
                 return;
@@ -81,14 +91,18 @@ public class CommandHandler {
         }
 
         //guild only check
-        if (command.guildOnly() && event.getGuild() == null) {
-            MessageUtils.sendMessage(event.getChannel(), ":warning: **" + devi.getTranslation(Language.ENGLISH, 1) + "**");
+        if ((command.guildOnly() && event != null && event.getGuild() == null) || command.guildOnly() && commandSender.isConsoleSender()) {
+            commandSender.reply(":warning: **" + devi.getTranslation(Language.ENGLISH, 1) + "**");
             return;
         }
 
-        //all good, run that shit
+        //all good, run the command
         devi.increaseCommandsExecuted();
-        command.execute(container.getInvoke(), container.getArgs(), container.getEvent());
+        command.execute(container.getArgs(), container.getEvent(), commandSender);
+    }
+
+    public ConsoleCommandSender getConsoleCommandSender() {
+        return consoleCommandSender;
     }
 
     public LinkedHashMap<String, Command> getCommands() {
@@ -97,6 +111,29 @@ public class CommandHandler {
 
     public LinkedHashMap<String, Command> getUnmodifiedCommands() {
         return unmodifiedCommands;
+    }
+
+    public void startConsoleCommandListener() {
+        NonblockingBufferedReader reader = new NonblockingBufferedReader(new BufferedReader(new InputStreamReader(System.in)));
+        boolean stop = false;
+        try {
+            while (!stop) {
+                String line = reader.readLine();
+                if (line != null) {
+                    if (line.equals("--stop command-listener")){
+                        stop = true;
+                    }
+
+                    CommandHandler commandHandler = devi.getCommandHandler();
+                    String invoke = line.split(" ")[0].toLowerCase();
+                    if (commandHandler.getCommands().containsKey(invoke)) {
+                        commandHandler.handleCommand("", line, null, new CommandSender(getConsoleCommandSender(), null));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

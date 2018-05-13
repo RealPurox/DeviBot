@@ -1,6 +1,7 @@
 package me.purox.devi.commands.music;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
@@ -27,7 +28,7 @@ public class JoinCommand implements Command {
     }
 
     @Override
-    public void execute(String command, String[] args, MessageReceivedEvent event) {
+    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
         DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
         String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);

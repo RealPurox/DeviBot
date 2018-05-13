@@ -39,7 +39,7 @@ public class PlayCommand implements Command {
             MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "play <link or yt search>`"));
         }
 
-        String input = Arrays.stream(args).skip(0).map(s -> " " + s).collect(Collectors.joining()).substring(1);
+        String input = Arrays.stream(args).skip(0).collect(Collectors.joining(" "));
 
         if(!args[0].startsWith("https://") && !args[0].startsWith("http://")) {
             input = "ytsearch:" + input;

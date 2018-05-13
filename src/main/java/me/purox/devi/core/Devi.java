@@ -122,6 +122,9 @@ public class Devi {
             System.out.println(e instanceof JedisConnectionException ? "(FAILED TO CONNECT TO REDIS SERVER)" : "");
             System.exit(0);
         }
+
+        //start console command listener
+        commandHandler.startConsoleCommandListener();
     }
 
     public void loadTranslations() {

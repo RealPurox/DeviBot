@@ -1,6 +1,7 @@
 package me.purox.devi.listener;
 
 import me.purox.devi.commands.handler.CommandHandler;
+import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -31,7 +32,7 @@ public class CommandListener extends ListenerAdapter {
             CommandHandler commandHandler = devi.getCommandHandler();
             String invoke = message.split(" ")[0].toLowerCase().substring(prefix.length());
             if (commandHandler.getCommands().containsKey(invoke)) {
-                commandHandler.handleCommand(prefix, message, event);
+                commandHandler.handleCommand(prefix, message, event, new CommandSender(event.getAuthor(), event));
             }
         }
     }

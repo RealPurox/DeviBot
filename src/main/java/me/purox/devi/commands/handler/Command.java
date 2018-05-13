@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Command {
 
-    void execute(String command, String[] args, MessageReceivedEvent event);
+    void execute(String[] args, MessageReceivedEvent event, CommandSender sender);
 
     boolean guildOnly();
 

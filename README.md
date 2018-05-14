@@ -68,7 +68,7 @@ rm -rf temp
 
 You should be able to execute the jar file now. Below is an example on how to run it.
 
-##### REMEMBER: If you don't add --devi at the end ofthe command line, the dev bot token will be used.
+##### REMEMBER: If you don't add --devi at the end of the command line, the dev bot token will be used.
 
 ```
 java -jar -Xmx[MAX AMOUNT OF OF MG TO USE] Devi[PRESS TAB FOR AUTO COMPLETE] --devi

@@ -6,20 +6,29 @@
 
     <groupId>me.purox.devi</groupId>
     <artifactId>Devi</artifactId>
-    <version>1.0.0-aa-beta</version>
+    <version>1.0.0-ad-beta</version>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <outputDirectory>C:\Users\Daniel\Desktop\Devi</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <mainClass>
+                                me.purox.devi.Main
+                            </mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 
 
 

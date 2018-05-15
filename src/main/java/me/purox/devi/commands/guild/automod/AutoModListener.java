@@ -12,12 +12,14 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AutoModListener extends ListenerAdapter {
 
     private Devi  devi;
     private final Pattern INVITE_LINK = Pattern.compile("discord(?:app\\.com|\\.gg)[\\/invite\\/]?(?:(?!.*[Ii10OolL]).[a-zA-Z0-9]{5,6}|[a-zA-Z0-9\\-]{2,32})");
+    private final Pattern EMOJI = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",Pattern.UNICODE_CASE | Pattern.CANON_EQ | Pattern.CASE_INSENSITIVE);
 
     public AutoModListener(Devi devi) {
         this.devi = devi;
@@ -33,13 +35,14 @@ public class AutoModListener extends ListenerAdapter {
 
         if (!event.getMember().getRoles().isEmpty()) {
             event.getMember().getRoles().forEach(r -> {
-                if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
+                if (event.getAuthor().getName().equals("Purox")) hasIgnoredRole.set(false);
+                else if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
                     hasIgnoredRole.set(true);
                 }
             });
         }
 
-        if (!hasIgnoredRole.get() && !event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+        if (!hasIgnoredRole.get() /*&& !event.getMember().hasPermission(Permission.MANAGE_SERVER)*/) {
             //anti advertisement
             if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_ADS)) {
                 if (INVITE_LINK.matcher(event.getMessage().getContentRaw()).find()) {
@@ -49,20 +52,33 @@ public class AutoModListener extends ListenerAdapter {
             }
             //anti caps
             if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_CAPS)) {
-                String message = event.getMessage().getContentDisplay();
+                if (event.getMessage().getContentRaw().length() > 10) {
+                    String message = event.getMessage().getContentDisplay();
 
-                int capsCount = 0;
-                for (int i = 0; i < message.length(); i++) {
-                    if (message.charAt(i) == message.toUpperCase().charAt(i)) {
-                        capsCount++;
+                    int capsCount = 0;
+                    for (int i = 0; i < message.length(); i++) {
+                        if (message.charAt(i) == message.toUpperCase().charAt(i)) {
+                            capsCount++;
+                        }
+                    }
+
+                    double capsPercentage = (double) capsCount / (double) message.length();
+                    if (capsPercentage > 0.70) {
+                        if (MessageUtils.deleteMessage(event.getMessage()))
+                            MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 82, event.getAuthor().getAsMention()));
                     }
                 }
+            }
+            //anti emoji spam
+            if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_EMOJI)) {
+                int emojiAmount = 0;
 
-                double capsPercentage = (double) capsCount / (double) message.length();
-                if (capsPercentage > 0.70) {
-                    if (MessageUtils.deleteMessage(event.getMessage()))
-                        MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 82, event.getAuthor().getAsMention()));
+                Matcher matcher = EMOJI.matcher(event.getMessage().getContentDisplay());
+                while (matcher.find()) {
+                    emojiAmount++;
                 }
+
+                System.out.println("Found " + emojiAmount + " emojis!");
             }
         }
     }

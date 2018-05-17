@@ -14,7 +14,6 @@ public class Main {
         HttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(globalConfig).build();
         Unirest.setHttpClient(httpclient);
 
-        //test
         new Devi().boot(args);
     }
 

@@ -1,4 +1,4 @@
-package me.purox.devi.commands.guild.automod;
+package me.purox.devi.listener;
 
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;

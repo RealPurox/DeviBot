@@ -20,6 +20,7 @@ public class DeviGuild {
     private Document banned;
     private Document embeds;
     private List<String> autoModIgnoredRoles;
+    private HashMap<String, String> commands = new HashMap<>();
     private boolean ready = false;
 
     public DeviGuild(String id, Devi devi){
@@ -70,6 +71,8 @@ public class DeviGuild {
                 guildSettings.setIntegerValue(setting, document.getInteger(setting.name().toLowerCase()) == null ? (int) setting.getDefaultValue() : document.getInteger(setting.name().toLowerCase()));
             }
         }
+
+
 
         Object embedsObject = document.get("embeds");
         if (embedsObject == null) {
@@ -172,5 +175,9 @@ public class DeviGuild {
 
     public Devi getDevi() {
         return devi;
+    }
+
+    public HashMap<String, String> getCommands() {
+        return commands;
     }
 }

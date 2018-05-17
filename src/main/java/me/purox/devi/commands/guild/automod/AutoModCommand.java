@@ -11,6 +11,7 @@ import me.purox.devi.utils.JavaUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -38,16 +39,32 @@ public class AutoModCommand implements Command {
 
             //add enabled field
             GuildSettings.Settings autoModEnabled = GuildSettings.Settings.AUTO_MOD_ENABLED;
-            embedBuilder.addField(autoModEnabled.getEmoji() + " " + devi.getTranslation(language, autoModEnabled.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModEnabled))) + "`" + "\n`" + prefix + "automod enabled <value>`", true);
+            embedBuilder.addField(autoModEnabled.getEmoji() + " " + devi.getTranslation(language, autoModEnabled.getTranslationID()),
+                    devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModEnabled))) + "`"
+                            + "\n`" + prefix + "automod enabled <value>`", false);
 
             //add anti advertisement field
             GuildSettings.Settings autoModAds = GuildSettings.Settings.AUTO_MOD_ANTI_ADS;
-            embedBuilder.addField(autoModAds.getEmoji() + " " + devi.getTranslation(language, autoModAds.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModAds))) + "`" + "\n`" + prefix + "automod advertisement <value>`", true);
+            embedBuilder.addField(autoModAds.getEmoji() + " " + devi.getTranslation(language, autoModAds.getTranslationID()),
+                    devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModAds))) + "`"
+                            + "\n`" + prefix + "automod advertisement <value>`", false);
+
+            //add anti caps field field
+            GuildSettings.Settings autoModAntiCaps = GuildSettings.Settings.AUTO_MOD_ANTI_CAPS;
+            embedBuilder.addField(autoModAntiCaps.getEmoji() + " " + devi.getTranslation(language, autoModAntiCaps.getTranslationID()),
+                    devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModAntiCaps))) + "`"
+                            + "\n`" + prefix + "automod advertisement <value>`", false);
+
+            //add anti emoji spam field field
+            GuildSettings.Settings autoModAntiEmoji = GuildSettings.Settings.AUTO_MOD_ANTI_EMOJI;
+            embedBuilder.addField(autoModAntiEmoji.getEmoji() + " " + devi.getTranslation(language, autoModAntiEmoji.getTranslationID()),
+                    devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModAntiEmoji))) + "`"
+                            + "\n`" + prefix + "automod advertisement <value>`", false);
+
 
             //add bypass roles
             List<String> bypassRoles = deviGuild.getAutoModIgnoredRoles();
-            embedBuilder.addField(":white_check_mark: " + devi.getTranslation(language, 79), devi.getTranslation(language, 80)+ ":`" + bypassRoles.size() + "`\n`" + prefix + "automod roles`",true);
-
+            embedBuilder.addField(":white_check_mark: " + devi.getTranslation(language, 79), devi.getTranslation(language, 80)+ ": `" + bypassRoles.size() + "`\n`" + prefix + "automod roles`",true);
 
             //send builder
             MessageUtils.sendMessage(event.getChannel(), embedBuilder.build());

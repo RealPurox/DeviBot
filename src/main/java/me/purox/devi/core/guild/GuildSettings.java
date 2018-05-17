@@ -17,18 +17,19 @@ public class GuildSettings {
     }
 
     public enum Settings {
-        PREFIX            ( "!",        ":page_with_curl:",            5,  true ),
-        LANGUAGE          ( "english",  ":earth_americas:",            6,  true ),
-        MUTE_ROLE         ( "-1",       ":mute:",                      24, false),
-        MOD_LOG_CHANNEL   ( "-1",       ":microphone2:",               59, false),
-        MOD_LOG_ENABLED   ( false,      ":newspaper:",                 60, false),
-        MOD_LOG_MUTES     ( true,       DeviEmote.MUTE.get(),          71, false),
-        MOD_LOG_BANS      ( true,       DeviEmote.BAN.get(),           72, false),
-        AUTO_MOD_ENABLED  ( true,       DeviEmote.BAN_HAMMER.get(),    76, false),
-        AUTO_MOD_ANTI_ADS ( true,       DeviEmote.ADVERTISEMENT.get(), 77, false),
-        AUTO_MOD_ANTI_CAPS( true,       ":ab:",                        81, false),
-        MUSIC_LOG_ENABLED ( true,       ":checkered_flag:",            84, true ),
-        MUSIC_LOG_CHANNEL ( "-1",       ":notes:",                     83, true );
+        PREFIX              ( "!",        ":page_with_curl:",            5,   true ),
+        LANGUAGE            ( "english",  ":earth_americas:",            6,   true ),
+        MUTE_ROLE           ( "-1",       ":mute:",                      24,  false),
+        MOD_LOG_CHANNEL     ( "-1",       ":microphone2:",               59,  false),
+        MOD_LOG_ENABLED     ( false,      ":newspaper:",                 60,  false),
+        MOD_LOG_MUTES       ( true,       DeviEmote.MUTE.get(),          71,  false),
+        MOD_LOG_BANS        ( true,       DeviEmote.BAN.get(),           72,  false),
+        AUTO_MOD_ENABLED    ( true,       DeviEmote.BAN_HAMMER.get(),    76,  false),
+        AUTO_MOD_ANTI_ADS   ( true,       DeviEmote.ADVERTISEMENT.get(), 77,  false),
+        AUTO_MOD_ANTI_CAPS  ( true,       ":ab:",                        81,  false),
+        MUSIC_LOG_ENABLED   ( true,       ":checkered_flag:",            84,  true ),
+        MUSIC_LOG_CHANNEL   ( "-1",       ":notes:",                     83,  true ),
+        AUTO_MOD_ANTI_EMOJI ( true,       ":stuck_out_tongue:",          161, false);
 
         private Integer translationID;
         private String emoji;

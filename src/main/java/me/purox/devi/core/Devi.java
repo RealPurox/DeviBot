@@ -20,7 +20,8 @@ import me.purox.devi.music.MusicManager;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.*;
 import org.bson.Document;
 import org.json.JSONObject;
 import redis.clients.jedis.Jedis;
@@ -163,22 +164,39 @@ public class Devi {
     private boolean pushStats() {
         if (settings.isDevBot()) return false;
         try {
-            // 0 = shards; 1 = guilds; 2 = users; 3 = channels;
-            long[] data = new long[5];
-            /*shards*/   data[0] = shardManager.getShards().size();
-            /*guilds*/   shardManager.getShards().forEach(jda -> data[1] += jda.getGuilds().size());
-            /*users*/    shardManager.getShards().forEach(jda -> jda.getGuilds().forEach(guild -> data[2] += guild.getMembers().size()));
-            /*channels*/ shardManager.getShards().forEach(jda -> data[3] += (jda.getPrivateChannels().size() + jda.getTextChannels().size() + jda.getVoiceChannels().size()));
-            /*ping*/     data[4] = (long) shardManager.getAveragePing();
+
+            long shards = shardManager.getShards().size(),
+                    guilds = 0,
+                    users = 0,
+                    channels = 0,
+                    ping = 0;
+
+            for (JDA jda : shardManager.getShards()) {
+                for (Guild guild : jda.getGuilds()) {
+                    guilds++;
+                    for (Member ignored : guild.getMembers()) users++;
+                    for (TextChannel ignored : guild.getTextChannels()) channels++;
+                    for (VoiceChannel ignored : guild.getVoiceChannels()) channels++;
+                }
+                for (PrivateChannel ignored : jda.getPrivateChannels()) channels++;
+                ping += jda.getPing();
+            }
+            ping = ping / shardManager.getShards().size();
+
+
+            System.out.println(guilds);
+            System.out.println(users);
+            System.out.println(channels);
+            System.out.println(ping);
 
             //website
             JSONObject websiteObject = new JSONObject();
 
-            websiteObject.put("shards", data[0]);
-            websiteObject.put("guilds", data[1]);
-            websiteObject.put("users", data[2]);
-            websiteObject.put("channels", data[3]);
-            websiteObject.put("average_ping", shardManager.getAveragePing());
+            websiteObject.put("shards", shards);
+            websiteObject.put("guilds", guilds);
+            websiteObject.put("users", users);
+            websiteObject.put("channels", channels);
+            websiteObject.put("average_ping", ping);
 
             HashMap<String, String> deviHeaders = new HashMap<>();
             deviHeaders.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
@@ -193,9 +211,9 @@ public class Devi {
             HashMap<String, String> discordBotsOrgHeaders = new HashMap<>();
             discordBotsOrgHeaders.put("Authorization", settings.getDiscordBotsDotOrgToken());
 
-           int discordBotsStatus = Unirest.post("https://discordbots.org/api/bots/354361427731152907/stats")
+            int discordBotsStatus = Unirest.post("https://discordbots.org/api/bots/354361427731152907/stats")
                     .headers(discordBotsOrgHeaders)
-                    .field("server_count", data[1])
+                    .field("server_count", guilds)
                     .asJson().getStatus();
 
             return (websiteStatus == 200 || websiteStatus == 301) && (discordBotsStatus == 200 || discordBotsStatus == 301);

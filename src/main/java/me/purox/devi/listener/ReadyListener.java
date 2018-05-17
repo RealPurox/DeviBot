@@ -1,6 +1,5 @@
 package me.purox.devi.listener;
 
-import com.mashape.unirest.http.Unirest;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
@@ -12,10 +11,6 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClients;
 
 public class ReadyListener extends ListenerAdapter {
 

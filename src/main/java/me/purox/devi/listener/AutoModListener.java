@@ -82,15 +82,6 @@ public class AutoModListener extends ListenerAdapter {
                         backToBackEmojis++;
                 }
 
-                // This will get deleted:
-                // -> :) :) :) :) )
-                // -> Hello :) ;) my :) ;) name :) :) is :):) Devi
-                // -> Hello ;) ;) ;) :) how are you? :) :)
-                // This won't get deleted:
-                // -> :) :) :) :)
-                // -> Hello! How are you? :) :) :) :)
-                // -> ;) Yo :) what's :) up :) man :) how :) are :) you :) doing :)
-                // I don't wanna be to strict on emoji spammers, so I will just leave it like that for now
                 if (backToBackEmojis >= 4) {
                     if (MessageUtils.deleteMessage(event.getMessage()))
                         MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 162, event.getAuthor().getAsMention()));

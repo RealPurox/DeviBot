@@ -1,4 +1,4 @@
-package me.purox.devi.commands.guild.modlog;
+package me.purox.devi.core.guild;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.guild.DeviGuild;

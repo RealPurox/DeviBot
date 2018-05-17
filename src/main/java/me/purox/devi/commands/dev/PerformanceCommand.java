@@ -2,9 +2,7 @@ package me.purox.devi.commands.dev;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandSender;
-import me.purox.devi.commands.handler.ConsoleCommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -42,7 +40,6 @@ public class PerformanceCommand implements Command {
         builder.addField("Music Player" , String.valueOf(devi.getMusicManager().getAudioPlayers().size()), false);
         builder.addField("Commands Executed", String.valueOf(devi.getCommandsExecuted()), false);
         builder.addField("Songs Played", String.valueOf(devi.getSongsPlayed()), false);
-        devi.resetStats();
 
         sender.reply(builder.build());
     }

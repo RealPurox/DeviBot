@@ -3,7 +3,6 @@ package me.purox.devi.commands.dev;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 

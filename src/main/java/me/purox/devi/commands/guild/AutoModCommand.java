@@ -1,4 +1,4 @@
-package me.purox.devi.commands.guild.automod;
+package me.purox.devi.commands.guild;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandSender;

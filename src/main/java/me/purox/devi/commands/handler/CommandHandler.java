@@ -2,11 +2,11 @@ package me.purox.devi.commands.handler;
 
 import me.purox.devi.commands.dev.PerformanceCommand;
 import me.purox.devi.commands.dev.ReloadCommand;
-import me.purox.devi.commands.guild.automod.AutoModCommand;
+import me.purox.devi.commands.guild.AutoModCommand;
 import me.purox.devi.commands.info.HelpCommand;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.guild.SettingsCommand;
-import me.purox.devi.commands.guild.modlog.ModLogCommand;
+import me.purox.devi.commands.guild.ModLogCommand;
 import me.purox.devi.commands.music.*;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;

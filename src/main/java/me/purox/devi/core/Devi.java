@@ -7,15 +7,12 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import me.purox.devi.listener.AutoModListener;
+import me.purox.devi.listener.*;
 import me.purox.devi.core.guild.ModLogManager;
 import me.purox.devi.commands.handler.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.database.DatabaseManager;
-import me.purox.devi.listener.CommandListener;
-import me.purox.devi.listener.MessageListener;
-import me.purox.devi.listener.ReadyListener;
 import me.purox.devi.music.MusicManager;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
@@ -116,6 +113,7 @@ public class Devi {
             builder.addEventListeners(new MessageListener(this));
             builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
             builder.addEventListeners(new AutoModListener(this));
+            builder.addEventListeners(new ModLogListener(this));
 
             // build & login
             this.shardManager = builder.build();

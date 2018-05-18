@@ -3,6 +3,7 @@ package me.purox.devi.commands.handler;
 import me.purox.devi.commands.dev.PerformanceCommand;
 import me.purox.devi.commands.dev.ReloadCommand;
 import me.purox.devi.commands.guild.AutoModCommand;
+import me.purox.devi.commands.guild.custom.AddCommand;
 import me.purox.devi.commands.info.HelpCommand;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.guild.SettingsCommand;
@@ -54,6 +55,8 @@ public class CommandHandler {
         registerCommand("banlist", new BanlistCommand(devi));
         registerCommand("mutelist", new MutelistCommand(devi));
         registerCommand("purge", new PurgeCommand(devi));
+        //  - custom commands
+        //registerCommand("addcommand", new AddCommand(devi));
         //  - music commands
         registerCommand("join", new JoinCommand(devi));
         registerCommand("leave", new LeaveCommand(devi));

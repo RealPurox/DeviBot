@@ -39,28 +39,36 @@ public class ModLogCommand implements Command {
             //add channel field
             GuildSettings.Settings modLogChannel = GuildSettings.Settings.MOD_LOG_CHANNEL;
             TextChannel channel = event.getGuild().getTextChannelById(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL));
-            embedBuilder.addField(modLogChannel.getEmoji() + " " + devi.getTranslation(language, modLogChannel.getTranslationID()),devi.getTranslation(language, 7, channel == null ? "`undefined`" : channel.getAsMention()) + "\n`" + prefix + "modlog channel <value>`", true);
+            embedBuilder.addField(modLogChannel.getEmoji() + " " + devi.getTranslation(language, modLogChannel.getTranslationID()),devi.getTranslation(language, 7, channel == null ? "`undefined`" : channel.getAsMention()) + "\n`" + prefix + "modlog channel <value>`", false);
 
             //add enabled field
             GuildSettings.Settings modLogEnabled = GuildSettings.Settings.MOD_LOG_ENABLED;
-            embedBuilder.addField(modLogEnabled.getEmoji() + " " + devi.getTranslation(language, modLogEnabled.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogEnabled))) + "`" + "\n`" + prefix + "modlog enabled <value>`", true);
+            embedBuilder.addField(modLogEnabled.getEmoji() + " " + devi.getTranslation(language, modLogEnabled.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogEnabled))) + "`" + "\n`" + prefix + "modlog enabled <value>`", false);
 
             //add bans field
             GuildSettings.Settings modLogBans = GuildSettings.Settings.MOD_LOG_BANS;
-            embedBuilder.addField(modLogBans.getEmoji() + " " + devi.getTranslation(language, modLogBans.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogBans))) + "`" + "\n`" + prefix + "modlog bans <value>`", true);
+            embedBuilder.addField(modLogBans.getEmoji() + " " + devi.getTranslation(language, modLogBans.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogBans))) + "`" + "\n`" + prefix + "modlog bans <value>`", false);
+
+            //add edited messages field
+            GuildSettings.Settings modLogEditedMessages = GuildSettings.Settings.MOD_LOG_MESSAGE_EDITED;
+            embedBuilder.addField(modLogEditedMessages.getEmoji() + " " + devi.getTranslation(language, modLogEditedMessages.getTranslationID()), devi.getTranslation(language, 7, "`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogEditedMessages)) + "`" + "\n`" + prefix + "modlog message_edit <value>`"), false);
+
+            //add delete messages field
+            GuildSettings.Settings modLogDeletedMessages = GuildSettings.Settings.MOD_LOG_MESSAGE_DELETED;
+            embedBuilder.addField(modLogDeletedMessages.getEmoji() + " " + devi.getTranslation(language, modLogDeletedMessages.getTranslationID()), devi.getTranslation(language, 7, "`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogDeletedMessages)) + "`" + "\n`" + prefix + "modlog message_delete <value>`"), false);
 
             //add mutes field
             GuildSettings.Settings modLogMutes = GuildSettings.Settings.MOD_LOG_MUTES;
-            embedBuilder.addField(modLogMutes.getEmoji() + " " + devi.getTranslation(language, modLogMutes.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogMutes))) + "`" + "\n`" + prefix + "modlog mutes <value>`", true);
+            embedBuilder.addField(modLogMutes.getEmoji() + " " + devi.getTranslation(language, modLogMutes.getTranslationID()), devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(modLogMutes))) + "`" + "\n`" + prefix + "modlog mutes <value>`", false);
 
             //send builder
-            MessageUtils.sendMessage(event.getChannel(), embedBuilder.build());
+            sender.reply(embedBuilder.build());
             return;
         }
 
         // missed args
         if (args.length < 2) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "modlog <value> <key>`"));
+            sender.reply( devi.getTranslation(language, 12, "`" + prefix + "modlog <value> <key>`"));
             return;
         }
 
@@ -70,7 +78,7 @@ public class ModLogCommand implements Command {
             TextChannel newChannel = DiscordUtils.getTextChannel(args[1], event.getGuild());
             //channel not found, send error message
             if (newChannel == null) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 68, args[1]));
+                sender.reply(devi.getTranslation(language, 68, args[1]));
                 return;
             }
             //update
@@ -81,7 +89,7 @@ public class ModLogCommand implements Command {
             Boolean value = JavaUtils.getBoolean(args[1]);
             //boolean not found, send error message
             if (value == null) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 10, "`on`", "`off`"));
+                sender.reply( devi.getTranslation(language, 10, "`on`", "`off`"));
                 return;
             }
             //update
@@ -92,7 +100,7 @@ public class ModLogCommand implements Command {
             Boolean value = JavaUtils.getBoolean(args[1]);
             //boolean not found, send error message
             if (value == null) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 10, "`on`", "`off`"));
+                sender.reply( devi.getTranslation(language, 10, "`on`", "`off`"));
                 return;
             }
             //update
@@ -103,21 +111,20 @@ public class ModLogCommand implements Command {
             Boolean value = JavaUtils.getBoolean(args[1]);
             //boolean not found, send error message
             if (value == null) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 10, "`on`", "`off`"));
+                sender.reply(devi.getTranslation(language, 10, "`on`", "`off`"));
                 return;
             }
             //update
             deviGuild.getSettings().setBooleanValue(GuildSettings.Settings.MOD_LOG_BANS, value);
             newValue = String.valueOf(value);
-        }
-        else {
-            MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 8, "`" + prefix  + "modlog`"));
+        } else {
+            sender.reply(":warning: " + devi.getTranslation(language, 8, "`" + prefix  + "modlog`"));
             return;
         }
 
         //save settings and send message
         deviGuild.saveSettings();
-        MessageUtils.sendMessage(event.getChannel(), ":ok_hand: " + devi.getTranslation(language, 11, "`" + args[0].toLowerCase() + "`", "`" + newValue + "`"));
+        sender.reply(":ok_hand: " + devi.getTranslation(language, 11, "`" + args[0].toLowerCase() + "`", "`" + newValue + "`"));
     }
 
     @Override

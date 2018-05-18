@@ -32,6 +32,7 @@ import javax.security.auth.login.LoginException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -148,79 +149,62 @@ public class Devi {
 
     public void startStatsPusher(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (!pushStats()) {
-                    System.out.println(simpleDateFormat.format(new Date(System.currentTimeMillis())) + " FAILED TO PUSH STATS");
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            try {
+                long shards = shardManager.getShards().size();
+                long guilds = 0;
+                long users = 0;
+                long channels = 0;
+                long ping = 0;
+
+                for (JDA jda : shardManager.getShards()) {
+                    for (Guild guild : jda.getGuilds()) {
+                        guilds++;
+                        for (Member ignored : guild.getMembers()) users++;
+                        for (TextChannel ignored : guild.getTextChannels()) channels++;
+                        for (VoiceChannel ignored : guild.getVoiceChannels()) channels++;
+                    }
+                    for (PrivateChannel ignored : jda.getPrivateChannels()) channels++;
+                    ping += jda.getPing();
                 }
+                ping = ping / shards;
+
+                //website
+                JSONObject websiteObject = new JSONObject();
+
+                websiteObject.put("shards", shards);
+                websiteObject.put("guilds", guilds);
+                websiteObject.put("users", users);
+                websiteObject.put("channels", channels);
+                websiteObject.put("average_ping", ping);
+
+                HashMap<String, String> deviHeaders = new HashMap<>();
+                deviHeaders.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
+                deviHeaders.put("Content-Type", "application/json");
+
+                int websiteStatus = Unirest.post("https://www.devibot.net/api/stats")
+                        .headers(deviHeaders)
+                        .body(websiteObject)
+                        .asJson().getStatus();
+
+
+                //discordbots.org
+                HashMap<String, String> discordBotsOrgHeaders = new HashMap<>();
+                discordBotsOrgHeaders.put("Authorization", settings.getDiscordBotsDotOrgToken());
+
+                int discordBotsStatus = Unirest.post("https://discordbots.org/api/bots/354361427731152907/stats")
+                        .headers(discordBotsOrgHeaders)
+                        .field("server_count", guilds)
+                        .asJson().getStatus();
+
+                if (!(websiteStatus == 200 || websiteStatus == 301) && !(discordBotsStatus == 200 | discordBotsStatus == 301))
+                    System.out.println(simpleDateFormat.format(new Date())+ " Failed to push stats (invalid status)");
+            } catch (UnirestException e) {
+                System.out.println(simpleDateFormat.format(new Date())+ " Failed to push stats (" + e.getMessage() + ")");
             }
-        };
 
-        Timer timer = new Timer();
-        timer.schedule(timerTask, 0, 120000);
-    }
-
-    private boolean pushStats() {
-        if (settings.isDevBot()) return false;
-        try {
-
-            long shards = shardManager.getShards().size(),
-                    guilds = 0,
-                    users = 0,
-                    channels = 0,
-                    ping = 0;
-
-            for (JDA jda : shardManager.getShards()) {
-                for (Guild guild : jda.getGuilds()) {
-                    guilds++;
-                    for (Member ignored : guild.getMembers()) users++;
-                    for (TextChannel ignored : guild.getTextChannels()) channels++;
-                    for (VoiceChannel ignored : guild.getVoiceChannels()) channels++;
-                }
-                for (PrivateChannel ignored : jda.getPrivateChannels()) channels++;
-                ping += jda.getPing();
-            }
-            ping = ping / shardManager.getShards().size();
-
-
-            System.out.println(guilds);
-            System.out.println(users);
-            System.out.println(channels);
-            System.out.println(ping);
-
-            //website
-            JSONObject websiteObject = new JSONObject();
-
-            websiteObject.put("shards", shards);
-            websiteObject.put("guilds", guilds);
-            websiteObject.put("users", users);
-            websiteObject.put("channels", channels);
-            websiteObject.put("average_ping", ping);
-
-            HashMap<String, String> deviHeaders = new HashMap<>();
-            deviHeaders.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
-            deviHeaders.put("Content-Type", "application/json");
-
-            int websiteStatus = Unirest.post("https://www.devibot.net/api/stats")
-                    .headers(deviHeaders)
-                    .body(websiteObject)
-                    .asJson().getStatus();
-
-            //discordbots.org
-            HashMap<String, String> discordBotsOrgHeaders = new HashMap<>();
-            discordBotsOrgHeaders.put("Authorization", settings.getDiscordBotsDotOrgToken());
-
-            int discordBotsStatus = Unirest.post("https://discordbots.org/api/bots/354361427731152907/stats")
-                    .headers(discordBotsOrgHeaders)
-                    .field("server_count", guilds)
-                    .asJson().getStatus();
-
-            return (websiteStatus == 200 || websiteStatus == 301) && (discordBotsStatus == 200 || discordBotsStatus == 301);
-        } catch (UnirestException e) {
-            e.printStackTrace();
-            return false;
-        }
+        }, 2, 2, TimeUnit.MINUTES);
     }
 
     public String getTranslation(Language language, int id, Object ... args) {

@@ -26,7 +26,7 @@ public class GuildSettings {
         MOD_LOG_MUTES           ( true,       DeviEmote.MUTE.get(),          71,  false),
         MOD_LOG_BANS            ( true,       DeviEmote.BAN.get(),           72,  false),
         MOD_LOG_MESSAGE_EDITED  ( true,       ":pen_ballpoint:",             178, false),
-        MOD_LOG_MESSAGE_DELETED ( true,       ":xmark:",                     178, false),
+        MOD_LOG_MESSAGE_DELETED ( true,       ":no_entry_sign:",             179, false),
         AUTO_MOD_ENABLED        ( true,       ":hammer_pick:",               76,  false),
         AUTO_MOD_ANTI_ADS       ( true,       ":tv:",                        77,  false),
         AUTO_MOD_ANTI_CAPS      ( true,       ":ab:",                        81,  false),

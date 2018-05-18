@@ -5,6 +5,7 @@ import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.MessageUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -35,14 +36,14 @@ public class AutoModListener extends ListenerAdapter {
 
         if (!event.getMember().getRoles().isEmpty()) {
             event.getMember().getRoles().forEach(r -> {
-                if (event.getAuthor().getName().equals("Purox")) hasIgnoredRole.set(false);
-                else if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
+                /*if (event.getAuthor().getName().equals("Purox")) hasIgnoredRole.set(false);
+                else*/ if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
                     hasIgnoredRole.set(true);
                 }
             });
         }
 
-        if (!hasIgnoredRole.get() && !event.getAuthor().isBot() /*&& !event.getMember().hasPermission(Permission.MANAGE_SERVER)*/) {
+        if (!hasIgnoredRole.get() && !event.getAuthor().isBot() && !event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
             //anti advertisement
             if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_ADS)) {
                 if (INVITE_LINK.matcher(event.getMessage().getContentRaw()).find()) {

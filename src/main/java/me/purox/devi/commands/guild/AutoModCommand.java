@@ -8,10 +8,8 @@ import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.JavaUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -53,135 +51,157 @@ public class AutoModCommand implements Command {
             GuildSettings.Settings autoModAntiCaps = GuildSettings.Settings.AUTO_MOD_ANTI_CAPS;
             embedBuilder.addField(autoModAntiCaps.getEmoji() + " " + devi.getTranslation(language, autoModAntiCaps.getTranslationID()),
                     devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModAntiCaps))) + "`"
-                            + "\n`" + prefix + "automod advertisement <value>`", false);
+                            + "\n`" + prefix + "automod caps <value>`", false);
 
             //add anti emoji spam field field
             GuildSettings.Settings autoModAntiEmoji = GuildSettings.Settings.AUTO_MOD_ANTI_EMOJI;
             embedBuilder.addField(autoModAntiEmoji.getEmoji() + " " + devi.getTranslation(language, autoModAntiEmoji.getTranslationID()),
                     devi.getTranslation(language, 7,"`" + JavaUtils.makeBooleanBeautiful(deviGuild.getSettings().getBooleanValue(autoModAntiEmoji))) + "`"
-                            + "\n`" + prefix + "automod advertisement <value>`", false);
+                            + "\n`" + prefix + "automod emoji <value>`", false);
 
 
             //add bypass roles
             List<String> bypassRoles = deviGuild.getAutoModIgnoredRoles();
-            embedBuilder.addField(":white_check_mark: " + devi.getTranslation(language, 79), devi.getTranslation(language, 80)+ ": `" + bypassRoles.size() + "`\n`" + prefix + "automod roles`",true);
+            embedBuilder.addField(":white_check_mark: " + devi.getTranslation(language, 79), "`" + prefix + "automod roles`",true);
 
             //send builder
-            MessageUtils.sendMessage(event.getChannel(), embedBuilder.build());
+            sender.reply( embedBuilder.build());
             return;
         }
 
         // missed args
         if (args.length < 2 && !args[0].equalsIgnoreCase("roles") && !args[0].equalsIgnoreCase("role")) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "automod <value> <key>`"));
+            sender.reply( devi.getTranslation(language, 12, "`" + prefix + "automod <value> <key>`"));
             return;
         }
 
-        String newValue = null; //updated value
+        String newValue; //updated value
         if (args[0].equalsIgnoreCase("enabled")){
             //get boolean
             Boolean value = JavaUtils.getBoolean(args[1]);
             //boolean not found, send error message
             if (value == null) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 10, "`on`", "`off`"));
+                sender.reply( devi.getTranslation(language, 10, "`on`", "`off`"));
                 return;
             }
             //update
             deviGuild.getSettings().setBooleanValue(GuildSettings.Settings.MOD_LOG_BANS, value);
-            newValue = String.valueOf(value);
+            newValue = JavaUtils.makeBooleanBeautiful(value);
         } else if (args[0].equalsIgnoreCase("advertisement")){
             //get boolean
             Boolean value = JavaUtils.getBoolean(args[1]);
             //boolean not found, send error message
             if (value == null) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 10, "`on`", "`off`"));
+                sender.reply( devi.getTranslation(language, 10, "`on`", "`off`"));
                 return;
             }
             //update
             deviGuild.getSettings().setBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_ADS, value);
-            newValue = String.valueOf(value);
+            newValue = JavaUtils.makeBooleanBeautiful(value);
+        } else if (args[0].equalsIgnoreCase("caps")) {
+            //get boolean
+            Boolean value = JavaUtils.getBoolean(args[1]);
+            //boolean not found, send error message
+            if (value == null) {
+                sender.reply(devi.getTranslation(language, 10, "`on`", "`off`"));
+                return;
+            }
+            //update
+            deviGuild.getSettings().setBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_CAPS, value);
+            newValue = JavaUtils.makeBooleanBeautiful(value);
+        } else if (args[0].equalsIgnoreCase("emoji")) {
+            //get boolean
+            Boolean value = JavaUtils.getBoolean(args[1]);
+            //boolean not found, send error message
+            if (value == null) {
+                sender.reply(devi.getTranslation(language, 10, "`on`", "`off`"));
+                return;
+            }
+            //update
+            deviGuild.getSettings().setBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_EMOJI, value);
+            newValue = JavaUtils.makeBooleanBeautiful(value);
         } else if (args[0].equalsIgnoreCase("roles") || args[0].equalsIgnoreCase("role")){
             Role role = null;
             if (args.length >= 3 ) role = DiscordUtils.getRole(args[2], event.getGuild());
 
             // missed args
             if (args.length < 2) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "automod roles <list | add | remove>`"));
+                sender.reply( devi.getTranslation(language, 12, "`" + prefix + "automod roles <list | add | remove>`"));
                 return;
             }
 
             if (args[1].equalsIgnoreCase("list")) {
                 if (deviGuild.getAutoModIgnoredRoles().size() == 0) {
-                    MessageUtils.sendMessage(event.getChannel(), "There are no roles ignored by auto-mod");
+                    sender.reply(devi.getTranslation(language, 170));
                     return;
                 }
 
-                StringBuilder msg = new StringBuilder().append("**The following roles are ignored by auto-mod**:\n\n");
+                StringBuilder msg = new StringBuilder().append("**").append(devi.getTranslation(language, 171)).append("**:\n\n");
                 for (String r : deviGuild.getAutoModIgnoredRoles()) {
                     Role ignoredRole = DiscordUtils.getRole(r, event.getGuild());
                     if (ignoredRole != null)
-                        msg.append(ignoredRole.getName() + " (" + ignoredRole.getId() + ")\n");
+                        msg.append(ignoredRole.getName()).append(" ( ").append(ignoredRole.getId()).append(" )\n");
                 }
 
-                MessageUtils.sendMessage(event.getChannel(), msg.toString());
+                sender.reply( msg.toString());
                 return;
             }
 
             else if (args[1].equalsIgnoreCase("add")) {
                 // missed args
                 if (args.length < 3) {
-                    MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "automod role add <role>`"));
+                    sender.reply( devi.getTranslation(language, 12, "`" + prefix + "automod role add <role>`"));
                     return;
                 }
 
                 if (role == null) {
-                    MessageUtils.sendMessage(event.getChannel(), "The role `" + args[2] + "` could not be found");
+                    sender.reply(devi.getTranslation(language, 172,  "`" + args[2] + "`"));
                     return;
                 }
 
                 if (deviGuild.getAutoModIgnoredRoles().contains(role.getId())) {
-                    MessageUtils.sendMessage(event.getChannel(), "This role is already being ignored by auto-mod");
+                    sender.reply(devi.getTranslation(language, 173));
                     return;
                 }
 
                 deviGuild.getAutoModIgnoredRoles().add(role.getId());
                 deviGuild.saveSettings();
-                MessageUtils.sendMessage(event.getChannel(), "The role `" + role.getName() + " (" + role.getId() + ")` will now be ignored by auto-mod");
+                sender.reply( devi.getTranslation(language, 174, role.getName() + " ( " + role.getId() + " )"));
                 return;
             }
 
             else if (args[1].equalsIgnoreCase("remove")) {
                 // missed args
                 if (args.length < 3) {
-                    MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "automod role remove <role>`"));
+                    sender.reply( devi.getTranslation(language, 12, "`" + prefix + "automod role remove <role>`"));
                     return;
                 }
 
                 if (role == null) {
-                    MessageUtils.sendMessage(event.getChannel(), "The role `" + args[2] + "` could not be found");
+                    sender.reply(devi.getTranslation(language, 172,  "`" + args[2] + "`"));
                     return;
                 }
 
                 if (!deviGuild.getAutoModIgnoredRoles().contains(role.getId())) {
-                    MessageUtils.sendMessage(event.getChannel(), "This role is not being ignored by auto-mod");
+                    sender.reply(devi.getTranslation(language, 175));
                     return;
                 }
 
                 deviGuild.getAutoModIgnoredRoles().remove(role.getId());
                 deviGuild.saveSettings();
-                MessageUtils.sendMessage(event.getChannel(), "The role `" + role.getName() + " (" + role.getId() + ")` will no longer be ignored by auto-mod");
+                sender.reply(devi.getTranslation(language, 176, role.getName() + " ( " + role.getId() + " )"));
                 return;
             } else {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "automod <list | add | remove>`"));
+                sender.reply( devi.getTranslation(language, 12, "`" + prefix + "automod <list | add | remove>`"));
                 return;
             }
         } else {
-            MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 8, "`" + prefix  + "automod`"));
+            sender.reply( ":warning: " + devi.getTranslation(language, 8, "`" + prefix  + "automod`"));
             return;
         }
         //save settings and send message
         deviGuild.saveSettings();
-        MessageUtils.sendMessage(event.getChannel(), ":ok_hand: " + devi.getTranslation(language, 11, "`" + args[0].toLowerCase() + "`", "`" + newValue + "`"));
+        sender.reply( ":ok_hand: " + devi.getTranslation(language, 11, "`" + args[0].toLowerCase() + "`", "`" + newValue + "`"));
     }
 
     @Override

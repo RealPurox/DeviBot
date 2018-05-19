@@ -34,7 +34,7 @@ public class BanCommand implements Command {
         String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
 
         if (args.length < 3) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "ban <user> <number of days of messages being deleted> <reason>`"));
+            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "ban <user> <days> <reason>`"));
             return;
         }
 

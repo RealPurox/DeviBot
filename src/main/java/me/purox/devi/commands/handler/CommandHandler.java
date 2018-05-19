@@ -68,6 +68,7 @@ public class CommandHandler {
         registerCommand("skip", new SkipCommand(devi));
         registerCommand("shuffle", new ShuffleCommand(devi));
         registerCommand("unshuffle", new UnShuffleCommand(devi));
+        registerCommand("volume", new VolumeCommand(devi));
     }
 
     private void registerCommand(String commandName, Command command){

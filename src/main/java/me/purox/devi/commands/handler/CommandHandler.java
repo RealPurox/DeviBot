@@ -56,7 +56,7 @@ public class CommandHandler {
         registerCommand("mutelist", new MutelistCommand(devi));
         registerCommand("purge", new PurgeCommand(devi));
         //  - custom commands
-        //registerCommand("addcommand", new AddCommand(devi));
+        registerCommand("addcommand", new AddCommand(devi));
         //  - music commands
         registerCommand("join", new JoinCommand(devi));
         registerCommand("leave", new LeaveCommand(devi));

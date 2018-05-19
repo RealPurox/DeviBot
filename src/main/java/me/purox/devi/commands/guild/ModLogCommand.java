@@ -8,7 +8,6 @@ import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.JavaUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;

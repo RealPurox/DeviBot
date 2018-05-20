@@ -1,6 +1,7 @@
 package me.purox.devi.commands.mod;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
@@ -12,7 +13,6 @@ import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleRemoveEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.role.RoleDeleteEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
@@ -22,11 +22,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MuteCommand extends ListenerAdapter implements Command {
+public class MuteCommandExecutor extends ListenerAdapter implements CommandExecutor {
 
     private Devi devi;
 
-    public MuteCommand(Devi devi) {
+    public MuteCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
@@ -53,46 +53,42 @@ public class MuteCommand extends ListenerAdapter implements Command {
     }
 
     @Override
-    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
-
+    public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length < 2) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, "`" + prefix + "mute <user> <reason>`"));
+            sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "mute <user> <reason>`"));
             return;
         }
 
-        User user = DiscordUtils.getUser(args[0], event.getGuild());
+        User user = DiscordUtils.getUser(args[0], command.getEvent().getGuild());
         if (user == null) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 13, "`" + args[0] + "`"));
+            sender.reply(devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
             return;
         }
-        Member member = event.getGuild().getMember(user);
+        Member member = command.getEvent().getGuild().getMember(user);
 
-        if (deviGuild.getMuted().containsKey(user.getId())) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 26));
-            return;
-        }
-
-        if (!PermissionUtil.canInteract(event.getMember(), member) || user.getId().equals(event.getAuthor().getId()) || event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 27));
+        if (command.getDeviGuild().getMuted().containsKey(user.getId())) {
+            sender.reply(devi.getTranslation(command.getLanguage(), 26));
             return;
         }
 
-        if (!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MANAGE_ROLES) || !PermissionUtil.canInteract(event.getGuild().getSelfMember(), member)) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 28));
+        if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) || command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
+            sender.reply(devi.getTranslation(command.getLanguage(), 27));
             return;
         }
 
-        Role role = event.getGuild().getRoleById(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MUTE_ROLE));
+        if (!PermissionUtil.checkPermission(command.getEvent().getGuild().getSelfMember(), Permission.MANAGE_ROLES) || !PermissionUtil.canInteract(command.getEvent().getGuild().getSelfMember(), member)) {
+            sender.reply(devi.getTranslation(command.getLanguage(), 28));
+            return;
+        }
+
+        Role role = command.getEvent().getGuild().getRoleById(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.MUTE_ROLE));
         if (role == null) {
-            role = createMuteRole(event.getGuild());
+            role = createMuteRole(command.getEvent().getGuild());
         }
 
         muteMember(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")),
-                event.getAuthor().getName() + "#" + event.getAuthor().getDiscriminator(),
-                devi, event.getGuild(), member, role, event.getTextChannel());
+                sender.getName() + "#" + sender.getDiscriminator(),
+                devi, command.getEvent().getGuild(), member, role, command.getEvent().getTextChannel());
     }
 
     private Role createMuteRole(Guild guild) {

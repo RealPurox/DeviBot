@@ -14,7 +14,7 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender {
 
     private Devi devi;
 
-    public ConsoleCommandSenderImpl (Devi devi) {
+    ConsoleCommandSenderImpl (Devi devi) {
         this.devi = devi;
     }
 
@@ -30,12 +30,12 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender {
 
     @Override
     public String getAvatarId() {
-        return null;
+        return getDefaultAvatarId();
     }
 
     @Override
     public String getAvatarUrl() {
-        return null;
+        return getDefaultAvatarUrl();
     }
 
     @Override

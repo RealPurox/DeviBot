@@ -1,32 +1,25 @@
 package me.purox.devi.commands.music;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
-import me.purox.devi.core.guild.DeviGuild;
-import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.List;
 
-public class VolumeCommand implements Command {
+public class VolumeCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-    public VolumeCommand(Devi devi) {
+    public VolumeCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
-
+    public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length < 1) {
-            sender.reply(devi.getTranslation(language, 12, "`" + prefix + "volume <1 - 100>`"));
+            sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "volume <1 - 100>`"));
             return;
         }
 
@@ -38,12 +31,12 @@ public class VolumeCommand implements Command {
         }
 
         if (volume < 1 || volume > 100) {
-            sender.reply(devi.getTranslation(language, 191));
+            sender.reply(devi.getTranslation(command.getLanguage(), 191));
             return;
         }
 
-        devi.getMusicManager().getPlayer(event.getGuild()).setVolume(volume);
-        MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 190, volume));
+        devi.getMusicManager().getPlayer(command.getEvent().getGuild()).setVolume(volume);
+        MessageUtils.sendMessage(command.getEvent().getChannel(), devi.getTranslation(command.getLanguage(), 190, volume));
     }
 
     @Override

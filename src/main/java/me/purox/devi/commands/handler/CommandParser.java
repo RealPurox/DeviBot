@@ -1,45 +1,44 @@
 package me.purox.devi.commands.handler;
 
+import me.purox.devi.core.Devi;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandParser {
+class CommandParser {
 
-    public static CommandContainer parseCommand(String raw, MessageReceivedEvent event){
+    private Devi devi;
+    public CommandParser(Devi devi) {
+        this.devi = devi;
+    }
+
+    CommandContainer parseCommand(String raw, MessageReceivedEvent event){
         raw = raw.substring(1);
         String[] split = raw.split(" ");
-        String invoke = split[0];
         List<String> list = new ArrayList<>(Arrays.asList(split));
 
         String[] args = list.subList(1, list.size()).toArray(new String[0]);
 
-        return new CommandContainer(invoke, args, event);
+        return new CommandContainer(args, new CommandImpl(devi, event));
     }
 
-    public static class CommandContainer{
-        private final String invoke;
+    public class CommandContainer{
         private final String[] args;
-        private final MessageReceivedEvent event;
+        private final Command command;
 
-        public CommandContainer(String invoke, String[] args, MessageReceivedEvent event) {
-            this.invoke = invoke;
+        CommandContainer(String[] args, Command command) {
             this.args = args;
-            this.event = event;
-        }
-
-        public String getInvoke() {
-            return invoke;
+            this.command = command;
         }
 
         public String[] getArgs() {
             return args;
         }
 
-        public MessageReceivedEvent getEvent() {
-            return event;
+        public Command getCommand() {
+            return command;
         }
     }
 }

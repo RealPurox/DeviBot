@@ -1,5 +1,6 @@
-package me.purox.devi.commands.handler;
+package me.purox.devi.commands.handler.impl;
 
+import me.purox.devi.commands.handler.ConsoleCommandSender;
 import me.purox.devi.core.Devi;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
@@ -14,7 +15,7 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender {
 
     private Devi devi;
 
-    ConsoleCommandSenderImpl (Devi devi) {
+    public ConsoleCommandSenderImpl (Devi devi) {
         this.devi = devi;
     }
 

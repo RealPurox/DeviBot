@@ -1,5 +1,6 @@
 package me.purox.devi.commands.handler;
 
+import me.purox.devi.commands.handler.impl.CommandImpl;
 import me.purox.devi.core.Devi;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 

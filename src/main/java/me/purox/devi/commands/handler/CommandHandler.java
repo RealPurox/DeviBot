@@ -3,6 +3,7 @@ package me.purox.devi.commands.handler;
 import me.purox.devi.commands.dev.*;
 import me.purox.devi.commands.guild.*;
 import me.purox.devi.commands.guild.custom.*;
+import me.purox.devi.commands.handler.impl.ConsoleCommandSenderImpl;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.music.*;
 import me.purox.devi.commands.info.*;
@@ -57,6 +58,8 @@ public class CommandHandler {
         //  - custom commands
         registerCommand("addcommand", new AddCustomCommandExecutor(devi));
         registerCommand("commandlist", new ListCustomCommandExecutor(devi));
+        registerCommand("removecommand", new RemoveCustomCommandExecutor(devi));
+        registerCommand("editcommand", new EditCustomCommandExecutor(devi));
         //  - music commands
         registerCommand("join", new JoinCommandExecutor(devi));
         registerCommand("leave", new LeaveCommandExecutor(devi));

@@ -1,19 +1,20 @@
-package me.purox.devi.commands.handler;
+package me.purox.devi.commands.handler.impl;
 
+import me.purox.devi.commands.handler.Command;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class CommandImpl implements Command{
+public class CommandImpl implements Command {
 
     private MessageReceivedEvent event;
     private DeviGuild deviGuild;
     private Language language;
     private String prefix;
 
-    CommandImpl (Devi devi, MessageReceivedEvent event) {
+    public CommandImpl (Devi devi, MessageReceivedEvent event) {
         this.event = event;
         this.deviGuild = devi.getDeviGuild(event.getGuild().getId());
         this.language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));

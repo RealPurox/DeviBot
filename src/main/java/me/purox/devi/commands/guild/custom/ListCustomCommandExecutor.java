@@ -4,10 +4,15 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.utils.JavaUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
+import org.bson.Document;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListCustomCommandExecutor implements CommandExecutor {
 
@@ -19,7 +24,31 @@ public class ListCustomCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
+        List<Document> commands = command.getDeviGuild().getCommands();
+        List<List<Document>> pages = JavaUtils.chopList(commands, 5);
 
+        int page;
+        try {
+            page = args.length > 0 ? Integer.parseInt(args[0]) : 0;
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+
+        int total = pages.size();
+        if (page > total) page = total;
+        else if (page < 1 ) page = 1;
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(new Color(100, 248, 255));
+        builder.setAuthor(devi.getTranslation(command.getLanguage(), 193, page, pages.size()));
+        builder.setFooter(devi.getTranslation(command.getLanguage(), 33, command.getPrefix() + "commandlist [page]"), null);
+
+
+        for (Document doc: pages.get(page - 1)) {
+            builder.addField("➤ " +  doc.getString("invoke"), doc.getString("response"), false);
+        }
+
+        sender.reply(builder.build());
     }
 
     @Override
@@ -34,7 +63,7 @@ public class ListCustomCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return Arrays.asList("cmdlist", "listcmd", "listcommands");
+        return Arrays.asList("cmdlist", "listcmd", "listcommands", "listcommand");
     }
 
     @Override

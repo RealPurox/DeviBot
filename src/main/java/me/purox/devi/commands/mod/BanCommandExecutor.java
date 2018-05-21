@@ -63,7 +63,7 @@ public class BanCommandExecutor implements CommandExecutor {
         }
 
         String reason = Arrays.stream(args).skip(2).collect(Collectors.joining("", "", ""));
-        MessageUtils.sendPrivateMessage(user, devi.getTranslation(command.getLanguage(), 17, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));
+        MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 17, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));
         int day = days;
         command.getEvent().getGuild().getController().ban(user, days).queue(
                 success -> {

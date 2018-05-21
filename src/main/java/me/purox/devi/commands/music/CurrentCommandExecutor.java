@@ -24,7 +24,7 @@ public class CurrentCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         AudioPlayer player = devi.getMusicManager().getPlayer(command.getEvent().getGuild());
         if (player.getPlayingTrack() == null) {
-            MessageUtils.sendMessage(command.getEvent().getChannel(), devi.getTranslation(command.getLanguage(), 129));
+            sender.reply(devi.getTranslation(command.getLanguage(), 129));
             return;
         }
 

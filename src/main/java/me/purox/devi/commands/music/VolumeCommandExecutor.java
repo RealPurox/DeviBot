@@ -36,7 +36,7 @@ public class VolumeCommandExecutor implements CommandExecutor {
         }
 
         devi.getMusicManager().getPlayer(command.getEvent().getGuild()).setVolume(volume);
-        MessageUtils.sendMessage(command.getEvent().getChannel(), devi.getTranslation(command.getLanguage(), 190, volume));
+        sender.reply(devi.getTranslation(command.getLanguage(), 190, volume));
     }
 
     @Override

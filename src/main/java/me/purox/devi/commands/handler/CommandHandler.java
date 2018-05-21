@@ -92,13 +92,13 @@ public class CommandHandler {
         //perms check
         if (event != null && event.getGuild() != null && commandExecutor.getPermission() != null) {
             if (!event.getMember().hasPermission(event.getTextChannel(), commandExecutor.getPermission()) && !devi.getAdmins().contains(event.getAuthor().getId())) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(Language.getLanguage(devi.getDeviGuild(event.getGuild().getId()).getSettings().getStringValue(GuildSettings.Settings.LANGUAGE)), 31));
+                MessageUtils.sendMessageAsync(event.getChannel(), devi.getTranslation(Language.getLanguage(devi.getDeviGuild(event.getGuild().getId()).getSettings().getStringValue(GuildSettings.Settings.LANGUAGE)), 31));
                 return;
             }
         }
 
         //guild only check
-        if ((commandExecutor.guildOnly() && event != null && event.getGuild() == null) || commandExecutor.guildOnly() && commandSender.isConsoleSender()) {
+        if ((commandExecutor.guildOnly() && event != null && event.getGuild() == null) || commandExecutor.guildOnly() && commandSender.isConsoleCommandSender()) {
             commandSender.reply(":warning: **" + devi.getTranslation(Language.ENGLISH, 1) + "**");
             return;
         }

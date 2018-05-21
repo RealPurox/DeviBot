@@ -35,7 +35,7 @@ public class CommandListener extends ListenerAdapter {
 
             for (Document command : commands) {
                 if (command.getString("invoke").equals(invokeWithoutPrefix)) {
-                    MessageUtils.sendMessage(event.getChannel(), command.getString("response"));
+                    MessageUtils.sendMessageAsync(event.getChannel(), command.getString("response"));
                     return;
                 }
             }

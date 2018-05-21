@@ -29,7 +29,7 @@ public class ReadyListener extends ListenerAdapter {
         msg += ":white_check_mark: **" + devi.getTranslation(language, 141) + "**\n\n";
         msg += devi.getTranslation(language, 142, "`" + deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX) + "help`");
 
-        MessageUtils.sendMessage(event.getGuild().getDefaultChannel(), msg);
+        MessageUtils.sendMessageAsync(event.getGuild().getDefaultChannel(), msg);
     }
 
     @Override

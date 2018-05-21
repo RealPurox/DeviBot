@@ -20,7 +20,7 @@ public class PerformanceCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleSender()) return;
+        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
 
         Runtime runtime = Runtime.getRuntime();
         int mb = 1024 * 1024;

@@ -1,5 +1,6 @@
-package me.purox.devi.commands.handler;
+package me.purox.devi.commands.handler.impl;
 
+import me.purox.devi.commands.handler.ConsoleCommandSender;
 import me.purox.devi.core.Devi;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
@@ -30,12 +31,12 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender {
 
     @Override
     public String getAvatarId() {
-        return null;
+        return getDefaultAvatarId();
     }
 
     @Override
     public String getAvatarUrl() {
-        return null;
+        return getDefaultAvatarUrl();
     }
 
     @Override

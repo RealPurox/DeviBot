@@ -146,8 +146,8 @@ public class Devi {
 
 
     public void startStatsPusher(){
+        if (this.settings.isDevBot()) return;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
-
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             try {
                 long shards = shardManager.getShards().size();

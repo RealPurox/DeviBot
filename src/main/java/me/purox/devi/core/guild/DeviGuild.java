@@ -1,5 +1,7 @@
 package me.purox.devi.core.guild;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import me.purox.devi.core.Devi;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -9,6 +11,7 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DeviGuild {
 
@@ -20,7 +23,7 @@ public class DeviGuild {
     private Document banned;
     private Document embeds;
     private List<String> autoModIgnoredRoles;
-    private HashMap<String, String> commands = new HashMap<>();
+    private List<Document> commands = new ArrayList<>();
     private boolean ready = false;
 
     public DeviGuild(String id, Devi devi){
@@ -72,7 +75,8 @@ public class DeviGuild {
             }
         }
 
-
+        MongoCollection<Document> commandCollection = devi.getDatabaseManager().getDatabase().getCollection("commands");
+        commandCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) command -> commands.add(command));
 
         Object embedsObject = document.get("embeds");
         if (embedsObject == null) {
@@ -116,7 +120,7 @@ public class DeviGuild {
     public void log(MessageEmbed embed) {
         TextChannel channel = devi.getShardManager().getTextChannelById(settings.getStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL));
         if (channel != null) {
-            MessageUtils.sendMessage(channel, embed);
+            MessageUtils.sendMessageAsync(channel, embed);
         }
     }
 
@@ -177,7 +181,7 @@ public class DeviGuild {
         return devi;
     }
 
-    public HashMap<String, String> getCommands() {
+    public List<Document> getCommands() {
         return commands;
     }
 }

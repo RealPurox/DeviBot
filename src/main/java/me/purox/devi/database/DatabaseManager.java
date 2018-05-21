@@ -2,17 +2,17 @@ package me.purox.devi.database;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import me.purox.devi.core.Devi;
 import org.bson.*;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DatabaseManager {
 
@@ -35,8 +35,17 @@ public class DatabaseManager {
         return client;
     }
 
-    public void saveToDatabase(String collection, Document document, String id) {
-        database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+    public UpdateResult saveToDatabase(String collection, Document document, String id) {
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+    }
+
+    public UpdateResult saveToDatabase(String collection, Document document) {
+        String id = UUID.randomUUID().toString();
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+    }
+
+    public DeleteResult removeFromDatabase(String collection, String id) {
+        return database.getCollection(collection).deleteOne(Filters.eq("_id", id));
     }
 
     public Document getDocument(String id, String collection) {
@@ -49,5 +58,9 @@ public class DatabaseManager {
         List<Document> documents = database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
         if (documents == null) return new ArrayList<>();
         return documents;
+    }
+
+    public MongoDatabase getDatabase() {
+        return database;
     }
 }

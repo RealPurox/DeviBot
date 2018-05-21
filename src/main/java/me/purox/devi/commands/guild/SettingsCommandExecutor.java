@@ -1,80 +1,73 @@
 package me.purox.devi.commands.guild;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.JavaUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SettingsCommand implements Command {
+public class SettingsCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public SettingsCommand(Devi devi) {
+    public SettingsCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
-
+    public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
             //create builder
             EmbedBuilder embedBuilder = new EmbedBuilder().setColor(new Color(34, 113, 126));
-            embedBuilder.setAuthor(devi.getTranslation(language, 3, event.getGuild().getName()));
-            embedBuilder.setDescription(devi.getTranslation(language, 4,"`" + prefix + "settings <value> <key>`"));
+            embedBuilder.setAuthor(devi.getTranslation(command.getLanguage(), 3, command.getEvent().getGuild().getName()));
+            embedBuilder.setDescription(devi.getTranslation(command.getLanguage(), 4,"`" + command.getPrefix() + "settings <value> <key>`"));
 
             // add fields
             for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {
                 if (setting.isEditable()) {
                     if (setting == GuildSettings.Settings.MUSIC_LOG_CHANNEL) {
-                        TextChannel channel = event.getGuild().getTextChannelById(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MUSIC_LOG_CHANNEL));
+                        TextChannel channel = command.getEvent().getGuild().getTextChannelById(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.MUSIC_LOG_CHANNEL));
                         embedBuilder.addField(
-                                setting.getEmoji() + " " + devi.getTranslation(language, setting.getTranslationID()),
-                                devi.getTranslation(language, 7, (channel == null ? "`unknown`" : channel.getAsMention()) + "\n`" + prefix + "settings " + setting.name().toLowerCase() + " <value>`"),
+                                setting.getEmoji() + " " + devi.getTranslation(command.getLanguage(), setting.getTranslationID()),
+                                devi.getTranslation(command.getLanguage(), 7, (channel == null ? "`unknown`" : channel.getAsMention()) + "\n`" + command.getPrefix() + "settings " + setting.name().toLowerCase() + " <value>`"),
                                 true);
                         continue;
                     }
                     embedBuilder.addField(
-                            setting.getEmoji() + " " + devi.getTranslation(language, setting.getTranslationID()),
-                            devi.getTranslation(language, 7, "`" + deviGuild.getSettings().getValue(setting) + "\n" + prefix + "settings " + setting.name().toLowerCase() + " <value>`"),
+                            setting.getEmoji() + " " + devi.getTranslation(command.getLanguage(), setting.getTranslationID()),
+                            devi.getTranslation(command.getLanguage(), 7, "`" + command.getDeviGuild().getSettings().getValue(setting) + "\n" + command.getPrefix() + "settings " + setting.name().toLowerCase() + " <value>`"),
                             true);
                 }
             }
 
             //send message
-            MessageUtils.sendMessage(event.getChannel(), embedBuilder.build());
+            sender.reply(embedBuilder.build());
             return;
         }
 
         // missed arguments
         if (args.length < 2) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 12, prefix + "settings <value> <key>"));
+            sender.reply(devi.getTranslation(command.getLanguage(), 12, command.getPrefix() + "settings <value> <key>"));
             return;
         }
 
         Language newLang = Language.getLanguage(args[1]); //new language
-        TextChannel newChannel = DiscordUtils.getTextChannel(args[1], event.getGuild()); //new text channel
+        TextChannel newChannel = DiscordUtils.getTextChannel(args[1], command.getEvent().getGuild()); //new text channel
         GuildSettings.Settings settings = GuildSettings.Settings.getSetting(args[0]); // get setting
         // setting not found, send error message
         if (settings == null) {
-            MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 8, "`" + prefix + "settings`"));
+            sender.reply(":warning: " + devi.getTranslation(command.getLanguage(), 8, "`" + command.getPrefix() + "settings`"));
             return;
         }
 
@@ -83,14 +76,14 @@ public class SettingsCommand implements Command {
             List<String> langs = new ArrayList<>();
             Arrays.stream(Language.values()).forEach(l -> langs.add(l.name()));
 
-            String message = ":warning: " + devi.getTranslation(language, 9, langs.stream().collect(Collectors.joining(", ")));
-            MessageUtils.sendMessage(event.getChannel(), message);
+            String message = ":warning: " + devi.getTranslation(command.getLanguage(), 9, langs.stream().collect(Collectors.joining(", ")));
+            sender.reply(message);
             return;
         }
 
         //if the settings is GuildSettings.Settings.MUSIC_LOG_CHANNEL and the new channel was not found, send error message
         if (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL && newChannel == null) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 68, "`" + args[1] + "`"));
+            sender.reply(devi.getTranslation(command.getLanguage(), 68, "`" + args[1] + "`"));
             return;
         }
 
@@ -98,20 +91,20 @@ public class SettingsCommand implements Command {
         String newStringValue = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
         if (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL) {
             newStringValue = newChannel.getId();
-            deviGuild.getSettings().setStringValue(settings, newStringValue);
+            command.getDeviGuild().getSettings().setStringValue(settings, newStringValue);
         } else if (settings.isStringValue()) { //it's a string settings
             //update
-            deviGuild.getSettings().setStringValue(settings, newStringValue);
+            command.getDeviGuild().getSettings().setStringValue(settings, newStringValue);
         } else if (settings.isBooleanValue()) { // it's a boolean setting
             //get boolean
             Boolean value = JavaUtils.getBoolean(args[1]);
             //boolean not found, send error message
             if (value == null) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 10, "`on`", "`off`"));
+                sender.reply(devi.getTranslation(command.getLanguage(), 10, "`on`", "`off`"));
                 return;
             }
             //update
-            deviGuild.getSettings().setBooleanValue(settings, value);
+            command.getDeviGuild().getSettings().setBooleanValue(settings, value);
         } else if (settings.isIntegerValue()) { // it's an int setting
             int i;
             try {
@@ -119,17 +112,17 @@ public class SettingsCommand implements Command {
                 i = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
                 // not an int, send error message
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 23));
+                sender.reply(devi.getTranslation(command.getLanguage(), 23));
                 return;
             }
             //update
-            deviGuild.getSettings().setIntegerValue(settings, i);
+            command.getDeviGuild().getSettings().setIntegerValue(settings, i);
         }
 
         //save settings and send confirmation message in the new language
-        deviGuild.saveSettings();
-        Language lang = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        MessageUtils.sendMessage(event.getChannel(), ":ok_hand: " + devi.getTranslation(lang, 11, "`" + args[0].toLowerCase() + "`",
+        command.getDeviGuild().saveSettings();
+        Language lang = Language.getLanguage(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+        sender.reply(":ok_hand: " + devi.getTranslation(lang, 11, "`" + args[0].toLowerCase() + "`",
                 (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL ? newChannel.getAsMention() : "`" + newStringValue + "`") ));
     }
 

@@ -102,15 +102,19 @@ public class CommandSender implements User, ConsoleCommandSender {
         return consoleCommandSender == null ? userCommandSender.getIdLong(): consoleCommandSender.getIdLong();
     }
 
-    public boolean isConsoleSender() {
+    public boolean isConsoleCommandSender() {
         return userCommandSender == null;
+    }
+
+    public boolean isUserCommandSender() {
+        return consoleCommandSender == null;
     }
 
     public void reply(String message) {
         if (userCommandSender == null) {
             System.out.println(message);
         } else {
-            MessageUtils.sendMessage(event.getChannel(), message);
+            MessageUtils.sendMessageAsync(event.getChannel(), message);
         }
     }
 
@@ -128,7 +132,7 @@ public class CommandSender implements User, ConsoleCommandSender {
             message += embed.getFooter() == null ? "" : embed.getFooter().getText();
             System.out.println(message);
         } else {
-            MessageUtils.sendMessage(event.getChannel(), embed);
+            MessageUtils.sendMessageAsync(event.getChannel(), embed);
         }
     }
 }

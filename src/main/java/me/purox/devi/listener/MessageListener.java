@@ -21,7 +21,7 @@ public class MessageListener extends ListenerAdapter {
             GuildSettings settings = devi.getDeviGuild(event.getGuild().getId()).getSettings();
             if (event.getMessage().getContentRaw().equalsIgnoreCase(event.getJDA().getSelfUser().getAsMention())) {
                 Language language = Language.getLanguage(settings.getStringValue(GuildSettings.Settings.LANGUAGE));
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 2, "`" + settings.getStringValue(GuildSettings.Settings.PREFIX) + "`"));
+                MessageUtils.sendMessageAsync(event.getChannel(), devi.getTranslation(language, 2, "`" + settings.getStringValue(GuildSettings.Settings.PREFIX) + "`"));
             }
         }
     }

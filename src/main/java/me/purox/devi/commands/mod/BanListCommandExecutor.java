@@ -1,42 +1,34 @@
 package me.purox.devi.commands.mod;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.guild.DeviGuild;
-import me.purox.devi.core.guild.GuildSettings;
-import me.purox.devi.core.Language;
 import me.purox.devi.utils.JavaUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.bson.Document;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BanlistCommand implements Command {
+public class BanListCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public BanlistCommand(Devi devi) {
+    public BanListCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        String prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
-
-        Document document = deviGuild.getBanned();
+    public void execute(String[] args, Command command, CommandSender sender) {
+        Document document = command.getDeviGuild().getBanned();
         List<String> docs = new ArrayList<>(document.keySet());
         List<List<String>> bans = JavaUtils.chopList(docs, 5);
 
         if (bans.size() == 0) {
-            MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 65));
+            sender.reply(devi.getTranslation(command.getLanguage(), 65));
             return;
         }
 
@@ -53,19 +45,19 @@ public class BanlistCommand implements Command {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(new Color(34, 113, 126));
-        builder.setAuthor(devi.getTranslation(language, 63, page, bans.size()));
-        builder.setFooter(devi.getTranslation(language, 33, prefix + "banlist [page]"), null);
+        builder.setAuthor(devi.getTranslation(command.getLanguage(), 63, page, bans.size()));
+        builder.setFooter(devi.getTranslation(command.getLanguage(), 33, command.getPrefix() + "banlist [page]"), null);
         builder.setDescription("This is a list of all users that are banned from this server. :no_entry:\n\n");
 
         for(String index : bans.get(page -1 )) {
             Document doc = (Document) document.get(index);
             builder.appendDescription("**" + index + ":**\n");
-            builder.appendDescription(" - " + (devi.getTranslation(language, 66) + " " + (doc.getString("user") == null ? "N/A" : doc.getString("user"))) + "\n");
-            builder.appendDescription(" - " + (devi.getTranslation(language, 47) + " " + (doc.getString("punisher") == null ? "N/A" : doc.getString("punisher"))) + "\n");
-            builder.appendDescription(" - " + (devi.getTranslation (language, 48 ) + " " + (doc.getString("reason") == null ? "N/A" : doc.getString("reason"))) + "\n");
+            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 66) + " " + (doc.getString("user") == null ? "N/A" : doc.getString("user"))) + "\n");
+            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 47) + " " + (doc.getString("punisher") == null ? "N/A" : doc.getString("punisher"))) + "\n");
+            builder.appendDescription(" - " + (devi.getTranslation (command.getLanguage(), 48 ) + " " + (doc.getString("reason") == null ? "N/A" : doc.getString("reason"))) + "\n");
         }
 
-        MessageUtils.sendMessage(event.getChannel(), builder.build());
+        sender.reply(builder.build());
     }
 
     @Override

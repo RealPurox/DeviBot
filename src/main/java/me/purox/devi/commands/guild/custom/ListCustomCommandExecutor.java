@@ -44,8 +44,10 @@ public class ListCustomCommandExecutor implements CommandExecutor {
         builder.setFooter(devi.getTranslation(command.getLanguage(), 33, command.getPrefix() + "commandlist [page]"), null);
 
 
-        for (Document doc: pages.get(page - 1)) {
-            builder.addField("\u27A4 " +  doc.getString("invoke"), doc.getString("response"), false);
+        if (!pages.isEmpty()) {
+            for (Document doc : pages.get(page - 1)) {
+                builder.addField("\u27A4 " + doc.getString("invoke"), doc.getString("response"), false);
+            }
         }
 
         sender.reply(builder.build());

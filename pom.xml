@@ -6,7 +6,7 @@
 
     <groupId>me.purox.devi</groupId>
     <artifactId>Devi</artifactId>
-    <version>1.0.0-af-beta</version>
+    <version>1.0.0-ah-beta</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

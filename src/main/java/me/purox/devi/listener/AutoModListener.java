@@ -48,7 +48,7 @@ public class AutoModListener extends ListenerAdapter {
             if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_ADS)) {
                 if (INVITE_LINK.matcher(event.getMessage().getContentRaw()).find()) {
                     if (MessageUtils.deleteMessage(event.getMessage()))
-                        MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 78, event.getAuthor().getAsMention()));
+                        MessageUtils.sendMessageAsync(event.getChannel(), ":warning: " + devi.getTranslation(language, 78, event.getAuthor().getAsMention()));
                 }
             }
             //anti caps
@@ -63,7 +63,7 @@ public class AutoModListener extends ListenerAdapter {
                     double capsPercentage = (double) capsCount / (double) message.length();
                     if (capsPercentage > 0.70) {
                         if (MessageUtils.deleteMessage(event.getMessage()))
-                            MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 82, event.getAuthor().getAsMention()));
+                            MessageUtils.sendMessageAsync(event.getChannel(), ":warning: " + devi.getTranslation(language, 82, event.getAuthor().getAsMention()));
                     }
                 }
             }
@@ -85,7 +85,7 @@ public class AutoModListener extends ListenerAdapter {
 
                 if (backToBackEmojis >= 4) {
                     if (MessageUtils.deleteMessage(event.getMessage()))
-                        MessageUtils.sendMessage(event.getChannel(), ":warning: " + devi.getTranslation(language, 162, event.getAuthor().getAsMention()));
+                        MessageUtils.sendMessageAsync(event.getChannel(), ":warning: " + devi.getTranslation(language, 162, event.getAuthor().getAsMention()));
                 }
             }
         }

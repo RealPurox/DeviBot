@@ -78,7 +78,7 @@ public class MusicManager {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 getManager(guild).addToQueue(audioTrack, channel);
-                MessageUtils.sendMessage(event.getChannel(), new EmbedBuilder()
+                MessageUtils.sendMessageAsync(event.getChannel(), new EmbedBuilder()
                         .setColor(new Color(34, 113, 126))
                         .setAuthor(devi.getTranslation(language, 85), null, "https://i.pinimg.com/736x/9d/83/17/9d8317162494a004969b79c85d88b5c1--music-logo-dj-music.jpg")
                         .setDescription("**" + devi.getTranslation(language, 92) + "**")
@@ -99,7 +99,7 @@ public class MusicManager {
                         getManager(guild).addToQueue(track, channel);
                         length += track.getDuration();
                     }
-                    MessageUtils.sendMessage(event.getChannel(), new EmbedBuilder()
+                    MessageUtils.sendMessageAsync(event.getChannel(), new EmbedBuilder()
                             .setColor(new Color(34, 113, 126))
                             .setAuthor(devi.getTranslation(language, 85), null, "https://i.pinimg.com/736x/9d/83/17/9d8317162494a004969b79c85d88b5c1--music-logo-dj-music.jpg")
                             .setDescription("**" + devi.getTranslation(language, 93) + "**")
@@ -112,12 +112,12 @@ public class MusicManager {
 
             @Override
             public void noMatches() {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 96, identifier));
+                MessageUtils.sendMessageAsync(event.getChannel(), devi.getTranslation(language, 96, identifier));
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
-                MessageUtils.sendMessage(event.getChannel(), devi.getTranslation(language, 97, identifier) + "\n(" + e.getMessage() + ")");
+                MessageUtils.sendMessageAsync(event.getChannel(), devi.getTranslation(language, 97, identifier) + "\n(" + e.getMessage() + ")");
             }
         });
     }

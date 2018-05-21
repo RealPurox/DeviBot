@@ -1,20 +1,16 @@
 package me.purox.devi.commands.handler;
 
-import net.dv8tion.jda.core.Permission;
+import me.purox.devi.core.Language;
+import me.purox.devi.core.guild.DeviGuild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-
-import java.util.List;
 
 public interface Command {
 
-    void execute(String[] args, MessageReceivedEvent event, CommandSender sender);
+    DeviGuild getDeviGuild();
 
-    boolean guildOnly();
+    Language getLanguage();
 
-    int getDescriptionTranslationID();
+    String getPrefix();
 
-    List<String> getAliases();
-
-    Permission getPermission();
-
+    MessageReceivedEvent getEvent();
 }

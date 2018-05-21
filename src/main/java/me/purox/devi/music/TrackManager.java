@@ -127,7 +127,7 @@ public class TrackManager extends AudioEventAdapter {
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MUSIC_LOG_ENABLED)) {
             TextChannel channel = guild.getTextChannelById(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MUSIC_LOG_CHANNEL));
             if (channel != null) {
-                MessageUtils.sendMessage(channel, embed);
+                MessageUtils.sendMessageAsync(channel, embed);
             }
         }
     }

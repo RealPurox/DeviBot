@@ -23,7 +23,7 @@ public class ModLogManager {
             Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(new Color(34, 113, 126));
+            builder.setColor(new Color(255, 45, 40));
             builder.setAuthor(devi.getTranslation(language, 69));
             builder.setDescription(devi.getTranslation(language, 180, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ DeviEmote.BAN.get());
             builder.addField(devi.getTranslation(language, 48), reason, true);
@@ -42,7 +42,7 @@ public class ModLogManager {
             Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(new Color(34, 113, 126));
+            builder.setColor(new Color(49, 245, 255));
             builder.setAuthor(devi.getTranslation(language, 69));
             builder.setDescription(devi.getTranslation(language, 181, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ DeviEmote.MUTE.get());
             builder.addField(devi.getTranslation(language, 48), reason, true);
@@ -61,7 +61,7 @@ public class ModLogManager {
             Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(new Color(226, 52, 13));
+            builder.setColor(new Color(255, 146, 15));
             builder.setAuthor(devi.getTranslation(language, 69));
             builder.setDescription(devi.getTranslation(language, 185) + " :no_entry_sign:");
             builder.addField(devi.getTranslation(language, 88), message.getAuthor().getName() + "#" + message.getAuthor().getDiscriminator() + " ( " + message.getAuthor().getId() + " )", false);
@@ -79,7 +79,7 @@ public class ModLogManager {
             Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(new Color(244, 212, 66));
+            builder.setColor(new Color(18, 244, 0));
             builder.setAuthor(devi.getTranslation(language, 69));
             builder.setDescription(devi.getTranslation(language, 186) + " :pen_ballpoint:");
             builder.addField(devi.getTranslation(language, 88), newMessage.getAuthor().getName() + "#" + newMessage.getAuthor().getDiscriminator() + " ( " + newMessage.getAuthor().getId() + " )", false);

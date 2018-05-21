@@ -1,6 +1,7 @@
 package me.purox.devi.commands.guild;
 
 import me.purox.devi.commands.handler.Command;
+import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.DeviGuild;
@@ -18,11 +19,10 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EmbedCommand implements Command {
+public class EmbedCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-
-    public EmbedCommand(Devi devi) {
+    public EmbedCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
@@ -38,8 +38,8 @@ public class EmbedCommand implements Command {
     //embed removefield <id> <fieldKey>
 
     @Override
-    public void execute(String[] args, MessageReceivedEvent event, CommandSender sender) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
+    public void execute(String[] args, Command command, CommandSender sender) {
+        /*DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
         EmbedBuilder builder = new EmbedBuilder();
@@ -160,7 +160,7 @@ public class EmbedCommand implements Command {
         }
         //</editor-fold>
         MessageUtils.sendMessage(event.getChannel(), "work in progress");
-        return;
+        return;*/
     }
 
 

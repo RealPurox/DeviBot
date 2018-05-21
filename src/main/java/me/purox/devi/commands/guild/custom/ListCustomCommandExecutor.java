@@ -45,7 +45,7 @@ public class ListCustomCommandExecutor implements CommandExecutor {
 
 
         for (Document doc: pages.get(page - 1)) {
-            builder.addField("➤ " +  doc.getString("invoke"), doc.getString("response"), false);
+            builder.addField("\u27A4 " +  doc.getString("invoke"), doc.getString("response"), false);
         }
 
         sender.reply(builder.build());

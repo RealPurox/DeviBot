@@ -21,4 +21,13 @@ public enum Language {
         }
         return null;
     }
+
+    public static String getAllLanguagesBeautiful() {
+        StringBuilder sb = new StringBuilder();
+        for (Language language : values()) {
+            char capital = Character.toUpperCase(language.name().charAt(0));
+            sb.append("`").append(capital).append(language.name().toLowerCase().substring(1)).append("`, ");
+        }
+        return sb.toString().substring(0, sb.toString().length() - 2);
+    }
 }

@@ -32,7 +32,8 @@ public class GuildSettings {
         AUTO_MOD_ANTI_CAPS      ( true,       ":ab:",                        81,  false),
         AUTO_MOD_ANTI_EMOJI     ( true,       ":stuck_out_tongue:",          161, false),
         MUSIC_LOG_ENABLED       ( true,       ":checkered_flag:",            84,  true ),
-        MUSIC_LOG_CHANNEL       ( "-1",       ":notes:",                     83,  true );
+        MUSIC_LOG_CHANNEL       ( "-1",       ":notes:",                     83,  true ),
+        TWITCH_CHANNEL          ( "-1",       DeviEmote.TWITCH.get(),        198, true );
 
         private Integer translationID;
         private String emoji;

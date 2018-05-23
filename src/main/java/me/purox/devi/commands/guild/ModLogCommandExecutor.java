@@ -31,28 +31,28 @@ public class ModLogCommandExecutor implements CommandExecutor {
 
             //add enabled field
             GuildSettings.Settings modLogEnabled = GuildSettings.Settings.MOD_LOG_ENABLED;
-            embedBuilder.addField(modLogEnabled.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogEnabled.getTranslationID()), devi.getTranslation(command.getLanguage(), 7,"`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogEnabled))) + "`" + "\n`" + command.getPrefix() + "modlog enabled <value>`", true);
+            embedBuilder.addField(modLogEnabled.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogEnabled.getTranslationID()), devi.getTranslation(command.getLanguage(), 7,"`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogEnabled))) + "`" + "\n`" + command.getPrefix() + "modlog enabled <value>`", false);
 
             //add channel field
             GuildSettings.Settings modLogChannel = GuildSettings.Settings.MOD_LOG_CHANNEL;
             TextChannel channel = command.getEvent().getGuild().getTextChannelById(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL));
-            embedBuilder.addField(modLogChannel.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogChannel.getTranslationID()),devi.getTranslation(command.getLanguage(), 7, channel == null ? "`undefined`" : channel.getAsMention()) + "\n`" + command.getPrefix() + "modlog channel <value>`", true);
+            embedBuilder.addField(modLogChannel.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogChannel.getTranslationID()),devi.getTranslation(command.getLanguage(), 7, channel == null ? "`undefined`" : channel.getAsMention()) + "\n`" + command.getPrefix() + "modlog channel <value>`", false);
 
             //add bans field
             GuildSettings.Settings modLogBans = GuildSettings.Settings.MOD_LOG_BANS;
-            embedBuilder.addField(modLogBans.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogBans.getTranslationID()), devi.getTranslation(command.getLanguage(), 7,"`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogBans))) + "`" + "\n`" + command.getPrefix() + "modlog bans <value>`", true);
+            embedBuilder.addField(modLogBans.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogBans.getTranslationID()), devi.getTranslation(command.getLanguage(), 7,"`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogBans))) + "`" + "\n`" + command.getPrefix() + "modlog bans <value>`", false);
 
             //add mutes field
             GuildSettings.Settings modLogMutes = GuildSettings.Settings.MOD_LOG_MUTES;
-            embedBuilder.addField(modLogMutes.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogMutes.getTranslationID()), devi.getTranslation(command.getLanguage(), 7,"`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogMutes))) + "`" + "\n`" + command.getPrefix() + "modlog mutes <value>`", true);
+            embedBuilder.addField(modLogMutes.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogMutes.getTranslationID()), devi.getTranslation(command.getLanguage(), 7,"`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogMutes))) + "`" + "\n`" + command.getPrefix() + "modlog mutes <value>`", false);
 
             //add edited messages field
             GuildSettings.Settings modLogEditedMessages = GuildSettings.Settings.MOD_LOG_MESSAGE_EDITED;
-            embedBuilder.addField(modLogEditedMessages.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogEditedMessages.getTranslationID()), devi.getTranslation(command.getLanguage(), 7, "`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogEditedMessages)) + "`" + "\n`" + command.getPrefix() + "modlog message_edit <value>`"), true);
+            embedBuilder.addField(modLogEditedMessages.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogEditedMessages.getTranslationID()), devi.getTranslation(command.getLanguage(), 7, "`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogEditedMessages)) + "`" + "\n`" + command.getPrefix() + "modlog message_edit <value>`"), false);
 
             //add delete messages field
             GuildSettings.Settings modLogDeletedMessages = GuildSettings.Settings.MOD_LOG_MESSAGE_DELETED;
-            embedBuilder.addField(modLogDeletedMessages.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogDeletedMessages.getTranslationID()), devi.getTranslation(command.getLanguage(), 7, "`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogDeletedMessages)) + "`" + "\n`" + command.getPrefix() + "modlog message_delete <value>`"), true);
+            embedBuilder.addField(modLogDeletedMessages.getEmoji() + " " + devi.getTranslation(command.getLanguage(), modLogDeletedMessages.getTranslationID()), devi.getTranslation(command.getLanguage(), 7, "`" + JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(modLogDeletedMessages)) + "`" + "\n`" + command.getPrefix() + "modlog message_delete <value>`"), false);
 
             //send builder
             sender.reply(embedBuilder.build());

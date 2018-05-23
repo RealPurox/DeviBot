@@ -28,6 +28,7 @@ public class PlayCommandExecutor implements CommandExecutor {
 
         if (args.length == 0) {
             sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "play <link or yt search>`"));
+            return;
         }
 
         String input = Arrays.stream(args).skip(0).collect(Collectors.joining(" "));

@@ -414,8 +414,7 @@ public class Devi {
         commandsExecuted++;
     }
 
-    public void resetStats() {
-        commandsExecuted = 0;
-        songsPlayed = 0;
+    public HashMap<String, List<String>> getStreams() {
+        return streams;
     }
 }

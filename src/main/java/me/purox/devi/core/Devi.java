@@ -118,6 +118,7 @@ public class Devi {
             // build & login
             this.shardManager = builder.build();
         } catch (JedisConnectionException | LoginException e) {
+            e.printStackTrace();
             System.out.println("BOOTING FAILED - SHUTTING DOWN");
             System.out.println(e instanceof JedisConnectionException ? "(FAILED TO CONNECT TO REDIS SERVER)" : "");
             System.exit(0);

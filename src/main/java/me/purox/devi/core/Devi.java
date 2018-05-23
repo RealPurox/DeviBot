@@ -3,10 +3,13 @@ package me.purox.devi.core;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.util.JSON;
 import me.purox.devi.listener.*;
 import me.purox.devi.core.guild.ModLogManager;
 import me.purox.devi.commands.handler.CommandHandler;
@@ -19,6 +22,7 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.requests.RestAction;
 import org.bson.Document;
 import org.json.JSONObject;
 import redis.clients.jedis.Jedis;
@@ -85,20 +89,27 @@ public class Devi {
         // connect to database and load translations
         databaseManager.connect();
         loadTranslations();
-
-        // subscribe to redis channel
-        Thread redisThread = new Thread(() -> {
-            redisSender = new Jedis("54.38.182.128");
-            redisSender.auth(settings.getDeviAPIAuthorizazion());
-
-            Jedis receiverRedis = new Jedis("54.38.182.128");
-            receiverRedis.auth(settings.getDeviAPIAuthorizazion());
-            receiverRedis.subscribe(getJedisPubSub(), "devi_update");
-        });
-        redisThread.setName("Devi Redis Thread");
-        redisThread.start();
-
         try {
+            // subscribe to redis channel
+            Thread redisThread = new Thread(() -> {
+                redisSender = new Jedis("54.38.182.128");
+                redisSender.auth(settings.getDeviAPIAuthorizazion());
+
+                Jedis receiverRedis = new Jedis("54.38.182.128");
+                receiverRedis.auth(settings.getDeviAPIAuthorizazion());
+                receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
+            });
+            redisThread.setName("Devi Redis Thread");
+            redisThread.start();
+
+            //subscribe to twitch events
+            subscribeToTwitchEvents("45044816");
+            subscribeToTwitchEvents("17337557");
+            subscribeToTwitchEvents("75802639");
+            subscribeToTwitchEvents("38121996");
+            subscribeToTwitchEvents("42800818");
+            subscribeToTwitchEvents("46602222");
+
             //create builder
             DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder();
             builder.setToken(settings.getBotToken());
@@ -117,7 +128,7 @@ public class Devi {
 
             // build & login
             this.shardManager = builder.build();
-        } catch (JedisConnectionException | LoginException e) {
+        } catch (JedisConnectionException | LoginException | UnirestException e) {
             System.out.println("BOOTING FAILED - SHUTTING DOWN");
             System.out.println(e instanceof JedisConnectionException ? "(FAILED TO CONNECT TO REDIS SERVER)" : "");
             System.exit(0);
@@ -127,23 +138,42 @@ public class Devi {
         commandHandler.startConsoleCommandListener();
     }
 
-    public void loadTranslations() {
-        // connect to translations database
-        MongoDatabase securityDatabase = databaseManager.getClient().getDatabase("website");
-        MongoCollection<Document> translations = securityDatabase.getCollection("translations");
+    private void unsubscribeFromTwitchEvents(String id) throws UnirestException {
+        String baseUrl = "https://api.twitch.tv/helix/webhooks/hub";
 
-        // register translations
-        translations.find().forEach((Consumer<? super Document>) document -> {
-            int id = Integer.parseInt(document.getString("_id"));
-            for (Language language : Language.values()) {
-                String translation = document.getString(language.getRegistry().toLowerCase());
-                if(translation != null && !translation.equals("none")) {
-                    deviTranslations.get(language).put(id, translation);
-                }
-            }
-        });
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Client-ID", settings.getTwitchClientID());
+
+        JSONObject body = new JSONObject();
+        body.put("hub.mode", "unsubscribe");
+        body.put("hub.callback", "https://www.devibot.net/api/twitch/callback");
+        body.put("hub.topic", "https://api.twitch.tv/helix/streams?user_id=" + id);
+
+        HttpResponse<JsonNode> response = Unirest.post(baseUrl).headers(headers).body(body).asJson();
+        if (response.getStatus() != 202) {
+            System.out.println("[INFO] Failed to unsubscribe from twitch stream: " + id);
+        }
     }
 
+    private void subscribeToTwitchEvents(String id) throws UnirestException {
+        String baseUrl = "https://api.twitch.tv/helix/webhooks/hub";
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Client-ID", settings.getTwitchClientID());
+
+        JSONObject body = new JSONObject();
+        body.put("hub.mode", "subscribe");
+        body.put("hub.callback", "https://www.devibot.net/api/twitch/callback");
+        body.put("hub.topic", "https://api.twitch.tv/helix/streams?user_id=" + id);
+        body.put("hub.lease_seconds", 864000);
+
+        HttpResponse<JsonNode> response = Unirest.post(baseUrl).headers(headers).body(body).asJson();
+        if (response.getStatus() != 202) {
+            System.out.println("[INFO] Failed to subscribe to twitch stream: " + id);
+        }
+    }
 
     public void startStatsPusher(){
         if (this.settings.isDevBot()) return;
@@ -203,6 +233,23 @@ public class Devi {
             }
 
         }, 2, 2, TimeUnit.MINUTES);
+    }
+
+    public void loadTranslations() {
+        // connect to translations database
+        MongoDatabase securityDatabase = databaseManager.getClient().getDatabase("website");
+        MongoCollection<Document> translations = securityDatabase.getCollection("translations");
+
+        // register translations
+        translations.find().forEach((Consumer<? super Document>) document -> {
+            int id = Integer.parseInt(document.getString("_id"));
+            for (Language language : Language.values()) {
+                String translation = document.getString(language.getRegistry().toLowerCase());
+                if(translation != null && !translation.equals("none")) {
+                    deviTranslations.get(language).put(id, translation);
+                }
+            }
+        });
     }
 
     public String getTranslation(Language language, int id, Object ... args) {

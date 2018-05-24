@@ -302,6 +302,8 @@ public class Devi {
 
                     if (streams.containsKey(object.getString("user_id"))) {
                         for (String guildID : streams.get(object.getString("user_id"))) {
+                            if (shardManager == null) return;
+
                             DeviGuild deviGuild = getDeviGuild(guildID);
 
                             Guild guild = shardManager.getGuildById(guildID);
@@ -341,7 +343,7 @@ public class Devi {
                                 MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
                                         .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
                                         .setEmbed(builder.build()).build());
-                                getRedisSender().hset("streams#1", object.getString("user_id"), user.toString());
+                                getRedisSender().hset("streams#1", object.getString("user_id"), userData.toString());
                             } catch (UnirestException e) {
                                 return;
                             }

@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mongodb.client.result.UpdateResult;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
@@ -77,7 +78,9 @@ public class AddStreamCommandExecutor implements CommandExecutor {
             document.put("stream", id);
             document.put("guild", command.getDeviGuild().getId());
 
-            if (devi.getDatabaseManager().saveToDatabase("streams", document).wasAcknowledged()) {
+            UpdateResult updateResult = devi.getDatabaseManager().saveToDatabase("streams", document);
+            if (updateResult.wasAcknowledged()) {
+                document.put("_id", updateResult.getUpsertedId().asString().getValue());
                 if (devi.getStreams().containsKey(id)) {
                     devi.getStreams().get(id).add(command.getDeviGuild().getId());
                 } else {
@@ -96,6 +99,7 @@ public class AddStreamCommandExecutor implements CommandExecutor {
                 else
                     builder.appendDescription(devi.getTranslation(command.getLanguage(), 207, textChannel.getAsMention()));
 
+                command.getDeviGuild().getStreams().add(document);
                 sender.reply(builder.build());
                 devi.getRedisSender().hset("streams#1", id, user.toString());
             } else {

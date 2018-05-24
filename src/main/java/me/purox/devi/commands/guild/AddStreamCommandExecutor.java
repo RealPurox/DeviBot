@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -40,8 +41,17 @@ public class AddStreamCommandExecutor implements CommandExecutor {
         String search = args[0];
 
         try {
-            HttpResponse<JsonNode> response = Unirest.get(baseUrl + "?login=" + search).header("Client-ID", devi.getSettings().getTwitchClientID()).asJson();
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("Client-ID", devi.getSettings().getTwitchClientID());
+            headers.put("Authorization", "Bearer " + devi.getSettings().getTwitchSecret());
+
+            HttpResponse<JsonNode> response = Unirest.get(baseUrl + "?login=" + search).headers(headers).asJson();
             JSONObject body = response.getBody().getObject();
+
+            if (response.getStatus() == 429) {
+                sender.reply(devi.getTranslation(command.getLanguage(), 210));
+                return;
+            }
 
             if (body.getJSONArray("data").length() == 0) {
                 sender.reply(devi.getTranslation(command.getLanguage(), 203, "`" + search + "`"));
@@ -72,7 +82,7 @@ public class AddStreamCommandExecutor implements CommandExecutor {
                     devi.getStreams().get(id).add(command.getDeviGuild().getId());
                 } else {
                     devi.getStreams().put(id, Collections.singletonList(command.getDeviGuild().getId()));
-                    devi.subscribeToTwitchStream(id);
+                    devi.changeTwitchSubscriptionStatus(Collections.singleton(id), true);
                 }
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setColor(new Color(100, 65, 164));
@@ -87,6 +97,7 @@ public class AddStreamCommandExecutor implements CommandExecutor {
                     builder.appendDescription(devi.getTranslation(command.getLanguage(), 207, textChannel.getAsMention()));
 
                 sender.reply(builder.build());
+                devi.getRedisSender().hset("streams#1", id, user.toString());
             } else {
                 sender.reply(devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
             }

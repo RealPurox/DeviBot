@@ -17,6 +17,10 @@ public class Settings {
         return System.getenv("DEVI_TWITCH");
     }
 
+    public String getTwitchSecret() {
+        return System.getenv("DEVI_TWITCH_SECRET");
+    }
+
     public String getMongoToken() {
         return System.getenv("MONGO_URL");
     }

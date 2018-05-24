@@ -59,6 +59,8 @@ public class MessageUtils {
                 user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((MessageEmbed) object).queue());
             else if (object instanceof String)
                 user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((String) object).queue());
+            else if (object instanceof Message)
+                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((Message) object).queue());
             else throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
 
         } catch (IllegalStateException | IllegalArgumentException | UnsupportedOperationException e) {
@@ -74,6 +76,8 @@ public class MessageUtils {
                 return channel.sendMessage((MessageEmbed) object).complete();
             else if (object instanceof String)
                 return channel.sendMessage((String) object).complete();
+            else if (object instanceof Message)
+                return channel.sendMessage((Message) object).complete();
             else {
                 channel.close().queue();
                 throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
@@ -101,9 +105,13 @@ public class MessageUtils {
                         channel.sendMessage(devi.getTranslation(language, 150)).queue();
                     }
                     else channel.sendMessage((MessageEmbed) object).queue();
-                } else if (object instanceof String)
+                } else if (object instanceof String) {
                     channel.sendMessage((String) object).queue();
-                else throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
+                } else if (object instanceof Message) {
+                    channel.sendMessage((Message) object).queue();
+                } else {
+                    throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
+                }
             }
 
         } catch (VerificationLevelException | InsufficientPermissionException ignored) {
@@ -127,9 +135,13 @@ public class MessageUtils {
                         return channel.sendMessage(devi.getTranslation(language, 150)).complete();
                     }
                     else return channel.sendMessage((MessageEmbed) object).complete();
-                } else if (object instanceof String)
+                } else if (object instanceof String) {
                     return channel.sendMessage((String) object).complete();
-                else throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
+                } else if (object instanceof Message) {
+                    return channel.sendMessage((Message) object).complete();
+                } else {
+                    throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
+                }
             }
 
         } catch (VerificationLevelException | InsufficientPermissionException ignored) {

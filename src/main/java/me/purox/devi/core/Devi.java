@@ -22,6 +22,7 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
 import org.bson.Document;
 import org.json.JSONArray;
@@ -114,10 +115,31 @@ public class Devi {
             consoleCommandThread.setName("Devi Console Command Thread");
             consoleCommandThread.start();
 
+            //block current for 1 second to make sure redis is connected
+            Thread.sleep(1000);
+
             // subscribe to twitch events
-            for (String id : streams.keySet()) {
-                subscribeToTwitchStream(id);
+            Set<String> subscribeToStream = new HashSet<>();
+            for (String streamID : streams.keySet()) {
+                //get time of last subscription
+                String lastSubscription = getRedisSender().hget("streams#2", streamID);
+                //there is not record of a last subscription, subscribe to stream events.
+                if (lastSubscription == null) {
+                    subscribeToStream.add(streamID);
+                    continue;
+                }
+                //convert to long
+                Long lastSubLong = Long.parseLong(lastSubscription);
+                //get days
+                long days = ((System.currentTimeMillis() - lastSubLong) / (60*60*24*1000));
+                //the subscription was more than 5 days ago, renew the subscription.
+                if (days >= 5) {
+                    System.out.println("Subscription to " + streamID + " was more than 5 days ago, renewing ...");
+                    subscribeToStream.add(streamID);
+                }
             }
+            //re-sub to them bebs
+            changeTwitchSubscriptionStatus(subscribeToStream, true);
 
             // create builder
             DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder();
@@ -128,16 +150,16 @@ public class Devi {
             builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.watching("devibot.net"));
 
             // add event listeners
-            builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
             builder.addEventListeners(new CommandListener(this));
             builder.addEventListeners(new ReadyListener(this));
             builder.addEventListeners(new MessageListener(this));
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
+            builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
 
             // build & login
             this.shardManager = builder.build();
-        } catch (JedisConnectionException | LoginException | UnirestException e) {
+        } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
             e.printStackTrace();
             System.out.println("BOOTING FAILED - SHUTTING DOWN");
             System.out.println(e instanceof JedisConnectionException ? "(FAILED TO CONNECT TO REDIS SERVER)" : "");
@@ -145,41 +167,64 @@ public class Devi {
         }
     }
 
-    public void unsubscribeFromTwitchStream(String id) throws UnirestException {
-        String baseUrl = "https://api.twitch.tv/helix/webhooks/hub";
+    public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
+        Thread thread = new Thread(() -> {
+            Set<String> copy = new HashSet<>(streamIDs);
+            Set<String> remove = new HashSet<>();
 
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Client-ID", settings.getTwitchClientID());
+            String baseUrl = "https://api.twitch.tv/helix/webhooks/hub";
 
-        JSONObject body = new JSONObject();
-        body.put("hub.mode", "unsubscribe");
-        body.put("hub.callback", "https://www.devibot.net/api/twitch/callback");
-        body.put("hub.topic", "https://api.twitch.tv/helix/streams?user_id=" + id);
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("Content-Type", "application/json");
+            headers.put("Client-ID", settings.getTwitchClientID());
+            headers.put("Authorization", "Bearer " + getSettings().getTwitchSecret());
 
-        HttpResponse<JsonNode> response = Unirest.post(baseUrl).headers(headers).body(body).asJson();
-        if (response.getStatus() != 202) {
-            System.out.println("[INFO] Failed to unsubscribe from twitch stream: " + id);
-        }
-    }
 
-    public void subscribeToTwitchStream(String id) throws UnirestException {
-        String baseUrl = "https://api.twitch.tv/helix/webhooks/hub";
+            int attempt = 0;
+            while (!copy.isEmpty()) {
+                if (attempt != 0) {
+                    try {
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                attempt++;
 
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Client-ID", settings.getTwitchClientID());
+                for (String id : copy) {
+                    JSONObject body = new JSONObject();
+                    body.put("hub.mode", subscribe ? "subscribe" : "unsubscribe");
+                    body.put("hub.callback", "https://www.devibot.net/api/twitch/callback");
+                    body.put("hub.topic", "https://api.twitch.tv/helix/streams?user_id=" + id);
+                    if (subscribe) body.put("hub.lease_seconds", 864000);
 
-        JSONObject body = new JSONObject();
-        body.put("hub.mode", "subscribe");
-        body.put("hub.callback", "https://www.devibot.net/api/twitch/callback");
-        body.put("hub.topic", "https://api.twitch.tv/helix/streams?user_id=" + id);
-        body.put("hub.lease_seconds", 864000);
 
-        HttpResponse<JsonNode> response = Unirest.post(baseUrl).headers(headers).body(body).asJson();
-        if (response.getStatus() != 202) {
-            System.out.println("[INFO] Failed to subscribe to twitch stream: " + id);
-        }
+                    HttpResponse<JsonNode> response;
+                    try {
+                        response = Unirest.post(baseUrl).headers(headers).body(body).asJson();
+                    } catch (UnirestException e) {
+                        response = null;
+                    }
+
+                    if (response == null) {
+                        System.err.println("[ERROR] Response for stream " + id + " is null");
+                    }
+
+                    if (response != null && response.getStatus() != 202) {
+                        System.err.println("[INFO] Failed to subscribe to twitch stream: " + id + ", retrying in 60 seconds.");
+                    } else {
+                        getRedisSender().hset("streams#2", id, String.valueOf(System.currentTimeMillis()));
+                        remove.add(id);
+                    }
+                }
+                for (String rm : remove) {
+                    copy.remove(rm);
+                }
+                remove.clear();
+            }
+        });
+        thread.setName("Devi Twitch Webhook Thread");
+        thread.start();
     }
 
     private void loadStreams() {
@@ -221,7 +266,7 @@ public class Devi {
     public String getTranslation(Language language, int id) {
         String translation = deviTranslations.get(language).get(id);
         if (translation == null) {
-            return deviTranslations.get(Language.ENGLISH).get(id) + " (" + language.name().toLowerCase() + " translation not found)";
+            return deviTranslations.get(Language.ENGLISH).get(id);
         }
         return translation;
     }
@@ -254,7 +299,6 @@ public class Devi {
                 }
                 if (channel.equals("devi_twitch_event")) {
                     JSONObject object = new JSONArray(message).getJSONObject(0);
-                    System.out.println(object);
 
                     if (streams.containsKey(object.getString("user_id"))) {
                         for (String guildID : streams.get(object.getString("user_id"))) {
@@ -262,30 +306,42 @@ public class Devi {
 
                             Guild guild = shardManager.getGuildById(guildID);
                             if (guild == null) return;
-                            System.out.println("GUILD NOT NULL");
 
                             TextChannel textChannel = DiscordUtils.getTextChannel(deviGuild.getSettings().getStringValue(GuildSettings.Settings.TWITCH_CHANNEL), guild);
                             if (textChannel == null) return;
-                            System.out.println("TEXTCHANNEL NOT NULL");
 
                             Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
                             try {
-                                JSONObject user = Unirest.get("https://api.twitch.tv/helix/users?login=" + object.getString("user_id"))
-                                        .header("Client-ID", getSettings().getTwitchClientID()).asJson().getBody().getObject();
+                                HashMap<String, String> headers = new HashMap<>();
+                                headers.put("Client-ID", getSettings().getTwitchClientID());
+                                headers.put("Authorization", "Bearer " + getSettings().getTwitchSecret());
+
+                                JSONObject user = Unirest.get("https://api.twitch.tv/helix/users?id=" + object.getString("user_id"))
+                                        .headers(headers).asJson().getBody().getObject();
 
                                 JSONObject game = Unirest.get("https://api.twitch.tv/helix/games?id=" + object.getString("game_id"))
-                                        .header("Client-ID", getSettings().getTwitchClientID()).asJson().getBody().getObject();
+                                        .headers(headers).asJson().getBody().getObject();
+
+                                if (user.getJSONArray("data").length() == 0) return;
+                                JSONObject userData = user.getJSONArray("data").getJSONObject(0);
+                                String url = "https://www.twitch.tv/" + userData.getString("login");
 
                                 EmbedBuilder builder = new EmbedBuilder();
                                 builder.setColor(new Color(100, 65, 164));
-                                builder.setAuthor("Twitch Stream", null, "https://www.twitch.tv/p/assets/uploads/glitch_474x356.png");
+                                builder.setAuthor(userData.getString("display_name"), url, "https://www.twitch.tv/p/assets/uploads/glitch_474x356.png");
                                 builder.setImage(object.getString("thumbnail_url").replace("{width}", "1920").replace("{height}", "1080"));
-                                builder.addField(getTranslation(language, 87	), object.getString("title"), true);
+                                builder.setDescription(object.getString("title"));
                                 builder.addField(getTranslation(language, 208), String.valueOf(object.getInt("viewer_count")), true);
-                                builder.addField(getTranslation(language, 209), game.getJSONArray("data").getJSONObject(0).getString("name"), true);
-                                builder.setThumbnail(user.getJSONArray("data").getJSONObject(0).getString("profile_image_url"));
 
-                                MessageUtils.sendMessageAsync(textChannel, builder.build());
+                                if (game.getJSONArray("data").length() != 0)
+                                    builder.addField(getTranslation(language, 209), game.getJSONArray("data").getJSONObject(0).getString("name"), true);
+
+                                builder.setThumbnail(userData.getString("profile_image_url"));
+
+                                MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
+                                        .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
+                                        .setEmbed(builder.build()).build());
+                                getRedisSender().hset("streams#1", object.getString("user_id"), user.toString());
                             } catch (UnirestException e) {
                                 return;
                             }
@@ -416,5 +472,9 @@ public class Devi {
 
     public HashMap<String, List<String>> getStreams() {
         return streams;
+    }
+
+    public Jedis getRedisSender() {
+        return redisSender;
     }
 }

@@ -41,7 +41,7 @@ public class CommandHandler {
 
         //info commands
         registerCommand("help", new HelpCommandExecutor(devi));
-
+        registerCommand("numberfact", new NumberFactCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         //registerCommand("embed", new EmbedCommand(devi));

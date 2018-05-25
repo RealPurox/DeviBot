@@ -7,24 +7,38 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import net.dv8tion.jda.core.Permission;
+import org.json.JSONObject;
 
-import java.util.Collections;
 import java.util.List;
 
-public class NumberFactCommandExecutor implements CommandExecutor {
+public class HypixelCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-
-    public NumberFactCommandExecutor(Devi devi) {
+    public HypixelCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
+        if (args.length == 0) {
+            sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "hypixel <player>`"));
+            return;
+        }
+
+        String search = args[0];
         try {
-            String URL = "http://numbersapi.com/random/trivia";
-            String fact = Unirest.get(URL).asString().getBody();
-            sender.reply(sender.getAsMention() + ", " + fact);
+            String URL = "https://api.hypixel.net/player?key=" + devi.getSettings().getHypixelAPIKey() + "&name=" + search;
+            JSONObject data = Unirest.get(URL).asJson().getBody().getObject();
+
+            if (data.get("player") == null) {
+                sender.reply("not found");
+                return;
+            }
+
+            JSONObject player = data.getJSONObject("player");
+            System.out.println(player.getJSONArray("achievementsOneTime").length());
+
+            System.out.println(data);
         } catch (UnirestException e) {
             sender.reply(devi.getTranslation(command.getLanguage(), 217));
         }
@@ -37,12 +51,12 @@ public class NumberFactCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 216;
+        return 0;
     }
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("number");
+        return null;
     }
 
     @Override

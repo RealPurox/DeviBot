@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.Permission;
 import org.bson.Document;
 
 import javax.print.Doc;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,21 +61,21 @@ public class EditCustomCommandExecutor implements CommandExecutor {
 
     @Override
     public boolean guildOnly() {
-        return false;
+        return true;
     }
 
     @Override
     public int getDescriptionTranslationID() {
-        return 0;
+        return 228;
     }
 
     @Override
     public List<String> getAliases() {
-        return null;
+        return Arrays.asList("editcom", "commandedit");
     }
 
     @Override
     public Permission getPermission() {
-        return null;
+        return Permission.MANAGE_SERVER;
     }
 }

@@ -44,6 +44,7 @@ public class CommandHandler {
         registerCommand("numberfact", new NumberFactCommandExecutor(devi));
         registerCommand("chucknorris", new ChuckNorrisCommandExecutor(devi));
         registerCommand("hypixel", new HypixelCommandExecutor(devi));
+        registerCommand("hive", new HiveCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         //registerCommand("embed", new EmbedCommand(devi));

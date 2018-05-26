@@ -25,6 +25,10 @@ public class Settings {
         return System.getenv("MONGO_URL");
     }
 
+    public String getHypixelAPIKey() {
+        return System.getenv("HYPIXEL");
+    }
+
     String getDeviAPIAuthorizazion() {
         return System.getenv("DEVI_AUTH");
     }

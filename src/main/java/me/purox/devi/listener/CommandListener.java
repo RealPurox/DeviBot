@@ -16,7 +16,6 @@ import java.util.List;
 public class CommandListener extends ListenerAdapter {
 
     private Devi devi;
-
     public CommandListener(Devi devi) {
         this.devi = devi;
     }

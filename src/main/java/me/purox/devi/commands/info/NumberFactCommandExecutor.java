@@ -14,7 +14,7 @@ import java.util.List;
 public class NumberFactCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-    private String URL = "http://numbersapi.com/random/trivia";
+
     public NumberFactCommandExecutor(Devi devi) {
         this.devi = devi;
     }
@@ -22,6 +22,7 @@ public class NumberFactCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         try {
+            String URL = "http://numbersapi.com/random/trivia";
             String fact = Unirest.get(URL).asString().getBody();
             sender.reply(sender.getAsMention() + ", " + fact);
         } catch (UnirestException e) {

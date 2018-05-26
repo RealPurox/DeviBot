@@ -15,7 +15,7 @@ import java.util.List;
 public class ChuckNorrisCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-    private String URL = "https://api.chucknorris.io/jokes/random";
+
     public ChuckNorrisCommandExecutor(Devi devi) {
         this.devi = devi;
     }
@@ -23,6 +23,7 @@ public class ChuckNorrisCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         try {
+            String URL = "https://api.chucknorris.io/jokes/random";
             String  fact = Unirest.get(URL).asJson().getBody().getObject().getString("value");
             sender.reply(sender.getAsMention() + ", " + fact);
         } catch (UnirestException | NullPointerException e) {

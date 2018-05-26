@@ -16,9 +16,9 @@ public class CommandImpl implements Command {
 
     public CommandImpl (Devi devi, MessageReceivedEvent event) {
         this.event = event;
-        this.deviGuild = event == null || event.getGuild() == null ? null : devi.getDeviGuild(event.getGuild().getId());
-        this.language = event == null || event.getGuild() == null ? Language.ENGLISH : Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        this.prefix = event == null || event.getGuild() == null ? devi.getSettings().getDefaultPrefix() : deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
+        this.deviGuild = event.getGuild() == null ? null : devi.getDeviGuild(event.getGuild().getId());
+        this.language = event.getGuild() == null ? Language.ENGLISH : Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+        this.prefix = event.getGuild() == null ? devi.getSettings().getDefaultPrefix() : deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
     }
 
     @Override

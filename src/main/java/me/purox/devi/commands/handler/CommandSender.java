@@ -120,16 +120,16 @@ public class CommandSender implements User, ConsoleCommandSender {
 
     public void reply(MessageEmbed embed) {
         if (userCommandSender == null) {
-            String message = "";
-            message += embed.getAuthor() == null ? "" : embed.getAuthor().getName() + "\n";
-            message += embed.getTitle() == null ? "" : embed.getTitle() + "\n";
-            message += embed.getDescription() == null ? "" : embed.getDescription() + "\n";
+            StringBuilder message = new StringBuilder();
+            message.append(embed.getAuthor() == null ? "" : embed.getAuthor().getName() + "\n");
+            message.append(embed.getTitle() == null ? "" : embed.getTitle() + "\n");
+            message.append(embed.getDescription() == null ? "" : embed.getDescription() + "\n");
 
             for (MessageEmbed.Field f : embed.getFields()) {
-                message += "\n" + f.getName() + ":\n" + f.getValue() + "\n";
+                message.append("\n").append(f.getName()).append(":\n").append(f.getValue()).append("\n");
             }
 
-            message += embed.getFooter() == null ? "" : embed.getFooter().getText();
+            message.append(embed.getFooter() == null ? "" : embed.getFooter().getText());
             System.out.println(message);
         } else {
             MessageUtils.sendMessageAsync(event.getChannel(), embed);

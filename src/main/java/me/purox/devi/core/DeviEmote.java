@@ -6,7 +6,8 @@ public enum DeviEmote {
     BAN("<:devi_ban:435786345445851136>"),
     BAN_HAMMER("<:banhammer:440940769751334922>"),
     DISCORD_LOGO("<:discord_logo:435796365243842580>"),
-    ADVERTISEMENT("<:advertisement:440942456360402944>");
+    ADVERTISEMENT("<:advertisement:440942456360402944>"),
+    TWITCH("<:twitch:448893462767599616>");
 
     private String get;
     DeviEmote(String get) {

@@ -24,6 +24,7 @@ public class DeviGuild {
     private Document embeds;
     private List<String> autoModIgnoredRoles;
     private List<Document> commands = new ArrayList<>();
+    private List<Document> streams = new ArrayList<>();
     private boolean ready = false;
 
     public DeviGuild(String id, Devi devi){
@@ -77,6 +78,9 @@ public class DeviGuild {
 
         MongoCollection<Document> commandCollection = devi.getDatabaseManager().getDatabase().getCollection("commands");
         commandCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) command -> commands.add(command));
+
+        MongoCollection<Document> streamsCollection = devi.getDatabaseManager().getDatabase().getCollection("streams");
+        streamsCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) stream -> streams.add(stream));
 
         Object embedsObject = document.get("embeds");
         if (embedsObject == null) {
@@ -183,5 +187,9 @@ public class DeviGuild {
 
     public List<Document> getCommands() {
         return commands;
+    }
+
+    public List<Document> getStreams() {
+        return streams;
     }
 }

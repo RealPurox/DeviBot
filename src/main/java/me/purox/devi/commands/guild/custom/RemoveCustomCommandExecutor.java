@@ -70,6 +70,6 @@ public class RemoveCustomCommandExecutor implements CommandExecutor {
 
     @Override
     public Permission getPermission() {
-        return null;
+        return Permission.MANAGE_SERVER;
     }
 }

@@ -36,8 +36,8 @@ public class SettingsCommandExecutor implements CommandExecutor {
             // add fields
             for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {
                 if (setting.isEditable()) {
-                    if (setting == GuildSettings.Settings.MUSIC_LOG_CHANNEL) {
-                        TextChannel channel = command.getEvent().getGuild().getTextChannelById(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.MUSIC_LOG_CHANNEL));
+                    if (setting == GuildSettings.Settings.MUSIC_LOG_CHANNEL || setting == GuildSettings.Settings.TWITCH_CHANNEL) {
+                        TextChannel channel = command.getEvent().getGuild().getTextChannelById(command.getDeviGuild().getSettings().getStringValue(setting == GuildSettings.Settings.MUSIC_LOG_CHANNEL ? GuildSettings.Settings.MUSIC_LOG_CHANNEL : GuildSettings.Settings.TWITCH_CHANNEL));
                         embedBuilder.addField(
                                 setting.getEmoji() + " " + devi.getTranslation(command.getLanguage(), setting.getTranslationID()),
                                 devi.getTranslation(command.getLanguage(), 7, (channel == null ? "`unknown`" : channel.getAsMention()) + "\n`" + command.getPrefix() + "settings " + setting.name().toLowerCase() + " <value>`"),
@@ -81,15 +81,15 @@ public class SettingsCommandExecutor implements CommandExecutor {
             return;
         }
 
-        //if the settings is GuildSettings.Settings.MUSIC_LOG_CHANNEL and the new channel was not found, send error message
-        if (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL && newChannel == null) {
+        //if the settings is MUSIC_LOG_CHANNEL or TWITCH_CHANNEL and the new channel was not found, send error message
+        if ((settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL || settings == GuildSettings.Settings.TWITCH_CHANNEL)&& newChannel == null) {
             sender.reply(devi.getTranslation(command.getLanguage(), 68, "`" + args[1] + "`"));
             return;
         }
 
         // new value
         String newStringValue = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
-        if (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL) {
+        if (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL || settings == GuildSettings.Settings.TWITCH_CHANNEL) {
             newStringValue = newChannel.getId();
             command.getDeviGuild().getSettings().setStringValue(settings, newStringValue);
         } else if (settings.isStringValue()) { //it's a string settings
@@ -123,7 +123,7 @@ public class SettingsCommandExecutor implements CommandExecutor {
         command.getDeviGuild().saveSettings();
         Language lang = Language.getLanguage(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
         sender.reply(":ok_hand: " + devi.getTranslation(lang, 11, "`" + args[0].toLowerCase() + "`",
-                (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL ? newChannel.getAsMention() : "`" + newStringValue + "`") ));
+                (settings == GuildSettings.Settings.MUSIC_LOG_CHANNEL || settings == GuildSettings.Settings.TWITCH_CHANNEL ? newChannel.getAsMention() : "`" + newStringValue + "`") ));
     }
 
 

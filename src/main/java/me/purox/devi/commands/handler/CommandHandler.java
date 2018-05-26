@@ -41,12 +41,17 @@ public class CommandHandler {
 
         //info commands
         registerCommand("help", new HelpCommandExecutor(devi));
-
+        registerCommand("numberfact", new NumberFactCommandExecutor(devi));
+        registerCommand("chucknorris", new ChuckNorrisCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         //registerCommand("embed", new EmbedCommand(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
+        //  - twitch commands
+        registerCommand("addstream", new AddStreamCommandExecutor(devi));
+        registerCommand("removestream", new RemoveStreamCommandExecutor(devi));
+        registerCommand("streamlist", new ListStreamCommandExecutor(devi));
         //  - mod commands
         registerCommand("ban", new BanCommandExecutor(devi));
         registerCommand("unban", new UnbanCommandExecutor(devi));

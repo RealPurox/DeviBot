@@ -1,4 +1,4 @@
-package me.purox.devi.commands.info;
+package me.purox.devi.commands.general;
 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -12,7 +12,9 @@ import net.dv8tion.jda.core.Permission;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HypixelCommandExecutor implements CommandExecutor {
 
@@ -28,7 +30,7 @@ public class HypixelCommandExecutor implements CommandExecutor {
             return;
         }
 
-        String search = args[0];
+        String search = Arrays.stream(args).collect(Collectors.joining(" "));
         try {
             String URL = "https://api.hypixel.net/player?key=" + devi.getSettings().getHypixelAPIKey() + "&name=" + search;
             JSONObject data = Unirest.get(URL).asJson().getBody().getObject();

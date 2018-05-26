@@ -33,7 +33,7 @@ public class ResumeCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 122;
+        return 125;
     }
 
     @Override

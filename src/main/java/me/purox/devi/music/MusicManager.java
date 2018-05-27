@@ -23,6 +23,8 @@ import java.awt.*;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MusicManager {
 
@@ -33,6 +35,26 @@ public class MusicManager {
     public MusicManager (Devi devi) {
         AudioSourceManagers.registerRemoteSources(manager);
         this.devi = devi;
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            for (Guild guild : audioPlayer.keySet()) {
+                DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
+                Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
+                AudioPlayer audioPlayer = getAudioPlayers().get(guild).getKey();
+                TrackManager trackManager = getAudioPlayers().get(guild).getValue();
+
+                if (trackManager.getQueue().isEmpty() && audioPlayer.getPlayingTrack() == null && guild.getSelfMember().getVoiceState().inVoiceChannel() &&
+                        guild.getSelfMember().getVoiceState().getChannel().getMembers().size() == 1) {
+                    EmbedBuilder builder = new EmbedBuilder()
+                            .setColor(new Color(34, 113, 126))
+                            .setAuthor(devi.getTranslation(language, 85), null, "https://i.pinimg.com/736x/9d/83/17/9d8317162494a004969b79c85d88b5c1--music-logo-dj-music.jpg")
+                            .setDescription("**" + devi.getTranslation(language, 247) + "**");
+                    trackManager.sendMusicLog(guild, builder.build());
+                    trackManager.leaveChannel(guild);
+                }
+            }
+        }, 5, 5, TimeUnit.MINUTES);
     }
 
     private AudioPlayer createPlayer(Guild guild) {

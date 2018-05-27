@@ -54,6 +54,8 @@ public class JoinCommandExecutor implements CommandExecutor {
                             .setAuthor(devi.getTranslation(command.getLanguage(), 85), null, "https://i.pinimg.com/736x/9d/83/17/9d8317162494a004969b79c85d88b5c1--music-logo-dj-music.jpg")
                             .setDescription(message)
                             .build());
+                    //create player if it doesn't exist
+                    devi.getMusicManager().getPlayer(command.getEvent().getGuild());
                 } else if (connectionStatus == ConnectionStatus.DISCONNECTED_LOST_PERMISSION) {
                     sender.reply(devi.getTranslation(command.getLanguage(), 102));
                 } else if (connectionStatus.name().startsWith("ERROR") || (connectionStatus.name().startsWith("DISCONNECTED") && !connectionStatus.name().equals("DISCONNECTED_LOST_PERMISSION"))) {

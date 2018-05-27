@@ -29,13 +29,13 @@ public class TrackManager extends AudioEventAdapter {
     private Queue<AudioInfo> oldQueue = new LinkedBlockingQueue<>();
     private Devi devi;
 
-    public TrackManager(Devi devi, AudioPlayer audioPlayer) {
+    TrackManager(Devi devi, AudioPlayer audioPlayer) {
         this.devi = devi;
         this.audioPlayer = audioPlayer;
         this.queue = new LinkedBlockingQueue<>();
     }
 
-    public void addToQueue(AudioTrack track, VoiceChannel voiceChannel){
+    void addToQueue(AudioTrack track, VoiceChannel voiceChannel){
         AudioInfo audioInfo = new AudioInfo(track, voiceChannel);
         queue.add(audioInfo);
 
@@ -122,7 +122,7 @@ public class TrackManager extends AudioEventAdapter {
         }
     }
 
-    private void sendMusicLog(Guild guild, MessageEmbed embed) {
+    void sendMusicLog(Guild guild, MessageEmbed embed) {
         DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MUSIC_LOG_ENABLED)) {
             TextChannel channel = guild.getTextChannelById(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MUSIC_LOG_CHANNEL));
@@ -132,7 +132,7 @@ public class TrackManager extends AudioEventAdapter {
         }
     }
 
-    public void leaveChannel(Guild guild) {
+    void leaveChannel(Guild guild) {
         new Thread(() -> {
             try {
                 Thread.sleep(1500);

@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -101,10 +102,10 @@ public class Devi {
             // subscribe to redis channel async because it's blocking the current thread
             Thread redisThread = new Thread(() -> {
                 redisSender = new Jedis("54.38.182.128");
-                redisSender.auth(settings.getDeviAPIAuthorizazion());
+                redisSender.auth(settings.getDeviAPIAuthorization());
 
                 Jedis receiverRedis = new Jedis("54.38.182.128");
-                receiverRedis.auth(settings.getDeviAPIAuthorizazion());
+                receiverRedis.auth(settings.getDeviAPIAuthorization());
                 receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
             });
             redisThread.setName("Devi Redis Thread");
@@ -462,7 +463,7 @@ public class Devi {
             object.put("average_ping", stats.getPing());
 
             HashMap<String, String> headers = new HashMap<>();
-            headers.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
+            headers.put("Authorization", "Bearer " + settings.getDeviAPIAuthorization());
             headers.put("Content-Type", "application/json");
 
             int websiteStatus = 0;

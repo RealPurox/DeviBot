@@ -39,12 +39,13 @@ public class CommandHandler {
         commands.put("performance", new PerformanceCommandExecutor(devi));
         commands.put("reload", new ReloadCommandExecutor(devi));
 
-        //info commands
+        //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
         registerCommand("numberfact", new NumberFactCommandExecutor(devi));
         registerCommand("chucknorris", new ChuckNorrisCommandExecutor(devi));
         registerCommand("hypixel", new HypixelCommandExecutor(devi));
         registerCommand("hive", new HiveCommandExecutor(devi));
+        registerCommand("fortnite", new FortniteCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         //registerCommand("embed", new EmbedCommand(devi));

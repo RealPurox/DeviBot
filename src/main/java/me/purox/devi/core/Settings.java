@@ -29,7 +29,11 @@ public class Settings {
         return System.getenv("HYPIXEL");
     }
 
-    String getDeviAPIAuthorizazion() {
+    public String getFortniteApiKey() {
+        return System.getenv("FTN");
+    }
+
+    String getDeviAPIAuthorization() {
         return System.getenv("DEVI_AUTH");
     }
 

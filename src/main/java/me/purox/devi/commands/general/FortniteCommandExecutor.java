@@ -75,7 +75,6 @@ public class FortniteCommandExecutor implements CommandExecutor {
             @Override
             public void completed(HttpResponse<JsonNode> response) {
                 JSONObject data = response.getBody().getObject();
-                System.out.println(data);
 
                 if (data.has("error") && data.getString("error").equals("Player Not Found")) {
                     sender.reply(devi.getTranslation(command.getLanguage(), 219, "`" + search + "`"));

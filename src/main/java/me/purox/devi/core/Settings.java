@@ -41,7 +41,7 @@ public class Settings {
         return devBot;
     }
 
-    void setDevBot(boolean devBot) {
-        this.devBot = devBot;
+    void disableDevBot() {
+        this.devBot = false;
     }
 }

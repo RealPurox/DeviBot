@@ -6,7 +6,7 @@ import me.purox.devi.commands.guild.custom.*;
 import me.purox.devi.commands.handler.impl.ConsoleCommandSenderImpl;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.music.*;
-import me.purox.devi.commands.info.*;
+import me.purox.devi.commands.general.*;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
@@ -39,10 +39,13 @@ public class CommandHandler {
         commands.put("performance", new PerformanceCommandExecutor(devi));
         commands.put("reload", new ReloadCommandExecutor(devi));
 
-        //info commands
+        //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
         registerCommand("numberfact", new NumberFactCommandExecutor(devi));
         registerCommand("chucknorris", new ChuckNorrisCommandExecutor(devi));
+        registerCommand("hypixel", new HypixelCommandExecutor(devi));
+        registerCommand("hive", new HiveCommandExecutor(devi));
+        registerCommand("fortnite", new FortniteCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         //registerCommand("embed", new EmbedCommand(devi));

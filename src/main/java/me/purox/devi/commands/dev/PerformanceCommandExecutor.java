@@ -8,7 +8,9 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 
 import java.awt.*;
+import java.lang.management.ManagementFactory;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class PerformanceCommandExecutor implements CommandExecutor {
 
@@ -31,6 +33,11 @@ public class PerformanceCommandExecutor implements CommandExecutor {
         long allocatedMemory = runtime.totalMemory() / mb;
         long maxMemory = runtime.maxMemory() / mb;
 
+        long millis = ManagementFactory.getRuntimeMXBean().getUptime();
+        int seconds = (int) (millis / 1000) % 60 ;
+        int minutes = (int) ((millis / (1000*60)) % 60);
+        int hours   = (int) ((millis / (1000*60*60)) % 24);
+
         EmbedBuilder builder = new EmbedBuilder().setAuthor("Performance").setColor(Color.RED);
         builder.addField("Threads", String.valueOf(threads), false);
         builder.addField("Using Memory (MB)", String.valueOf(usingMemory), false);
@@ -40,6 +47,7 @@ public class PerformanceCommandExecutor implements CommandExecutor {
         builder.addField("Music Player" , String.valueOf(devi.getMusicManager().getAudioPlayers().size()), false);
         builder.addField("Commands Executed", String.valueOf(devi.getCommandsExecuted()), false);
         builder.addField("Songs Played", String.valueOf(devi.getSongsPlayed()), false);
+        builder.addField("Uptime", hours + " hours, " + minutes + " minutes, " + seconds + " seconds", false);
 
         sender.reply(builder.build());
     }

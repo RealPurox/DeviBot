@@ -1,7 +1,8 @@
-package me.purox.devi.commands.info;
+package me.purox.devi.commands.general;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
@@ -21,21 +22,23 @@ public class NumberFactCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        try {
-            String URL = "http://numbersapi.com/random/trivia";
-            HttpResponse<String> response = Unirest.get(URL).asString();
-
-            if (response.getStatus() == 502) {
-                sender.reply(devi.getTranslation(command.getLanguage(), 217));
-                return;
+        String URL = "http://numbersapi.com/random/trivia";
+        Unirest.get(URL).asStringAsync(new Callback<String>() {
+            @Override
+            public void completed(HttpResponse<String> response) {
+                sender.reply(sender.getAsMention() + ", " + response.getBody());
             }
 
-            String fact = response.getBody();
+            @Override
+            public void failed(UnirestException e) {
+                sender.reply(devi.getTranslation(command.getLanguage(), 217));
+            }
 
-            sender.reply(sender.getAsMention() + ", " + fact);
-        } catch (UnirestException e) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 217));
-        }
+            @Override
+            public void cancelled() {
+                sender.reply(devi.getTranslation(command.getLanguage(), 217));
+            }
+        });
     }
 
     @Override

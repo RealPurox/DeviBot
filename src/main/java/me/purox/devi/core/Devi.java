@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -90,7 +91,7 @@ public class Devi {
     }
 
     public void boot(String[] args) {
-        if (Arrays.asList(args).contains("--devi")) this.settings.setDevBot(false);
+        if (Arrays.asList(args).contains("--devi")) this.settings.disableDevBot();
         // connect to database
         databaseManager.connect();
         // load translations
@@ -101,10 +102,10 @@ public class Devi {
             // subscribe to redis channel async because it's blocking the current thread
             Thread redisThread = new Thread(() -> {
                 redisSender = new Jedis("54.38.182.128");
-                redisSender.auth(settings.getDeviAPIAuthorizazion());
+                redisSender.auth(settings.getDeviAPIAuthorization());
 
                 Jedis receiverRedis = new Jedis("54.38.182.128");
-                receiverRedis.auth(settings.getDeviAPIAuthorizazion());
+                receiverRedis.auth(settings.getDeviAPIAuthorization());
                 receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
             });
             redisThread.setName("Devi Redis Thread");
@@ -115,7 +116,7 @@ public class Devi {
             consoleCommandThread.setName("Devi Console Command Thread");
             consoleCommandThread.start();
 
-            //block current for 1 second to make sure redis is connected
+            // block current thread for 1 second to make sure redis is connected
             Thread.sleep(1000);
 
             // subscribe to twitch events
@@ -163,13 +164,14 @@ public class Devi {
             e.printStackTrace();
             System.out.println("BOOTING FAILED - SHUTTING DOWN");
             System.out.println(e instanceof JedisConnectionException ? "(FAILED TO CONNECT TO REDIS SERVER)" : "");
-            System.exit(0);
+            System.exit(-5);
         }
     }
 
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
             Set<String> copy = new HashSet<>(streamIDs);
+            //need this to avoid interrupt exception
             Set<String> remove = new HashSet<>();
 
             String baseUrl = "https://api.twitch.tv/helix/webhooks/hub";
@@ -184,6 +186,7 @@ public class Devi {
             while (!copy.isEmpty()) {
                 if (attempt != 0) {
                     try {
+                        //sleep 1 min because of twitch rate limits
                         Thread.sleep(60000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -217,6 +220,7 @@ public class Devi {
                         remove.add(id);
                     }
                 }
+                //avoiding interrupt exception
                 for (String rm : remove) {
                     copy.remove(rm);
                 }
@@ -284,6 +288,7 @@ public class Devi {
         return new JedisPubSub() {
             @Override
             public void onMessage(String channel, String message) {
+                //<editor-fold desc="devi_update channel">
                 if (channel.equals("devi_update")) {
                     JSONObject update = new JSONObject(message);
 
@@ -297,6 +302,9 @@ public class Devi {
                     JSONObject confirmObject = new JSONObject().put("guild_id", update.getString("guild_id"));
                     redisSender.publish("devi_update_confirm", confirmObject.toString());
                 }
+                //</editor-fold>
+
+                //<editor-fold desc="devi_twitch_event channel">
                 if (channel.equals("devi_twitch_event")) {
                     JSONObject object = new JSONArray(message).getJSONObject(0);
 
@@ -350,6 +358,7 @@ public class Devi {
                         }
                     }
                 }
+                //</editor-fold>
             }
 
             @Override
@@ -364,64 +373,111 @@ public class Devi {
         };
     }
 
+    private class Stats {
+
+        private long shards;
+        private long guilds;
+        private long users;
+        private long channels;
+        private long ping;
+
+        private Stats() {
+            this.shards = shardManager.getShards().size();
+            this.guilds = 0;
+            this.users = 0;
+            this.channels = 0;
+            this.ping = 0;
+
+            for (JDA jda : shardManager.getShards()) {
+                for (Guild guild : jda.getGuilds()) {
+                    this.guilds++;
+                    for (Member ignored : guild.getMembers()) this.users++;
+                    for (TextChannel ignored : guild.getTextChannels()) this.channels++;
+                    for (VoiceChannel ignored : guild.getVoiceChannels()) this.channels++;
+                }
+                for (PrivateChannel ignored : jda.getPrivateChannels()) this.channels++;
+                this.ping += jda.getPing();
+            }
+            this.ping = this.ping / this.shards;
+        }
+
+        long getShards() {
+            return shards;
+        }
+
+        long getChannels() {
+            return channels;
+        }
+
+        long getGuilds() {
+            return guilds;
+        }
+
+        long getPing() {
+            return ping;
+        }
+
+        long getUsers() {
+            return users;
+        }
+    }
+
     public void startStatsPusher(){
         if (this.settings.isDevBot()) return;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
+
+        //post every half an hour to bot lists
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            Stats stats = new Stats();
+
+            //discordbots.org
+            HashMap<String, String> discordBotsOrgHeaders = new HashMap<>();
+            discordBotsOrgHeaders.put("Authorization", settings.getDiscordBotsDotOrgToken());
+
+            int discordBotsStatus = 0;
             try {
-                long shards = shardManager.getShards().size();
-                long guilds = 0;
-                long users = 0;
-                long channels = 0;
-                long ping = 0;
-
-                for (JDA jda : shardManager.getShards()) {
-                    for (Guild guild : jda.getGuilds()) {
-                        guilds++;
-                        for (Member ignored : guild.getMembers()) users++;
-                        for (TextChannel ignored : guild.getTextChannels()) channels++;
-                        for (VoiceChannel ignored : guild.getVoiceChannels()) channels++;
-                    }
-                    for (PrivateChannel ignored : jda.getPrivateChannels()) channels++;
-                    ping += jda.getPing();
-                }
-                ping = ping / shards;
-
-                //website
-                JSONObject websiteObject = new JSONObject();
-
-                websiteObject.put("shards", shards);
-                websiteObject.put("guilds", guilds);
-                websiteObject.put("users", users);
-                websiteObject.put("channels", channels);
-                websiteObject.put("average_ping", ping);
-
-                HashMap<String, String> deviHeaders = new HashMap<>();
-                deviHeaders.put("Authorization", "Bearer " + settings.getDeviAPIAuthorizazion());
-                deviHeaders.put("Content-Type", "application/json");
-
-                int websiteStatus = Unirest.post("https://www.devibot.net/api/stats")
-                        .headers(deviHeaders)
-                        .body(websiteObject)
-                        .asJson().getStatus();
-
-
-                //discordbots.org
-                HashMap<String, String> discordBotsOrgHeaders = new HashMap<>();
-                discordBotsOrgHeaders.put("Authorization", settings.getDiscordBotsDotOrgToken());
-
-                int discordBotsStatus = Unirest.post("https://discordbots.org/api/bots/354361427731152907/stats")
+                HttpResponse<JsonNode> response = Unirest.post("https://discordbots.org/api/bots/354361427731152907/stats")
                         .headers(discordBotsOrgHeaders)
-                        .field("server_count", guilds)
-                        .asJson().getStatus();
+                        .field("server_count", stats.getGuilds())
+                        .asJson();
+                discordBotsStatus = response.getStatus();
+            } catch (UnirestException e) {
+                System.out.println(simpleDateFormat.format(new Date()) + " Failed to push stats (" + e.getMessage() + ")");
+            }
 
-                if (!(websiteStatus == 200 || websiteStatus == 301) && !(discordBotsStatus == 200 | discordBotsStatus == 301))
-                    System.out.println(simpleDateFormat.format(new Date())+ " Failed to push stats (invalid status)");
+            if (discordBotsStatus != 200 && discordBotsStatus != 301)
+                System.out.println(simpleDateFormat.format(new Date()) + " Failed to push stats (invalid status)");
+        }, 0, 30, TimeUnit.MINUTES);
+
+        //post stats every 2 min to the website
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            Stats stats = new Stats();
+
+            //website
+            JSONObject object = new JSONObject();
+
+            object.put("shards", stats.getShards());
+            object.put("guilds", stats.getGuilds());
+            object.put("users", stats.getUsers());
+            object.put("channels", stats.getChannels());
+            object.put("average_ping", stats.getPing());
+
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("Authorization", "Bearer " + settings.getDeviAPIAuthorization());
+            headers.put("Content-Type", "application/json");
+
+            int websiteStatus = 0;
+            try {
+                websiteStatus = Unirest.post("https://www.devibot.net/api/stats")
+                        .headers(headers)
+                        .body(object).asJson().getStatus();
             } catch (UnirestException e) {
                 System.out.println(simpleDateFormat.format(new Date())+ " Failed to push stats (" + e.getMessage() + ")");
             }
 
-        }, 2, 2, TimeUnit.MINUTES);
+            if (websiteStatus != 200 && websiteStatus != 301)
+                System.out.println(simpleDateFormat.format(new Date())+ " Failed to push stats (invalid status)");
+        }, 0, 2, TimeUnit.MINUTES);
     }
 
     private DeviGuild createDeviGuild(String id) {

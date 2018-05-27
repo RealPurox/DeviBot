@@ -25,7 +25,15 @@ public class Settings {
         return System.getenv("MONGO_URL");
     }
 
-    String getDeviAPIAuthorizazion() {
+    public String getHypixelAPIKey() {
+        return System.getenv("HYPIXEL");
+    }
+
+    public String getFortniteApiKey() {
+        return System.getenv("FTN");
+    }
+
+    String getDeviAPIAuthorization() {
         return System.getenv("DEVI_AUTH");
     }
 
@@ -37,7 +45,7 @@ public class Settings {
         return devBot;
     }
 
-    void setDevBot(boolean devBot) {
-        this.devBot = devBot;
+    void disableDevBot() {
+        this.devBot = false;
     }
 }

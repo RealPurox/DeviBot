@@ -1,6 +1,7 @@
 package me.purox.devi.commands.general;
 
 import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -24,10 +25,10 @@ public class ChuckNorrisCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         String URL = "https://api.chucknorris.io/jokes/random";
-        Unirest.get(URL).asStringAsync(new Callback<String>() {
+        Unirest.get(URL).asJsonAsync(new Callback<JsonNode>() {
             @Override
-            public void completed(HttpResponse<String> response) {
-                sender.reply(sender.getAsMention() + ", " + response.getBody());
+            public void completed(HttpResponse<JsonNode> response) {
+                sender.reply(sender.getAsMention() + ", " + response.getBody().getObject().getString("value"));
             }
 
             @Override

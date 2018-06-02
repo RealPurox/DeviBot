@@ -42,7 +42,7 @@ public class CommandHandler {
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
         registerCommand("numberfact", new NumberFactCommandExecutor(devi));
-        //registerCommand("chucknorris", new ChuckNorrisCommandExecutor(devi));
+        registerCommand("chucknorris", new ChuckNorrisCommandExecutor(devi));
         registerCommand("hypixel", new HypixelCommandExecutor(devi));
         registerCommand("hive", new HiveCommandExecutor(devi));
         registerCommand("fortnite", new FortniteCommandExecutor(devi));

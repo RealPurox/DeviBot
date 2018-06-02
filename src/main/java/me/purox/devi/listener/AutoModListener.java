@@ -19,7 +19,7 @@ public class AutoModListener extends ListenerAdapter {
 
     private Devi  devi;
     private final Pattern INVITE_LINK = Pattern.compile("discord(?:app\\.com|\\.gg)[\\/invite\\/]?(?:(?!.*[Ii10OolL]).[a-zA-Z0-9]{5,6}|[a-zA-Z0-9\\-]{2,32})");
-    private final Pattern DISCORD_ASSEST = Pattern.compile("discordapp\\.com\\/attachments");
+    private final Pattern DISCORD_ASSETS = Pattern.compile("discordapp\\.com\\/attachments");
     private final Pattern EMOJI = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",Pattern.UNICODE_CASE | Pattern.CANON_EQ | Pattern.CASE_INSENSITIVE);
     private final Pattern CAPS = Pattern.compile("[A-Z]");
 
@@ -47,7 +47,7 @@ public class AutoModListener extends ListenerAdapter {
         if (!hasIgnoredRole.get() && !event.getAuthor().isBot() && !event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
             //anti advertisement
             if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_ADS)) {
-                if (INVITE_LINK.matcher(event.getMessage().getContentRaw()).find() && !DISCORD_ASSEST.matcher(event.getMessage().getContentRaw()).find()) {
+                if (INVITE_LINK.matcher(event.getMessage().getContentRaw()).find() && !DISCORD_ASSETS.matcher(event.getMessage().getContentRaw()).find()) {
                     if (MessageUtils.deleteMessage(event.getMessage()))
                         MessageUtils.sendMessageAsync(event.getChannel(), ":warning: " + devi.getTranslation(language, 78, event.getAuthor().getAsMention()));
                 }

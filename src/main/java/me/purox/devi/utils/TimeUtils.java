@@ -38,7 +38,7 @@ public class TimeUtils {
             }
         }
         if ("".equals(res.toString())) {
-            return "0 seconds ago";
+            return "just now";
         } else {
             res.setLength(res.length() - 2);
             res.append(" ago");
@@ -46,7 +46,7 @@ public class TimeUtils {
         }
     }
 
-    public static String toRelative(long duration) {
+    private static String toRelative(long duration) {
         return toRelative(duration, times.size());
     }
 

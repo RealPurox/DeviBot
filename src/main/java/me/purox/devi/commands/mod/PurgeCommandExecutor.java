@@ -7,9 +7,11 @@ import me.purox.devi.core.Devi;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import net.jodah.expiringmap.ExpirationPolicy;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class PurgeCommandExecutor implements CommandExecutor {
 
@@ -36,6 +38,7 @@ public class PurgeCommandExecutor implements CommandExecutor {
         List<Message> messages;
         try {
             messages = command.getEvent().getChannel().getHistoryBefore(command.getEvent().getMessageId(), amount).complete().getRetrievedHistory();
+            messages.forEach(message -> devi.getPrunedMessages().put(message.getId(), "", ExpirationPolicy.CREATED, 5, TimeUnit.MINUTES));
 
             command.getEvent().getTextChannel().deleteMessages(messages).queue(
                     success -> sender.reply(devi.getTranslation(command.getLanguage(), 153, finalAmount))
@@ -45,8 +48,6 @@ public class PurgeCommandExecutor implements CommandExecutor {
         } catch (IllegalArgumentException e) {
             sender.reply(devi.getTranslation(command.getLanguage(), 152));
         }
-
-
     }
 
     @Override

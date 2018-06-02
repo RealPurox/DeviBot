@@ -6,7 +6,6 @@ import com.google.common.cache.LoadingCache;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -25,6 +24,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
+import net.jodah.expiringmap.ExpiringMap;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,6 +51,7 @@ public class Devi {
     private ModLogManager modLogManager;
     private ShardManager shardManager;
 
+    private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
     private LoadingCache<String, DeviGuild> deviGuildLoadingCache;
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
@@ -534,5 +535,9 @@ public class Devi {
 
     public Jedis getRedisSender() {
         return redisSender;
+    }
+
+    public ExpiringMap<String, String> getPrunedMessages() {
+        return prunedMessages;
     }
 }

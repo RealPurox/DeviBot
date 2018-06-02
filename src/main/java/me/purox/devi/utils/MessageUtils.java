@@ -54,6 +54,7 @@ public class MessageUtils {
 
     public static void sendPrivateMessageAsync(User user, Object object) {
         try {
+            if (user.isBot()) return;
 
             if (object instanceof MessageEmbed)
                 user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((MessageEmbed) object).queue());
@@ -68,8 +69,10 @@ public class MessageUtils {
         }
     }
 
-    public static Message sendPrivateMessageSync(User user, Object object) {
+    private static Message sendPrivateMessageSync(User user, Object object) {
         try {
+            if (user.isBot()) return null;
+
             PrivateChannel channel = user.openPrivateChannel().complete();
 
             if (object instanceof MessageEmbed)

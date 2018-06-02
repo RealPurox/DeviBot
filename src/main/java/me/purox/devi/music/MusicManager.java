@@ -44,7 +44,7 @@ public class MusicManager {
                 AudioPlayer audioPlayer = getAudioPlayers().get(guild).getKey();
                 TrackManager trackManager = getAudioPlayers().get(guild).getValue();
 
-                if (trackManager.getQueue().isEmpty() && audioPlayer.getPlayingTrack() == null && guild.getSelfMember().getVoiceState().inVoiceChannel() &&
+                if (trackManager.getQueue().isEmpty() && (audioPlayer.getPlayingTrack() == null || audioPlayer.isPaused()) && guild.getSelfMember().getVoiceState().inVoiceChannel() &&
                         guild.getSelfMember().getVoiceState().getChannel().getMembers().size() == 1) {
                     EmbedBuilder builder = new EmbedBuilder()
                             .setColor(new Color(34, 113, 126))

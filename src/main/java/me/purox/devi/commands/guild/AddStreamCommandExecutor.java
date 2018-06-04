@@ -10,6 +10,8 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
+import me.purox.devi.request.Request;
+import me.purox.devi.request.RequestBuilder;
 import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -20,7 +22,6 @@ import org.json.JSONObject;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -42,12 +43,12 @@ public class AddStreamCommandExecutor implements CommandExecutor {
         String search = args[0];
 
         try {
-            HashMap<String, String> headers = new HashMap<>();
-            headers.put("Client-ID", devi.getSettings().getTwitchClientID());
-            headers.put("Authorization", "Bearer " + devi.getSettings().getTwitchSecret());
-
-            HttpResponse<JsonNode> response = Unirest.get(baseUrl + "?login=" + search).headers(headers).asJson();
-            JSONObject body = response.getBody().getObject();
+            Request.JSONResponse response = new RequestBuilder(devi.getOkHttpClient()).setURL(baseUrl + "?login=" + search)
+                    .addHeader("Client-ID", devi.getSettings().getTwitchClientID())
+                    .addHeader("Authorization", "Bearer " + devi.getSettings().getTwitchSecret())
+                    .setRequestType(Request.RequestType.GET).build()
+                    .asJSONSync();
+            JSONObject body = response.getBody();
 
             if (response.getStatus() == 429) {
                 sender.reply(devi.getTranslation(command.getLanguage(), 210));
@@ -105,8 +106,6 @@ public class AddStreamCommandExecutor implements CommandExecutor {
             } else {
                 sender.reply(devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
             }
-        } catch (UnirestException e) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
         } catch (IllegalArgumentException e) {
             sender.reply(devi.getTranslation(command.getLanguage(), 203, "`" + search + "`"));
         }

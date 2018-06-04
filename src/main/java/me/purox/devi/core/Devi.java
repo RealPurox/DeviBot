@@ -16,6 +16,8 @@ import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.database.DatabaseManager;
 import me.purox.devi.music.MusicManager;
+import me.purox.devi.request.Request;
+import me.purox.devi.request.RequestBuilder;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
@@ -25,6 +27,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.jodah.expiringmap.ExpiringMap;
+import okhttp3.OkHttpClient;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -57,6 +60,8 @@ public class Devi {
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
     private HashMap<String, List<String>> streams = new HashMap<>();
 
+    OkHttpClient okHttpClient;
+
     private Jedis redisSender;
 
     private int songsPlayed;
@@ -69,6 +74,7 @@ public class Devi {
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
+        this.okHttpClient = new OkHttpClient();
         new MessageUtils(this);
 
         songsPlayed = 0;
@@ -315,47 +321,51 @@ public class Devi {
 
                             DeviGuild deviGuild = getDeviGuild(guildID);
 
-                            Guild guild = shardManager.getGuildById(guildID);
+                            Guild guild = null;
+                            for (JDA jda : shardManager.getShards()) {
+                                for (Guild g : jda.getGuilds()) {
+                                    if (g.getId().equals(guildID))
+                                        guild = g;
+                                    break;
+                                }
+                            }
                             if (guild == null) return;
 
                             TextChannel textChannel = DiscordUtils.getTextChannel(deviGuild.getSettings().getStringValue(GuildSettings.Settings.TWITCH_CHANNEL), guild);
                             if (textChannel == null) return;
 
                             Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-                            try {
-                                HashMap<String, String> headers = new HashMap<>();
-                                headers.put("Client-ID", getSettings().getTwitchClientID());
-                                headers.put("Authorization", "Bearer " + getSettings().getTwitchSecret());
 
-                                JSONObject user = Unirest.get("https://api.twitch.tv/helix/users?id=" + object.getString("user_id"))
-                                        .headers(headers).asJson().getBody().getObject();
+                            JSONObject user = new RequestBuilder(okHttpClient).setURL("https://api.twitch.tv/helix/users?id=" + object.getString("user_id"))
+                                    .addHeader("Client-ID", getSettings().getTwitchClientID())
+                                    .addHeader("Authorization", "Bearer " + getSettings().getTwitchSecret())
+                                    .setRequestType(Request.RequestType.GET).build().asJSONSync().getBody();
 
-                                JSONObject game = Unirest.get("https://api.twitch.tv/helix/games?id=" + object.getString("game_id"))
-                                        .headers(headers).asJson().getBody().getObject();
+                            JSONObject game = new RequestBuilder(okHttpClient).setURL("https://api.twitch.tv/helix/games?id=" + object.getString("game_id"))
+                                    .addHeader("Client-ID", getSettings().getTwitchClientID())
+                                    .addHeader("Authorization", "Bearer " + getSettings().getTwitchSecret())
+                                    .setRequestType(Request.RequestType.GET).build().asJSONSync().getBody();
 
-                                if (user.getJSONArray("data").length() == 0) return;
-                                JSONObject userData = user.getJSONArray("data").getJSONObject(0);
-                                String url = "https://www.twitch.tv/" + userData.getString("login");
+                            if (user.getJSONArray("data").length() == 0) return;
+                            JSONObject userData = user.getJSONArray("data").getJSONObject(0);
+                            String url = "https://www.twitch.tv/" + userData.getString("login");
 
-                                EmbedBuilder builder = new EmbedBuilder();
-                                builder.setColor(new Color(100, 65, 164));
-                                builder.setAuthor(userData.getString("display_name"), url, "https://www.twitch.tv/p/assets/uploads/glitch_474x356.png");
-                                builder.setImage(object.getString("thumbnail_url").replace("{width}", "1920").replace("{height}", "1080"));
-                                builder.setDescription(object.getString("title"));
-                                builder.addField(getTranslation(language, 208), String.valueOf(object.getInt("viewer_count")), true);
+                            EmbedBuilder builder = new EmbedBuilder();
+                            builder.setColor(new Color(100, 65, 164));
+                            builder.setAuthor(userData.getString("display_name"), url, "https://www.twitch.tv/p/assets/uploads/glitch_474x356.png");
+                            builder.setImage(object.getString("thumbnail_url").replace("{width}", "1920").replace("{height}", "1080"));
+                            builder.setDescription(object.getString("title"));
+                            builder.addField(getTranslation(language, 208), String.valueOf(object.getInt("viewer_count")), true);
 
-                                if (game.getJSONArray("data").length() != 0)
-                                    builder.addField(getTranslation(language, 209), game.getJSONArray("data").getJSONObject(0).getString("name"), true);
+                            if (game.getJSONArray("data").length() != 0)
+                                builder.addField(getTranslation(language, 209), game.getJSONArray("data").getJSONObject(0).getString("name"), true);
 
-                                builder.setThumbnail(userData.getString("profile_image_url"));
+                            builder.setThumbnail(userData.getString("profile_image_url"));
 
-                                MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
-                                        .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
-                                        .setEmbed(builder.build()).build());
-                                getRedisSender().hset("streams#1", object.getString("user_id"), userData.toString());
-                            } catch (UnirestException e) {
-                                return;
-                            }
+                            MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
+                                    .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
+                                    .setEmbed(builder.build()).build());
+                            getRedisSender().hset("streams#1", object.getString("user_id"), userData.toString());
                         }
                     }
                 }
@@ -539,5 +549,9 @@ public class Devi {
 
     public ExpiringMap<String, String> getPrunedMessages() {
         return prunedMessages;
+    }
+
+    public OkHttpClient getOkHttpClient() {
+        return okHttpClient;
     }
 }

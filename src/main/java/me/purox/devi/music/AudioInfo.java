@@ -9,7 +9,7 @@ public class AudioInfo {
     private final VoiceChannel channel;
 
 
-    public AudioInfo(AudioTrack track, VoiceChannel channel) {
+    AudioInfo(AudioTrack track, VoiceChannel channel) {
         this.track = track;
         this.channel = channel;
     }

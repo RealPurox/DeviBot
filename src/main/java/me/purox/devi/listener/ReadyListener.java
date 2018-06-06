@@ -73,8 +73,10 @@ public class ReadyListener extends ListenerAdapter {
         Guild staffGuild = jda.getGuildById("392264119102996480");
         if (staffGuild != null) {
             if (devi.getSettings().isDevBot()) System.out.println(staffGuild.getEmotes());
-            Role adminRole = staffGuild.getRolesByName("Senior Administrator", false).get(0);
-            staffGuild.getMembersWithRoles(adminRole).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
+            Role seniorAdministrators = staffGuild.getRolesByName("Senior Administrator", false).get(0);
+            Role administrators = staffGuild.getRolesByName("Administrator", false).get(0);
+            staffGuild.getMembersWithRoles(seniorAdministrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
+            staffGuild.getMembersWithRoles(administrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
         }
     }
 }

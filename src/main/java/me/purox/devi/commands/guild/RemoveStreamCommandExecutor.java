@@ -1,21 +1,13 @@
 package me.purox.devi.commands.guild;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.mongodb.client.result.DeleteResult;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
-import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.TextChannel;
 import org.bson.Document;
 import org.json.JSONObject;
 

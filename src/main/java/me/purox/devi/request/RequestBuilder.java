@@ -58,6 +58,14 @@ public class RequestBuilder {
     }
 
     public Request build() {
+        notNull(url, "URL");
+        notNull(requestType, "RequestType");
         return new Request(client, url, body, headers, requestType);
+    }
+
+    private void notNull(Object argument, String name) {
+        if (argument == null) {
+            throw new IllegalArgumentException(name + " cannot be null");
+        }
     }
 }

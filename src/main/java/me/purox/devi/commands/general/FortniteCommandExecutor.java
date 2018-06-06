@@ -1,14 +1,11 @@
 package me.purox.devi.commands.general;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.request.Request;
+import me.purox.devi.request.RequestBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import org.json.JSONObject;
@@ -68,62 +65,49 @@ public class FortniteCommandExecutor implements CommandExecutor {
 
         String URL = "https://api.fortnitetracker.com/v1/profile/" + game + "/" + search;
 
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("TRN-Api-Key", devi.getSettings().getFortniteApiKey());
+        new RequestBuilder(devi.getOkHttpClient()).setURL(URL).addHeader("TRN-Api-Key", devi.getSettings().getFortniteApiKey())
+                .setRequestType(Request.RequestType.GET).build()
+                .asJSON(response -> {
+                    JSONObject data = response.getBody();
 
-        Unirest.get(URL).headers(headers).asJsonAsync(new Callback<JsonNode>() {
-            @Override
-            public void completed(HttpResponse<JsonNode> response) {
-                JSONObject data = response.getBody().getObject();
+                    if (data.has("error") && data.getString("error").equals("Player Not Found")) {
+                        sender.reply(devi.getTranslation(command.getLanguage(), 219, "`" + search + "`"));
+                        return;
+                    }
 
-                if (data.has("error") && data.getString("error").equals("Player Not Found")) {
-                    sender.reply(devi.getTranslation(command.getLanguage(), 219, "`" + search + "`"));
-                    return;
-                }
+                    JSONObject solo = data.getJSONObject("stats").getJSONObject("p2");
+                    JSONObject duo = data.getJSONObject("stats").getJSONObject("p10");
+                    JSONObject squad = data.getJSONObject("stats").getJSONObject("p9");
 
-                JSONObject solo = data.getJSONObject("stats").getJSONObject("p2");
-                JSONObject duo = data.getJSONObject("stats").getJSONObject("p10");
-                JSONObject squad = data.getJSONObject("stats").getJSONObject("p9");
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setColor(new java.awt.Color(100, 65, 164));
+                    builder.setAuthor(devi.getTranslation(command.getLanguage(), 237, data.getString("epicUserHandle")),
+                            null, "https://images.gutefrage.net/media/fragen/bilder/welche-dpi-fuer-fortnite/0_big.jpg");
 
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setColor(new java.awt.Color(100, 65, 164));
-                builder.setAuthor(devi.getTranslation(command.getLanguage(), 237, data.getString("epicUserHandle")),
-                        null, "https://images.gutefrage.net/media/fragen/bilder/welche-dpi-fuer-fortnite/0_big.jpg");
+                    String soloBuilder = "**" + devi.getTranslation(command.getLanguage(), 238) + "**: " + solo.getJSONObject("top1").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 239) + "**: " + solo.getJSONObject("winRatio").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 240) + "**: " + solo.getJSONObject("matches").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 241) + "**: " + solo.getJSONObject("kills").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 242) + "**: " + solo.getJSONObject("kd").getString("value") + "\n";
+                    builder.addField(devi.getTranslation(command.getLanguage(), 243), soloBuilder, true);
 
-                String soloBuilder = "**" + devi.getTranslation(command.getLanguage(), 238) + "**: " + solo.getJSONObject("top1").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 239) + "**: " + solo.getJSONObject("winRatio").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 240) + "**: " + solo.getJSONObject("matches").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 241) + "**: " + solo.getJSONObject("kills").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 242) + "**: " + solo.getJSONObject("kd").getString("value") + "\n";
-                builder.addField(devi.getTranslation(command.getLanguage(), 243), soloBuilder, true);
+                    String duoBuilder = "**" + devi.getTranslation(command.getLanguage(), 238) + "**: " + duo.getJSONObject("top1").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 239) + "**: " + duo.getJSONObject("winRatio").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 240) + "**: " + duo.getJSONObject("matches").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 241) + "**: " + duo.getJSONObject("kills").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 242) + "**: " + duo.getJSONObject("kd").getString("value") + "\n";
+                    builder.addField(devi.getTranslation(command.getLanguage(), 244), duoBuilder, true);
 
-                String duoBuilder = "**" + devi.getTranslation(command.getLanguage(), 238) + "**: " + duo.getJSONObject("top1").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 239) + "**: " + duo.getJSONObject("winRatio").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 240) + "**: " + duo.getJSONObject("matches").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 241) + "**: " + duo.getJSONObject("kills").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 242) + "**: " + duo.getJSONObject("kd").getString("value") + "\n";
-                builder.addField(devi.getTranslation(command.getLanguage(), 244), duoBuilder, true);
+                    String squadBuilder = "**" + devi.getTranslation(command.getLanguage(), 238) + "**: " + squad.getJSONObject("top1").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 239) + "**: " + squad.getJSONObject("winRatio").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 240) + "**: " + squad.getJSONObject("matches").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 241) + "**: " + squad.getJSONObject("kills").getString("value") + "\n" +
+                            "**" + devi.getTranslation(command.getLanguage(), 242) + "**: " + squad.getJSONObject("kd").getString("value") + "\n";
+                    builder.addField(devi.getTranslation(command.getLanguage(), 245), squadBuilder, true);
 
-                String squadBuilder = "**" + devi.getTranslation(command.getLanguage(), 238) + "**: " + squad.getJSONObject("top1").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 239) + "**: " + squad.getJSONObject("winRatio").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 240) + "**: " + squad.getJSONObject("matches").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 241) + "**: " + squad.getJSONObject("kills").getString("value") + "\n" +
-                        "**" + devi.getTranslation(command.getLanguage(), 242) + "**: " + squad.getJSONObject("kd").getString("value") + "\n";
-                builder.addField(devi.getTranslation(command.getLanguage(), 245), squadBuilder, true);
+                    sender.reply(builder.build());
 
-                sender.reply(builder.build());
-            }
-
-            @Override
-            public void failed(UnirestException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void cancelled() {
-                System.out.println("CANCELLED");
-            }
-        });
+                }, error -> sender.reply(devi.getTranslation(command.getLanguage(), 217)));
     }
 
     @Override

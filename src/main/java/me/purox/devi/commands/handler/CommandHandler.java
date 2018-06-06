@@ -39,6 +39,7 @@ public class CommandHandler {
         commands.put("performance", new PerformanceCommandExecutor(devi));
         commands.put("reload", new ReloadCommandExecutor(devi));
         commands.put("threadlist", new ThreadListCommandExecutor(devi));
+        commands.put("test", new TestCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));

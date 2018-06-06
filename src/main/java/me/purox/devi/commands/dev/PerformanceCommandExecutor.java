@@ -10,12 +10,11 @@ import net.dv8tion.jda.core.Permission;
 import java.awt.*;
 import java.lang.management.ManagementFactory;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class PerformanceCommandExecutor implements CommandExecutor {
 
-
     private Devi devi;
+
     public PerformanceCommandExecutor(Devi devi) {
         this.devi = devi;
     }

@@ -38,6 +38,8 @@ public class CommandHandler {
         //dev commands || only add them to commands so they don't appear in !help
         commands.put("performance", new PerformanceCommandExecutor(devi));
         commands.put("reload", new ReloadCommandExecutor(devi));
+        commands.put("threadlist", new ThreadListCommandExecutor(devi));
+        commands.put("test", new TestCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
@@ -83,7 +85,6 @@ public class CommandHandler {
     }
 
     private void registerCommand(String commandName, CommandExecutor commandExecutor){
-        //add
         commands.put(commandName, commandExecutor);
         unmodifiedCommands.put(commandName, commandExecutor);
         if(commandExecutor.getAliases() != null) {

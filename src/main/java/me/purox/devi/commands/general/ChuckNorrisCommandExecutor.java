@@ -1,14 +1,11 @@
 package me.purox.devi.commands.general;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.request.Request;
+import me.purox.devi.request.RequestBuilder;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.Arrays;
@@ -25,22 +22,9 @@ public class ChuckNorrisCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         String URL = "https://api.chucknorris.io/jokes/random";
-        Unirest.get(URL).asJsonAsync(new Callback<JsonNode>() {
-            @Override
-            public void completed(HttpResponse<JsonNode> response) {
-                sender.reply(sender.getAsMention() + ", " + response.getBody().getObject().getString("value"));
-            }
-
-            @Override
-            public void failed(UnirestException e) {
-                sender.reply(devi.getTranslation(command.getLanguage(), 217));
-            }
-
-            @Override
-            public void cancelled() {
-                sender.reply(devi.getTranslation(command.getLanguage(), 217));
-            }
-        });
+        new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(URL).build()
+                .asJSON(success -> sender.reply(sender.getAsMention() + ", " + success.getBody().getString("value")),
+                        error -> sender.reply(devi.getTranslation(command.getLanguage(), 217)));
     }
 
     @Override

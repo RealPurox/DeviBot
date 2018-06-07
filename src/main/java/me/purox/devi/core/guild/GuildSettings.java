@@ -18,50 +18,50 @@ public class GuildSettings {
     }
 
     public enum Settings {
-        PREFIX                  ( "!",        ":page_with_curl:",            5,   true ),
-        LANGUAGE                ( "english",  ":earth_americas:",            6,   true ),
-        MUTE_ROLE               ( "-1",       ":mute:",                      24,  false),
-        MOD_LOG_CHANNEL         ( "-1",       ":microphone2:",               59,  false),
-        MOD_LOG_ENABLED         ( false,      ":newspaper:",                 60,  false),
-        MOD_LOG_MUTES           ( true,       DeviEmote.MUTE.get(),          71,  false),
-        MOD_LOG_BANS            ( true,       DeviEmote.BAN.get(),           72,  false),
-        MOD_LOG_MESSAGE_EDITED  ( true,       ":pen_ballpoint:",             178, false),
-        MOD_LOG_MESSAGE_DELETED ( true,       ":no_entry_sign:",             179, false),
-        AUTO_MOD_ENABLED        ( true,       ":hammer_pick:",               76,  false),
-        AUTO_MOD_ANTI_ADS       ( true,       ":tv:",                        77,  false),
-        AUTO_MOD_ANTI_CAPS      ( true,       ":ab:",                        81,  false),
-        AUTO_MOD_ANTI_EMOJI     ( true,       ":stuck_out_tongue:",          161, false),
-        MUSIC_LOG_ENABLED       ( true,       ":checkered_flag:",            84,  true ),
-        MUSIC_LOG_CHANNEL       ( "-1",       ":notes:",                     83,  true ),
-        TWITCH_CHANNEL          ( "-1",       DeviEmote.TWITCH.get(),        198, true );
+        PREFIX                  ( "!",        ":page_with_curl:",            5,   "prefix"                ),
+        LANGUAGE                ( "english",  ":earth_americas:",            6,   "language"              ),
+        MUTE_ROLE               ( "-1",       ":mute:",                      24,  "muterole"              ),
+        MOD_LOG_ENABLED         ( false,      ":newspaper:",                 60,  "modlog"                ),
+        MOD_LOG_CHANNEL         ( "-1",       ":microphone2:",               59,  "modlog channel"        ),
+        MOD_LOG_MUTES           ( true,       DeviEmote.MUTE.get(),          71,  "modlog mutes"          ),
+        MOD_LOG_BANS            ( true,       DeviEmote.BAN.get(),           72,  "modlog bans"           ),
+        MOD_LOG_MESSAGE_EDITED  ( true,       ":pen_ballpoint:",             178, "modlog message-edit"   ),
+        MOD_LOG_MESSAGE_DELETED ( true,       ":no_entry_sign:",             179, "modlog message-delete" ),
+        AUTO_MOD_ENABLED        ( true,       ":hammer_pick:",               76,  "automod"               ),
+        AUTO_MOD_ANTI_ADS       ( true,       ":tv:",                        77,  "automod ads"           ),
+        AUTO_MOD_ANTI_CAPS      ( true,       ":ab:",                        81,  "automod caps"          ),
+        AUTO_MOD_ANTI_EMOJI     ( true,       ":stuck_out_tongue:",          161, "automod emoji"         ),
+        MUSIC_LOG_ENABLED       ( true,       ":checkered_flag:",            84,  "musiclog"              ),
+        MUSIC_LOG_CHANNEL       ( "-1",       ":notes:",                     83,  "musiclog channel"      ),
+        TWITCH_CHANNEL          ( "-1",       DeviEmote.TWITCH.get(),        198, "twitch"                );
 
         private Integer translationID;
         private String emoji;
-        private boolean editable;
+        private String command;
 
         private String defaultStringValue;
         private Boolean defaultBooleanValue;
         private Integer defaultIntegerValue;
 
-        Settings (String defaultStringValue, String emoji, Integer translationID, boolean editable) {
+        Settings (String defaultStringValue, String emoji, Integer translationID, String command) {
             this.defaultStringValue = defaultStringValue;
             this.emoji = emoji;
             this.translationID = translationID;
-            this.editable = editable;
+            this.command = command;
         }
 
-        Settings (Boolean defaultBooleanValue, String emoji, Integer translationID, boolean editable) {
+        Settings (Boolean defaultBooleanValue, String emoji, Integer translationID, String command) {
             this.defaultBooleanValue = defaultBooleanValue;
             this.emoji = emoji;
             this.translationID = translationID;
-            this.editable = editable;
+            this.command = command;
         }
 
-        Settings (Integer defaultIntegerValue, String emoji, Integer translationID, boolean editable) {
+        Settings (Integer defaultIntegerValue, String emoji, Integer translationID, String command) {
             this.defaultIntegerValue = defaultIntegerValue;
             this.emoji = emoji;
             this.translationID = translationID;
-            this.editable = editable;
+            this.command = command;
         }
 
         public String getEmoji() {
@@ -72,8 +72,8 @@ public class GuildSettings {
             return translationID;
         }
 
-        public boolean isEditable() {
-            return editable;
+        public String getCommand() {
+            return command;
         }
 
         public Object getDefaultValue() {
@@ -102,10 +102,8 @@ public class GuildSettings {
 
         public static Settings getSetting(String input) {
             for (Settings settings : values()) {
-                if(settings.isEditable()) {
-                    if (settings.name().equalsIgnoreCase(input)) {
-                        return settings;
-                    }
+                if (settings.name().equalsIgnoreCase(input)) {
+                    return settings;
                 }
             }
             return null;

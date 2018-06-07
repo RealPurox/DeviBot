@@ -48,6 +48,7 @@ public class Devi {
     private CommandHandler commandHandler;
     private ModLogManager modLogManager;
     private ShardManager shardManager;
+    private ResponseWaiter responseWaiter;
 
     private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
@@ -69,6 +70,7 @@ public class Devi {
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
         this.okHttpClient = new OkHttpClient();
+        this.responseWaiter = new ResponseWaiter();
         new MessageUtils(this);
 
         songsPlayed = 0;
@@ -157,7 +159,10 @@ public class Devi {
             builder.addEventListeners(new MessageListener(this));
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
+            builder.addEventListeners(this.responseWaiter);
             builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
+
+
 
             // build & login
             this.shardManager = builder.build();
@@ -511,5 +516,9 @@ public class Devi {
 
     public OkHttpClient getOkHttpClient() {
         return okHttpClient;
+    }
+
+    public ResponseWaiter getResponseWaiter() {
+        return responseWaiter;
     }
 }

@@ -159,7 +159,6 @@ public class Devi {
             builder.addEventListeners(new MessageListener(this));
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
-            builder.addEventListeners(this.responseWaiter);
             builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
 
 

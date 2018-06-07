@@ -51,6 +51,7 @@ public class CommandHandler {
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         registerCommand("prefix", new PrefixCommandExecutor(devi));
+        registerCommand("language", new LanguageCommandExecutor(devi));
         //registerCommand("embed", new EmbedCommand(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));

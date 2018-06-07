@@ -13,6 +13,11 @@ public enum Language {
         return registry;
     }
 
+    public String getName() {
+        char capital = Character.toUpperCase(this.name().charAt(0));
+        return capital + this.name().toLowerCase().substring(1);
+    }
+
     public static Language getLanguage(String input) {
         for (Language language : Language.values()) {
             if(language.name().equalsIgnoreCase(input) || language.getRegistry().equalsIgnoreCase(input)) {

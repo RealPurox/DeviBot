@@ -50,6 +50,7 @@ public class CommandHandler {
         registerCommand("fortnite", new FortniteCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
+        registerCommand("prefix", new PrefixCommandExecutor(devi));
         //registerCommand("embed", new EmbedCommand(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));

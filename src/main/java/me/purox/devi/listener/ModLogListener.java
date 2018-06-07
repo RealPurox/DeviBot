@@ -38,8 +38,8 @@ public class ModLogListener extends ListenerAdapter {
 
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) &&
                 (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_MESSAGE_DELETED) ||
-                deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_MESSAGE_EDITED))) {
-                messages.put(event.getGuild().getId() + "|" + event.getMessage().getId(), event.getMessage(), ExpirationPolicy.CREATED, 15, TimeUnit.MINUTES);
+                        deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_MESSAGE_EDITED))) {
+            messages.put(event.getGuild().getId() + "|" + event.getMessage().getId(), event.getMessage(), ExpirationPolicy.CREATED, 15, TimeUnit.MINUTES);
         }
     }
 
@@ -50,7 +50,7 @@ public class ModLogListener extends ListenerAdapter {
 
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_MESSAGE_DELETED)) {
             Message message = messages.get(event.getGuild().getId() + "|" + event.getMessageId());
-            if (message == null || message.getContentDisplay().equals("") || banned.containsKey(message.getAuthor().getId()) || devi.getPrunedMessages().containsKey(event.getMessageId())) return;
+            if (message == null || message.getContentDisplay().equals("") || banned.containsKey(message.getAuthor().getId()) || devi.getPrunedMessages().containsKey(message.getId()) || message.getAuthor().isBot()) return;
 
             devi.getModLogManager().logMessageDeleted(deviGuild, message);
         }
@@ -64,7 +64,7 @@ public class ModLogListener extends ListenerAdapter {
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_MESSAGE_EDITED)) {
             Message old = messages.get(event.getGuild().getId() + "|" + event.getMessageId());
             Message newMessage = event.getMessage();
-            if (old == null || old.getContentDisplay().equals("")) return;
+            if (old == null || old.getContentDisplay().equals("") || devi.getPrunedMessages().containsKey(event.getMessageId()) || newMessage.getAuthor().isBot()) return;
 
             messages.remove(event.getGuild().getId() + "|" + event.getMessageId());
             messages.put(event.getGuild().getId() + "|" + event.getMessageId(), event.getMessage(), ExpirationPolicy.CREATED, 15, TimeUnit.MINUTES);

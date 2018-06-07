@@ -4,6 +4,8 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.request.Request;
+import me.purox.devi.request.RequestBuilder;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
@@ -21,15 +23,20 @@ public class ThreadListCommandExecutor implements CommandExecutor {
         if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
 
         StringBuilder builder = new StringBuilder();
-        builder.append("```");
+        builder.append("id -> name - thread group name - thread state\n");
 
+        int t = 1;
         for (Thread thread : Thread.getAllStackTraces().keySet()) {
-            builder.append("-> ").append(thread.getName()).append(" - ").append(thread.getState()).append("\n");
+            builder.append(t++).append(" -> ").append(thread.getName()).append(" - ").append(thread.getThreadGroup().getName()).append(" - ").append(thread.getState()).append("\n");
         }
 
-        builder.append("```");
 
-        sender.reply(builder.toString());
+        new RequestBuilder(devi.getOkHttpClient()).setURL("https://hastebin.com/documents").setRequestType(Request.RequestType.POST)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .setStringBody(builder.toString())
+                .build()
+                .asJSON(res -> sender.reply("Thread list: https://hastebin.com/" + res.getBody().getString("key")));
+
     }
 
     @Override

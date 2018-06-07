@@ -33,7 +33,6 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -56,8 +55,7 @@ public class Devi {
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
     private HashMap<String, List<String>> streams = new HashMap<>();
 
-    OkHttpClient okHttpClient;
-
+    private OkHttpClient okHttpClient;
     private Jedis redisSender;
 
     private int songsPlayed;
@@ -176,12 +174,6 @@ public class Devi {
             Set<String> copy = new HashSet<>(streamIDs);
             //need this to avoid interrupt exception
             Set<String> remove = new HashSet<>();
-
-            HashMap<String, String> headers = new HashMap<>();
-            headers.put("Content-Type", "application/json");
-            headers.put("Client-ID", settings.getTwitchClientID());
-            headers.put("Authorization", "Bearer " + getSettings().getTwitchSecret());
-
 
             int attempt = 0;
             while (!copy.isEmpty()) {

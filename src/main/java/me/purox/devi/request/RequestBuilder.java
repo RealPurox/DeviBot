@@ -12,9 +12,15 @@ public class RequestBuilder {
     private String url = null;
     private Request.RequestType requestType = null;
     private OkHttpClient client;
+    private String stringBody = null;
 
     public RequestBuilder(OkHttpClient client) {
         this.client = client;
+    }
+
+    public RequestBuilder setStringBody(String stringBody) {
+        this.stringBody = stringBody;
+        return this;
     }
 
     public RequestBuilder setURL(String url) {
@@ -60,7 +66,7 @@ public class RequestBuilder {
     public Request build() {
         notNull(url, "URL");
         notNull(requestType, "RequestType");
-        return new Request(client, url, body, headers, requestType);
+        return new Request(client, url, headers, requestType, body, stringBody);
     }
 
     private void notNull(Object argument, String name) {

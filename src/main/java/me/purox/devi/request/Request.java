@@ -20,8 +20,9 @@ public class Request {
     private HashMap<String, String> headers;
     private RequestType requestType;
     private OkHttpClient client;
+    private String stringBody;
 
-    Request(OkHttpClient client, String url, JSONObject body, HashMap<String, String> headers, RequestType requestType) {
+    Request(OkHttpClient client, String url, HashMap<String, String> headers, RequestType requestType, JSONObject body, String stringBody) {
         notNull(url, "URL");
         notNull(requestType, "RequestType");
         notNull(client, "OkHttpClient");
@@ -30,6 +31,7 @@ public class Request {
         this.headers = headers;
         this.requestType = requestType;
         this.client = client;
+        this.stringBody = stringBody;
     }
 
     public void asString(Consumer<? super StringResponse> success) {
@@ -44,7 +46,8 @@ public class Request {
                 if (requestType == RequestType.GET)
                     builder.get();
                 else if (requestType == RequestType.POST)
-                    builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()));
+                    builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                            this.stringBody != null ? stringBody : body.toString()));
 
                 if (headers != null) {
                     for (Map.Entry<String, String> header : headers.entrySet()) {
@@ -76,7 +79,8 @@ public class Request {
             if (requestType == RequestType.GET)
                 builder.get();
             else if (requestType == RequestType.POST)
-                builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()));
+                builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                        this.stringBody != null ? stringBody : body.toString()));
 
             if (headers != null) {
                 for (Map.Entry<String, String> header : headers.entrySet()) {
@@ -109,7 +113,8 @@ public class Request {
                 if (requestType == RequestType.GET)
                     builder.get();
                 else if (requestType == RequestType.POST)
-                    builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()));
+                    builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                            this.stringBody != null ? stringBody : body.toString()));
 
                 if (headers != null) {
                     for (Map.Entry<String, String> header : headers.entrySet()) {
@@ -141,7 +146,8 @@ public class Request {
             if (requestType == RequestType.GET)
                 builder.get();
             else if (requestType == RequestType.POST)
-                builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()));
+                builder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                        this.stringBody != null ? stringBody : body.toString()));
 
             if (headers != null) {
                 for (Map.Entry<String, String> header : headers.entrySet()) {

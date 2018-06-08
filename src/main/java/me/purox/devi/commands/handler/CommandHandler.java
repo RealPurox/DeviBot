@@ -98,7 +98,7 @@ public class CommandHandler {
 
     public void handleCommand(String prefix, String raw, MessageReceivedEvent event, CommandSender commandSender){
         CommandParser.CommandContainer container = parser.parseCommand(raw, event);
-        CommandExecutor commandExecutor = commands.get(raw.toLowerCase().split( " ")[0].substring(prefix.length()));
+        CommandExecutor commandExecutor = commands.get(raw.toLowerCase().substring(prefix.length()).split( " ")[0]);
 
         //perms check
         if (event != null && event.getGuild() != null && commandExecutor.getPermission() != null) {

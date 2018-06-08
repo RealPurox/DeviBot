@@ -59,12 +59,14 @@ public class CommandListener extends ListenerAdapter {
                 prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
         }
 
-        if (event.getMessage().getContentRaw().startsWith(event.getJDA().getSelfUser().getAsMention())) {
+        if (event.getMessage().getContentRaw().startsWith(event.getJDA().getSelfUser().getAsMention() + " ")) {
+            prefix = event.getJDA().getSelfUser().getAsMention() + " ";
+        } else if (event.getMessage().getContentRaw().startsWith(event.getJDA().getSelfUser().getAsMention())) {
             prefix = event.getJDA().getSelfUser().getAsMention();
         }
 
         if (!event.getAuthor().isBot() && message.startsWith(prefix)) {
-            String invoke = message.split(" ")[0].toLowerCase().substring(prefix.length());
+            String invoke = message.substring(prefix.length()).split(" ")[0].toLowerCase();
             CommandHandler commandHandler = devi.getCommandHandler();
 
             if (commandHandler.getCommands().containsKey(invoke)) {

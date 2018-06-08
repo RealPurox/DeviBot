@@ -10,10 +10,7 @@ import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
-import net.jodah.expiringmap.ExpirationPolicy;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -51,26 +48,26 @@ public class LanguageCommandExecutor implements CommandExecutor {
             return;
         }
 
-        startWaiter(1, message, command, sender);
+        startWaiter(1, command, sender);
     }
 
-    private void startWaiter(int attempt, Message message, Command command, CommandSender sender) {
+    private void startWaiter(int attempt, Command command, CommandSender sender) {
+        int nextAttempt = attempt += 1;
         MessageReceivedEvent event = command.getEvent();
         devi.getResponseWaiter().waitForResponse(event.getGuild(),
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId()),
                 response -> {
-                    if (PermissionUtil.checkPermission(event.getTextChannel(), event.getGuild().getSelfMember(), Permission.MESSAGE_MANAGE)) {
-                        devi.getPrunedMessages().put(message.getId(), "", ExpirationPolicy.CREATED, 1, TimeUnit.MINUTES);
-                        devi.getPrunedMessages().put(response.getMessage().getId(), "", ExpirationPolicy.CREATED, 1, TimeUnit.MINUTES);
-                        event.getTextChannel().deleteMessages(Arrays.asList(message, response.getMessage())).queue();
-                    }
-
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(":no_entry: | The language selection was cancelled");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 254));
                         return;
                     }
 
-                    String input = command.getEvent().getMessage().getContentRaw().split(" ")[0];
+                    if (nextAttempt >= 4) {
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 255));
+                        return;
+                    }
+
+                    String input = response.getMessage().getContentRaw().split(" ")[0];
 
                     int entered;
                     try {
@@ -80,8 +77,8 @@ public class LanguageCommandExecutor implements CommandExecutor {
                     }
 
                     if (entered < 1 || entered > languageMap.size()) {
-                        Message updatedMessage = MessageUtils.sendMessageSync(event.getChannel(), ":no_entry: | Please provide a valid number." + );
-
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 256));
+                        startWaiter(nextAttempt, command, sender);
                         return;
                     }
 
@@ -89,15 +86,9 @@ public class LanguageCommandExecutor implements CommandExecutor {
                     Language language = languageMap.get(entered);
                     command.getDeviGuild().getSettings().setStringValue(GuildSettings.Settings.LANGUAGE, language.name());
                     command.getDeviGuild().saveSettings();
-                    sender.reply(":ok_hand: | The language has been changed to " + language.getName());
+                    sender.reply(":ok_hand: | " + devi.getTranslation(language, 258, "`" + language.getName() + "`"));
                 },
-                15, TimeUnit.SECONDS, () -> {
-                    if (PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_MANAGE)) {
-                        devi.getPrunedMessages().put(message.getId(), "", ExpirationPolicy.CREATED, 30, TimeUnit.SECONDS);
-                        message.delete().queue();
-                    }
-                    sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 252));
-                });
+                15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 259)) );
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.purox.devi.listener;
 import me.purox.devi.commands.handler.CommandHandler;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.Language;
 import me.purox.devi.core.ResponseWaiter;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -56,6 +57,10 @@ public class CommandListener extends ListenerAdapter {
             //custom prefix
             if (!devi.getSettings().isDevBot())
                 prefix = deviGuild.getSettings().getStringValue(GuildSettings.Settings.PREFIX);
+        }
+
+        if (event.getMessage().getContentRaw().startsWith(event.getJDA().getSelfUser().getAsMention())) {
+            prefix = event.getJDA().getSelfUser().getAsMention();
         }
 
         if (!event.getAuthor().isBot() && message.startsWith(prefix)) {

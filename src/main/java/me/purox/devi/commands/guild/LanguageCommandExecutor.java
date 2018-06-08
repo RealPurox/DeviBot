@@ -31,12 +31,12 @@ public class LanguageCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         StringBuilder builder = new StringBuilder();
-        builder.append(":information_source: | " + devi.getTranslation(command.getLanguage(), 260) + "\n\n");
+        builder.append(":information_source: | ").append(devi.getTranslation(command.getLanguage(), 260)).append("\n\n");
         builder.append("```python\n");
         for(Integer i : languageMap.keySet()) {
             builder.append("'").append(i).append("' => ").append(languageMap.get(i).getName()).append("\n");
         }
-        builder.append("```\n" + devi.getTranslation(command.getLanguage(), 261, "`cancel`"));
+        builder.append("```\n").append(devi.getTranslation(command.getLanguage(), 261, "`cancel`"));
 
         sender.reply(builder.toString());
         startWaiter(1, command, sender);
@@ -68,7 +68,7 @@ public class LanguageCommandExecutor implements CommandExecutor {
                     }
 
                     if (entered < 1 || entered > languageMap.size()) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 256));
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 265));
                         startWaiter(nextAttempt, command, sender);
                         return;
                     }

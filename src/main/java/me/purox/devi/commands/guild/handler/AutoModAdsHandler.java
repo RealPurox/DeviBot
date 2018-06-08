@@ -55,7 +55,7 @@ public class AutoModAdsHandler {
                     }
 
                     if (entered > 2 || entered < 1) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 256));
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 265));
                         startWaiter(nextAttempt, command, sender);
                         return;
                     }

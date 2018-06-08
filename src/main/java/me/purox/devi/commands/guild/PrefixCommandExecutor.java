@@ -31,7 +31,7 @@ public class PrefixCommandExecutor implements CommandExecutor {
         }
 
         devi.getResponseWaiter().waitForResponse(event.getGuild(),
-                evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId()),
+                evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
                         sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 250));

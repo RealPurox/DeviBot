@@ -36,7 +36,8 @@ public class SettingsCommandExecutor implements CommandExecutor {
         for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {
             if (setting.name().startsWith("MOD_LOG") && setting != GuildSettings.Settings.MOD_LOG_ENABLED ||
                     setting.name().startsWith("AUTO_MOD") && setting != GuildSettings.Settings.AUTO_MOD_ENABLED ||
-                    setting.name().startsWith("MUSIC_LOG") && setting != GuildSettings.Settings.MUSIC_LOG_ENABLED) {
+                    setting.name().startsWith("MUSIC_LOG") && setting != GuildSettings.Settings.MUSIC_LOG_ENABLED ||
+                    setting == GuildSettings.Settings.MUTE_ROLE) {
                 continue;
             }
 

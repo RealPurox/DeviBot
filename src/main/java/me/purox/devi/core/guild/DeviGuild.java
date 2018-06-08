@@ -22,9 +22,9 @@ public class DeviGuild {
     private Document muted;
     private Document banned;
     private Document embeds;
-    private List<String> autoModIgnoredRoles;
     private List<Document> commands = new ArrayList<>();
     private List<Document> streams = new ArrayList<>();
+    private List<Document> ignoredRoles = new ArrayList<>();
     private boolean ready = false;
 
     public DeviGuild(String id, Devi devi){
@@ -54,10 +54,10 @@ public class DeviGuild {
         document.append("embeds", embeds);
         document.append("muted", muted);
         document.append("banned", banned);
-        document.append("auto_mod_ignored_roles", autoModIgnoredRoles);
         devi.getDatabaseManager().saveToDatabase("guilds", document, id);
     }
 
+    @SuppressWarnings("Duplicates")
     private void loadSettings() {
         Document document = devi.getDatabaseManager().getDocument(id, "guilds");
 
@@ -81,6 +81,9 @@ public class DeviGuild {
 
         MongoCollection<Document> streamsCollection = devi.getDatabaseManager().getDatabase().getCollection("streams");
         streamsCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) stream -> streams.add(stream));
+
+        MongoCollection<Document> autoModIgnoredRolesCollection = devi.getDatabaseManager().getDatabase().getCollection("ignored_roles");
+        autoModIgnoredRolesCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) ignoredRole -> ignoredRoles.add(ignoredRole));
 
         Object embedsObject = document.get("embeds");
         if (embedsObject == null) {
@@ -109,19 +112,11 @@ public class DeviGuild {
             else banned = new Document();
         }
 
-        Object autoModIgnoredRolesObject = document.get("auto_mod_ignored_roles");
-        if (autoModIgnoredRolesObject == null) {
-            autoModIgnoredRoles = new ArrayList<>();
-        } else {
-            if (autoModIgnoredRolesObject instanceof ArrayList) {
-                autoModIgnoredRoles = (List<String>) autoModIgnoredRolesObject;
-            }
-        }
         this.settings = guildSettings;
         this.ready = true;
     }
 
-    public void log(MessageEmbed embed) {
+    void log(MessageEmbed embed) {
         TextChannel channel = devi.getShardManager().getTextChannelById(settings.getStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL));
         if (channel != null) {
             MessageUtils.sendMessageAsync(channel, embed);
@@ -177,8 +172,8 @@ public class DeviGuild {
         return embeds;
     }
 
-    public List<String> getAutoModIgnoredRoles() {
-        return autoModIgnoredRoles;
+    public List<Document> getIgnoredRoles() {
+        return ignoredRoles;
     }
 
     public Devi getDevi() {

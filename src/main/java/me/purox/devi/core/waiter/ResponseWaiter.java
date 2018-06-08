@@ -1,4 +1,4 @@
-package me.purox.devi.core;
+package me.purox.devi.core.waiter;
 
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
@@ -38,7 +38,7 @@ public class ResponseWaiter {
     //Guild ID, User ID
     private HashMap<String, Set<WaitingResponse>> waitingResponses;
 
-    ResponseWaiter() {
+    public ResponseWaiter() {
         this.threadPool = Executors.newSingleThreadScheduledExecutor();
         this.waitingResponses = new HashMap<>();
     }
@@ -89,8 +89,9 @@ public class ResponseWaiter {
         return waitingResponses;
     }
 
-    public boolean checkUser(MessageReceivedEvent event, String messageID, String authorID) {
+    public boolean checkUser(MessageReceivedEvent event, String messageID, String authorID, String channelID) {
         return event.getAuthor().getId().equals(authorID) &&
+                event.getChannel().getId().equalsIgnoreCase(channelID) &&
                 !event.getMessageId().equals(messageID) &&
                 !event.getAuthor().isBot();
     }

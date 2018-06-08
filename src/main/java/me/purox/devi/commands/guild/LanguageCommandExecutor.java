@@ -6,9 +6,7 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.GuildSettings;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.HashMap;
@@ -32,22 +30,15 @@ public class LanguageCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        MessageReceivedEvent event = command.getEvent();
-
         StringBuilder builder = new StringBuilder();
-        builder.append(":information_source: | Change your guild language by replying to this message with one of the languages listed below\n\n");
+        builder.append(":information_source: | " + devi.getTranslation(command.getLanguage(), 260) + "\n\n");
         builder.append("```python\n");
         for(Integer i : languageMap.keySet()) {
             builder.append("'").append(i).append("' => ").append(languageMap.get(i).getName()).append("\n");
         }
-        builder.append("```\nYou can cancel the language selection by typing `cancel`");
+        builder.append("```\n" + devi.getTranslation(command.getLanguage(), 261, "`cancel`"));
 
-        Message message = MessageUtils.sendMessageSync(event.getChannel(), builder.toString());
-        if (message == null) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 217));
-            return;
-        }
-
+        sender.reply(builder.toString());
         startWaiter(1, command, sender);
     }
 
@@ -55,7 +46,7 @@ public class LanguageCommandExecutor implements CommandExecutor {
         int nextAttempt = attempt += 1;
         MessageReceivedEvent event = command.getEvent();
         devi.getResponseWaiter().waitForResponse(event.getGuild(),
-                evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId()),
+                evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
                         sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 254));

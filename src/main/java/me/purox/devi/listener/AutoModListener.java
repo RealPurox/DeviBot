@@ -37,10 +37,12 @@ public class AutoModListener extends ListenerAdapter {
 
         if (!event.getMember().getRoles().isEmpty()) {
             event.getMember().getRoles().forEach(r -> {
+                //TODO: FIX THIS **VERY IMPORTANT*
                 /*if (event.getAuthor().getName().equals("Purox")) hasIgnoredRole.set(false);
-                else*/ if (deviGuild.getAutoModIgnoredRoles().contains(r.getId())) {
+                else
+                if (deviGuild.getIgnoredRoles().contains(r.getId())) {
                     hasIgnoredRole.set(true);
-                }
+                }*/
             });
         }
 

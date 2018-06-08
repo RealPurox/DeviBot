@@ -25,13 +25,13 @@ public class AutoModRolesHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | Edit Auto-Mod settings -> Roles ignored by Auto-Mod\n\n" +
+        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 275) + "\n\n" +
                 "```python\n" +
-                "Reply to this message with one of the options listed below to edit your Auto-Mod settings\n\n" +
-                " '1' => Display ignored roles\n" +
-                " '2' => Add a role to ignored roles\n" +
-                " '3' => Remove a role from ignored roles\n" +
-                "```\nYou can cancel editing your Auto-Mod settings by typing `cancel`";
+                devi.getTranslation(command.getLanguage(), 268) + "\n\n" +
+                " '1' => " + devi.getTranslation(command.getLanguage(), 276) + "\n" +
+                " '2' => " + devi.getTranslation(command.getLanguage(), 277) + "\n" +
+                " '3' => " + devi.getTranslation(command.getLanguage(), 278) + "\n" +
+                "```\n" + devi.getTranslation(command.getLanguage(), 271, "`cancel`");
 
         sender.reply(builder);
         startWaiter(1, command, sender);
@@ -49,7 +49,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | You've failed to enter a valid number 3 times in a row. Auto-Mod settings selection has been cancelled");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
                         return;
                     }
 
@@ -69,19 +69,19 @@ public class AutoModRolesHandler {
                             break;
                         //add
                         case 2:
-                            String addResponse = ":information_source: | Edit Auto-Mod settings -> Add ignored role\n\n" +
+                            String addResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 288) + "\n\n" +
                                     "```python\n" +
-                                    "Please mention the role you want to be ignored by Auto-Mod or reply with its name or ID" +
-                                    "```\nYou can cancel editing your Auto-Mod settings by typing `cancel`";
+                                    devi.getTranslation(command.getLanguage(), 289) +
+                                    "```\n" + devi.getTranslation(command.getLanguage(), 271, "`cancel`");
                             sender.reply(addResponse);
                             startAddWaiter(1, command, sender);
                             break;
                         //remove
                         case 3:
-                            String removeResponse = ":information_source: | Edit Auto-Mod settings -> Remove ignored role\n\n" +
+                            String removeResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + "  -> " + devi.getTranslation(command.getLanguage(), 290) + "\n\n" +
                                     "```python\n" +
-                                    "Please mention the role no longer want to be ignored by Auto-Mod or reply with the role's name or ID" +
-                                    "```\nYou can cancel editing your Auto-Mod settings by typing `cancel`";
+                                    devi.getTranslation(command.getLanguage(), 291) +
+                                    "```\n" + devi.getTranslation(command.getLanguage(), 271, "`cancel`");
                             sender.reply(removeResponse);
                             startRemoveWaiter(1, command, sender);
                             break;
@@ -97,15 +97,15 @@ public class AutoModRolesHandler {
     private void sendRoles(Command command, CommandSender sender) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(new Color(213, 123, 23));
-        builder.setAuthor("Auto-Mod Ignored Roles");
-        builder.appendDescription("All roles that are being ignored by Auto-Mod are listed below.\n");
-        builder.appendDescription("Note: You will be ignored by Auto-Mod, no matter if you have one of the roles listed below, if you have the Manage Server permission.\n\n");
+        builder.setAuthor(devi.getTranslation(command.getLanguage(), 292));
+        builder.appendDescription(devi.getTranslation(command.getLanguage(), 293) + "\n");
+        builder.appendDescription(devi.getTranslation(command.getLanguage(), 294)+ "\n\n");
 
         Guild guild = command.getEvent().getGuild();
         List<Role> roles = command.getDeviGuild().getIgnoredRoles().stream().map(doc -> guild.getRoleById(doc.getString("role"))).collect(Collectors.toList());
 
         if (roles.size() == 0)
-            builder.appendDescription(":no_bell: Auto-Mod is not ignoring any roles");
+            builder.appendDescription(":no_bell: | " + devi.getTranslation(command.getLanguage(), 295));
         else builder.appendDescription(roles.stream().map(Role::getAsMention).collect(Collectors.joining(", ")));
 
         sender.reply(builder.build());
@@ -123,7 +123,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | You've failed to enter a valid role 3 times in a row. Auto-Mod settings selection has been cancelled");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
                         return;
                     }
 
@@ -131,7 +131,7 @@ public class AutoModRolesHandler {
                     Role role = DiscordUtils.getRole(input, command.getEvent().getGuild());
 
                     if (role == null) {
-                        sender.reply(":no_entry: | Provided role was not found, please try again.");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 296));
                         startAddWaiter(nextAttempt, command, sender);
                         return;
                     }
@@ -145,7 +145,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (isIgnoredAlready) {
-                        sender.reply(":no_entry: | Provided role is already being ignored by Auto-Mod");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 297));
                         return;
                     }
 
@@ -156,7 +156,7 @@ public class AutoModRolesHandler {
                     UpdateResult updateResult = devi.getDatabaseManager().saveToDatabase("ignored_roles", document);
                     if (updateResult.wasAcknowledged()) {
                         command.getDeviGuild().getIgnoredRoles().add(document);
-                        sender.reply(":ok_hand: | The role " + role.getName() + " will now be ignored by Auto-Mod");
+                        sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 298, role.getName()));
                     } else {
                         sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
                     }
@@ -176,7 +176,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | You've failed to enter a valid role 3 times in a row. Auto-Mod settings selection has been cancelled");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
                         return;
                     }
 
@@ -184,8 +184,8 @@ public class AutoModRolesHandler {
                     Role role = DiscordUtils.getRole(input, command.getEvent().getGuild());
 
                     if (role == null) {
-                        sender.reply(":no_entry: | Provided role was not found, please try again.");
-                        startAddWaiter(nextAttempt, command, sender);
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 296));
+                        startRemoveWaiter(nextAttempt, command, sender);
                         return;
                     }
 
@@ -198,7 +198,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (document == null) {
-                        sender.reply(":no_entry: | Provided role is not being ignored by Auto-Mod");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 299));
                         return;
                     }
 
@@ -208,7 +208,7 @@ public class AutoModRolesHandler {
                     DeleteResult deleteResult = devi.getDatabaseManager().removeFromDatabase("ignored_roles", document.getString("_id"));
                     if (deleteResult.wasAcknowledged()) {
                         command.getDeviGuild().getIgnoredRoles().remove(document);
-                        sender.reply(":ok_hand: | The role " + role.getName() + " will no longer be ignored by Auto-Mod");
+                        sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 300));
                     } else {
                         sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
                     }

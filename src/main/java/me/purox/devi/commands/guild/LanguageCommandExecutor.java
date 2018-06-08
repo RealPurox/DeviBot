@@ -73,7 +73,6 @@ public class LanguageCommandExecutor implements CommandExecutor {
                         return;
                     }
 
-
                     Language language = languageMap.get(entered);
                     command.getDeviGuild().getSettings().setStringValue(GuildSettings.Settings.LANGUAGE, language.name());
                     command.getDeviGuild().saveSettings();

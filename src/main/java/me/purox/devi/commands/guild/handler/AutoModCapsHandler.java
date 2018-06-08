@@ -16,13 +16,12 @@ public class AutoModCapsHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-
-        String builder = ":information_source: | Edit Auto-Mod settings -> enable or disable filtering messages that are at least 70% uppercase\n\n" +
+        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 272) + "\n\n" +
                 "```python\n" +
-                "Reply to this message with one of the options listed below to edit your Auto-Mod settings\n\n" +
-                " '1' => Enabled\n" +
-                " '2' => Disabled\n" +
-                "```\nYou can cancel editing your Auto-Mod settings by typing `cancel`";
+                devi.getTranslation(command.getLanguage(), 268) + "\n\n" +
+                " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +
+                " '2' => " + devi.getTranslation(command.getLanguage(), 270) + "\n" +
+                "```\n" + devi.getTranslation(command.getLanguage(), 271, "`cancel`");
 
         sender.reply(builder);
 
@@ -41,7 +40,7 @@ public class AutoModCapsHandler {
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | You've failed to enter a valid number 3 times in a row. Auto-Mod settings selection has been cancelled");
+                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
                         return;
                     }
 
@@ -64,8 +63,8 @@ public class AutoModCapsHandler {
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(":ok_hand: | Auto-Mod will now filter caps messages");
-                    else sender.reply(":ok_hand: | Auto-Mod will no longer filter caps messages");
+                        sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 282));
+                    else sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 283));
                 },
                 15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 263)) );
     }

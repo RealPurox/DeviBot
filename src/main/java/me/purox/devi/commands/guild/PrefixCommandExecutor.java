@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
@@ -34,16 +35,16 @@ public class PrefixCommandExecutor implements CommandExecutor {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 250));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 250));
                         return;
                     }
 
                     String prefix = response.getMessage().getContentRaw().split(" ")[0];
                     command.getDeviGuild().getSettings().setStringValue(GuildSettings.Settings.PREFIX, prefix);
                     command.getDeviGuild().saveSettings();
-                    sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 251, "`" + prefix + "`"));
+                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 251, "`" + prefix + "`"));
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 252)));
+                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 252)));
     }
 
     @Override

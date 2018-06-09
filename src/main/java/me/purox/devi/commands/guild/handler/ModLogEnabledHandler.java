@@ -9,20 +9,20 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
-public class AutoModCapsHandler {
+public class ModLogEnabledHandler {
 
     private Devi devi;
-    public AutoModCapsHandler(Devi devi) {
+    public ModLogEnabledHandler(Devi devi) {
         this.devi = devi;
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 272) + "\n\n" +
+        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> Enable or disable Mod-Log\t\n\n" +
                 "```python\n" +
-                devi.getTranslation(command.getLanguage(), 268) + "\n\n" +
+                devi.getTranslation(command.getLanguage(), 305) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +
                 " '2' => " + devi.getTranslation(command.getLanguage(), 270) + "\n" +
-                "```\n" + devi.getTranslation(command.getLanguage(), 271, "`cancel`");
+                "```\n" + devi.getTranslation(command.getLanguage(), 306, "`cancel`");
 
         sender.reply(builder);
 
@@ -36,12 +36,12 @@ public class AutoModCapsHandler {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 262));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 307));
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 279));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 308));
                         return;
                     }
 
@@ -60,13 +60,14 @@ public class AutoModCapsHandler {
                         return;
                     }
 
-                    command.getDeviGuild().getSettings().setBooleanValue(GuildSettings.Settings.AUTO_MOD_ANTI_CAPS, entered == 1);
+                    command.getDeviGuild().getSettings().setBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED, entered == 1);
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 282));
-                    else sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 283));
+                        sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log has been enabled");
+                    else sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log has been disabled");
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 263)) );
+                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 309)) );
     }
+
 }

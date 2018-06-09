@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -45,7 +46,7 @@ public class UnbanCommandExecutor implements CommandExecutor {
 
         command.getEvent().getGuild().getController().unban(bannedUser).queue(
                 success -> {
-                    sender.reply(":ok_hand: " + devi.getTranslation(command.getLanguage(), 22, bannedUser.getName() + "#" + bannedUser.getDiscriminator()));
+                    sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 22, bannedUser.getName() + "#" + bannedUser.getDiscriminator()));
                     if (command.getDeviGuild().getBanned().containsKey(bannedUser.getId())) {
                         command.getDeviGuild().getBanned().remove(bannedUser.getId());
                         command.getDeviGuild().saveSettings();

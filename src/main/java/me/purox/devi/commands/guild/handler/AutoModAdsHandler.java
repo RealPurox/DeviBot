@@ -3,6 +3,7 @@ package me.purox.devi.commands.guild.handler;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -36,12 +37,12 @@ public class AutoModAdsHandler {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 254));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 262));
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 279));
                         return;
                     }
 
@@ -55,7 +56,7 @@ public class AutoModAdsHandler {
                     }
 
                     if (entered > 2 || entered < 1) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 265));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));
                         startWaiter(nextAttempt, command, sender);
                         return;
                     }
@@ -64,10 +65,10 @@ public class AutoModAdsHandler {
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 280));
-                    else sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 281));
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 280));
+                    else sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 281));
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 263)) );
+                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 263)) );
     }
 }
 

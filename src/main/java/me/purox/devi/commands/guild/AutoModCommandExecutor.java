@@ -6,7 +6,6 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
-import me.purox.devi.utils.JavaUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 
@@ -65,7 +64,7 @@ public class AutoModCommandExecutor implements CommandExecutor {
             String value = "";
 
             if (setting.isBooleanValue()){
-                value += devi.getTranslation(command.getLanguage(), 7, JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(setting)));
+                value += devi.getTranslation(command.getLanguage(), (Boolean) valObject ? 302 : 303);
             } else {
                 value += devi.getTranslation(command.getLanguage(), 7, valObject);
             }

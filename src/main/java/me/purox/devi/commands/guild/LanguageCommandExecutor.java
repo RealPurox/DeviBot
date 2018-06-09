@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.Permission;
@@ -49,12 +50,12 @@ public class LanguageCommandExecutor implements CommandExecutor {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 254));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 254));
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 255));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 255));
                         return;
                     }
 
@@ -68,7 +69,7 @@ public class LanguageCommandExecutor implements CommandExecutor {
                     }
 
                     if (entered < 1 || entered > languageMap.size()) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 265));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));
                         startWaiter(nextAttempt, command, sender);
                         return;
                     }
@@ -76,9 +77,9 @@ public class LanguageCommandExecutor implements CommandExecutor {
                     Language language = languageMap.get(entered);
                     command.getDeviGuild().getSettings().setStringValue(GuildSettings.Settings.LANGUAGE, language.name());
                     command.getDeviGuild().saveSettings();
-                    sender.reply(":ok_hand: | " + devi.getTranslation(language, 258, "`" + language.getName() + "`"));
+                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(language, 258, "`" + language.getName() + "`"));
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 259)) );
+                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 259)) );
     }
 
     @Override

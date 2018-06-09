@@ -4,7 +4,7 @@ import me.purox.devi.core.Devi;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         new Devi().boot(args);
     }
 }

@@ -5,6 +5,7 @@ import com.mongodb.client.result.UpdateResult;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
@@ -44,12 +45,12 @@ public class AutoModRolesHandler {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 262));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 262));
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 279));
                         return;
                     }
 
@@ -86,12 +87,12 @@ public class AutoModRolesHandler {
                             startRemoveWaiter(1, command, sender);
                             break;
                         default:
-                            sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 265));
+                            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));
                             startWaiter(nextAttempt, command, sender);
                             break;
                     }
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 263)));
+                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 263)));
     }
 
     private void sendRoles(Command command, CommandSender sender) {
@@ -118,12 +119,12 @@ public class AutoModRolesHandler {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 262));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 262));
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 310));
                         return;
                     }
 
@@ -131,7 +132,7 @@ public class AutoModRolesHandler {
                     Role role = DiscordUtils.getRole(input, command.getEvent().getGuild());
 
                     if (role == null) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 296));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 296));
                         startAddWaiter(nextAttempt, command, sender);
                         return;
                     }
@@ -145,7 +146,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (isIgnoredAlready) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 297));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 297));
                         return;
                     }
 
@@ -156,12 +157,12 @@ public class AutoModRolesHandler {
                     UpdateResult updateResult = devi.getDatabaseManager().saveToDatabase("ignored_roles", document);
                     if (updateResult.wasAcknowledged()) {
                         command.getDeviGuild().getIgnoredRoles().add(document);
-                        sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 298, role.getName()));
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 298, role.getName()));
                     } else {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
                     }
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 263)));
+                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 263)));
     }
 
     private void startRemoveWaiter(int attempt, Command command, CommandSender sender) {
@@ -171,12 +172,12 @@ public class AutoModRolesHandler {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 262));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 262));
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 279));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 310));
                         return;
                     }
 
@@ -184,7 +185,7 @@ public class AutoModRolesHandler {
                     Role role = DiscordUtils.getRole(input, command.getEvent().getGuild());
 
                     if (role == null) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 296));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 296));
                         startRemoveWaiter(nextAttempt, command, sender);
                         return;
                     }
@@ -198,7 +199,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (document == null) {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 299));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 299));
                         return;
                     }
 
@@ -208,11 +209,11 @@ public class AutoModRolesHandler {
                     DeleteResult deleteResult = devi.getDatabaseManager().removeFromDatabase("ignored_roles", document.getString("_id"));
                     if (deleteResult.wasAcknowledged()) {
                         command.getDeviGuild().getIgnoredRoles().remove(document);
-                        sender.reply(":ok_hand: | " + devi.getTranslation(command.getLanguage(), 300));
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 300));
                     } else {
-                        sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
+                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
                     }
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(":no_entry: | " + devi.getTranslation(command.getLanguage(), 263)));
+                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 263)));
     }
 }

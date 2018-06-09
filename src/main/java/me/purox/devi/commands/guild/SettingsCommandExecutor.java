@@ -6,8 +6,6 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
-import me.purox.devi.utils.DiscordUtils;
-import me.purox.devi.utils.JavaUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Role;
@@ -16,7 +14,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SettingsCommandExecutor implements CommandExecutor {
 
@@ -58,7 +55,12 @@ public class SettingsCommandExecutor implements CommandExecutor {
                 else
                     value += devi.getTranslation(command.getLanguage(), 7, role.getAsMention());
             } else if (setting.isBooleanValue()){
-                value += devi.getTranslation(command.getLanguage(), 7, JavaUtils.makeBooleanBeautiful(command.getDeviGuild().getSettings().getBooleanValue(setting)));
+                value += devi.getTranslation(command.getLanguage(), (Boolean) valObject ? 302 : 303);
+            } else  if (setting == GuildSettings.Settings.LANGUAGE) {
+                Language language = Language.getLanguage((String) valObject);
+                //will never be null but intellij ain't happy without this check
+                if (language == null) return;
+                value += devi.getTranslation(command.getLanguage(), 7, language.getName());
             } else {
                 value += devi.getTranslation(command.getLanguage(), 7, valObject);
             }

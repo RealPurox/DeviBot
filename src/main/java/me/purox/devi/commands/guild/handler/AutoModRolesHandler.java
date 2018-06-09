@@ -203,13 +203,10 @@ public class AutoModRolesHandler {
                         return;
                     }
 
-                    System.out.println(document);
-
-
                     DeleteResult deleteResult = devi.getDatabaseManager().removeFromDatabase("ignored_roles", document.getString("_id"));
                     if (deleteResult.wasAcknowledged()) {
                         command.getDeviGuild().getIgnoredRoles().remove(document);
-                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 300));
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 300, role.getName()));
                     } else {
                         sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
                     }

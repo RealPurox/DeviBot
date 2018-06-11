@@ -5,16 +5,12 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.utils.MessageUtils;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PMOwnersCommandExecutor implements CommandExecutor {
 
@@ -33,12 +29,17 @@ public class PMOwnersCommandExecutor implements CommandExecutor {
             return;
         }
 
+        //https://discord.gg/WD59dZ4
+
         List<Guild> guilds = new ArrayList<>();
         devi.getShardManager().getShards().forEach(jda -> guilds.addAll(jda.getGuilds()));
 
+        String message = command.getEvent().getMessage().getContentRaw().substring(devi.getSettings().getDefaultPrefix().length() + 8);
+
         for (Guild guild : guilds) {
             Member member = guild.getOwner();
-            MessageUtils.sendPrivateMessageAsync(member.getUser(), Arrays.stream(args).collect(Collectors.joining(" ")));
+            sender.reply("Sending PM to " + member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " ...");
+            MessageUtils.sendPrivateMessageAsync(member.getUser(), message);
         }
     }
 

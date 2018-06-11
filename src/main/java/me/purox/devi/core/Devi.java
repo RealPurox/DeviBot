@@ -63,7 +63,6 @@ public class Devi {
 
     private int songsPlayed;
     private int commandsExecuted;
-    private boolean databaseConnection = false;
 
     public Devi() {
         // init handlers / managers / settings / utils
@@ -97,19 +96,14 @@ public class Devi {
 
     public void boot(String[] args) {
         if (Arrays.asList(args).contains("--devi")) this.settings.disableDevBot();
-        try {
 
-            // connect to database
-            databaseManager.connect();
-            // load translations
-            loadTranslations();
-            // load streams
-            loadStreams();
+        // connect to database
+        databaseManager.connect();
+        // load translations
+        loadTranslations();
+        // load streams
+        loadStreams();
 
-        } catch (MongoTimeoutException e) {
-            e.printStackTrace();
-            setDatabaseConnection(false);
-        }
 
         try {
             // subscribe to redis channel async because it's blocking the current thread
@@ -529,13 +523,5 @@ public class Devi {
 
     public OkHttpClient getOkHttpClient() {
         return okHttpClient;
-    }
-
-    public boolean hasDatabaseConnection() {
-        return databaseConnection;
-    }
-
-    public void setDatabaseConnection(boolean databaseConnection) {
-        this.databaseConnection = databaseConnection;
     }
 }

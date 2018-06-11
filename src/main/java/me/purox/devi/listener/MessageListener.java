@@ -17,7 +17,7 @@ public class MessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (devi.hasDatabaseConnection() && event.getGuild() != null) {
+        if (event.getGuild() != null) {
             GuildSettings settings = devi.getDeviGuild(event.getGuild().getId()).getSettings();
             if (event.getMessage().getContentRaw().equalsIgnoreCase(event.getJDA().getSelfUser().getAsMention())) {
                 Language language = Language.getLanguage(settings.getStringValue(GuildSettings.Settings.LANGUAGE));

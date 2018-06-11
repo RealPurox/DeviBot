@@ -37,63 +37,28 @@ public class DatabaseManager {
     }
 
     public UpdateResult saveToDatabase(String collection, Document document, String id) {
-        if (devi.hasDatabaseConnection()) {
-            try {
-                return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
-            } catch (MongoTimeoutException e) {
-                devi.setDatabaseConnection(false);
-            }
-        }
-        return null;
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
     }
 
     public UpdateResult saveToDatabase(String collection, Document document) {
-        if (devi.hasDatabaseConnection()) {
-            try {
-                String id = UUID.randomUUID().toString();
-                return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
-            } catch (MongoTimeoutException e) {
-                devi.setDatabaseConnection(false);
-            }
-        }
-        return null;
+        String id = UUID.randomUUID().toString();
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
     }
 
     public DeleteResult removeFromDatabase(String collection, String id) {
-        if (devi.hasDatabaseConnection()) {
-            try {
-                return database.getCollection(collection).deleteOne(Filters.eq("_id", id));
-            } catch (MongoTimeoutException e) {
-                devi.setDatabaseConnection(false);
-            }
-        }
-        return null;
+        return database.getCollection(collection).deleteOne(Filters.eq("_id", id));
     }
 
     public Document getDocument(String id, String collection) {
-        if (devi.hasDatabaseConnection()) {
-            try {
-                Document document = database.getCollection(collection).find(Filters.eq("_id", id)).first();
-                if (document == null) return new Document();
-                return document;
-            } catch (MongoTimeoutException e) {
-                devi.setDatabaseConnection(false);
-            }
-        }
-        return null;
+        Document document = database.getCollection(collection).find(Filters.eq("_id", id)).first();
+        if (document == null) return new Document();
+        return document;
     }
 
     public List<Document> getDocuments(String key, String value, String collection) {
-        if (devi.hasDatabaseConnection()) {
-            try {
-                List<Document> documents = database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
-                if (documents == null) return new ArrayList<>();
-                return documents;
-            } catch (MongoTimeoutException e) {
-                devi.setDatabaseConnection(false);
-            }
-        }
-        return null;
+        List<Document> documents = database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
+        if (documents == null) return new ArrayList<>();
+        return documents;
     }
 
     public MongoDatabase getDatabase() {

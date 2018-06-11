@@ -27,7 +27,7 @@ public class CommandListener extends ListenerAdapter {
         String prefix = devi.getSettings().getDefaultPrefix();
 
 
-        if (devi.hasDatabaseConnection() && event.getChannelType() == ChannelType.TEXT && event.getGuild() != null) {
+        if (event.getChannelType() == ChannelType.TEXT && event.getGuild() != null) {
             DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
 
             //custom commands
@@ -51,11 +51,6 @@ public class CommandListener extends ListenerAdapter {
             CommandHandler commandHandler = devi.getCommandHandler();
 
             if (commandHandler.getCommands().containsKey(invoke)) {
-                if (!devi.hasDatabaseConnection()) {
-                    MessageUtils.sendMessageAsync(event.getChannel(), DeviEmote.ERROR.get() + " | Our services are currently down for an issue with our database server provider. Thanks for your patience.");
-                    //return;
-                }
-
                 commandHandler.handleCommand(prefix, message, event, new CommandSender(event.getAuthor(), event));
             }
         }

@@ -55,6 +55,7 @@ public class CommandHandler {
         //registerCommand("embed", new EmbedCommand(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
+        registerCommand("twitch", new TwitchCommandExecutor(devi));
         //  - twitch commands
         registerCommand("addstream", new AddStreamCommandExecutor(devi));
         registerCommand("removestream", new RemoveStreamCommandExecutor(devi));

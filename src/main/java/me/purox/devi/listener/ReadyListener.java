@@ -56,18 +56,20 @@ public class ReadyListener extends ListenerAdapter {
         if(jda.getShardInfo().getShardId() == jda.getShardInfo().getShardTotal() - 1) {
             devi.startStatsPusher();
 
-            new Thread(() -> {
-                for (Guild guild : event.getJDA().getGuilds()) {
-                    // load all guild settings real quick so we can make sure they all have data stored in the database
-                    new DeviGuild(guild.getId(), devi);
-                    // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.
-                    if (guild.getSelfMember().getVoiceState().inVoiceChannel()) {
-                        guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
-                        //create player if it doesn't exist
-                        devi.getMusicManager().getPlayer(guild);
+            if (devi.hasDatabaseConnection()) {
+                new Thread(() -> {
+                    for (Guild guild : event.getJDA().getGuilds()) {
+                        // load all guild settings real quick so we can make sure they all have data stored in the database
+                        new DeviGuild(guild.getId(), devi);
+                        // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.
+                        if (guild.getSelfMember().getVoiceState().inVoiceChannel()) {
+                            guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
+                            //create player if it doesn't exist
+                            devi.getMusicManager().getPlayer(guild);
+                        }
                     }
-                }
-            }).start();
+                }).start();
+            }
         }
 
         Guild staffGuild = jda.getGuildById("392264119102996480");

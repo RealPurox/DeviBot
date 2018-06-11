@@ -3,6 +3,7 @@ package me.purox.devi.core;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.purox.devi.listener.*;
@@ -56,12 +57,13 @@ public class Devi {
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
     private HashMap<String, List<String>> streams = new HashMap<>();
 
-    OkHttpClient okHttpClient;
+    private OkHttpClient okHttpClient;
 
     private Jedis redisSender;
 
     private int songsPlayed;
     private int commandsExecuted;
+    private boolean databaseConnection = false;
 
     public Devi() {
         // init handlers / managers / settings / utils
@@ -95,12 +97,20 @@ public class Devi {
 
     public void boot(String[] args) {
         if (Arrays.asList(args).contains("--devi")) this.settings.disableDevBot();
-        // connect to database
-        databaseManager.connect();
-        // load translations
-        loadTranslations();
-        // load streams
-        loadStreams();
+        try {
+
+            // connect to database
+            databaseManager.connect();
+            // load translations
+            loadTranslations();
+            // load streams
+            loadStreams();
+
+        } catch (MongoTimeoutException e) {
+            e.printStackTrace();
+            setDatabaseConnection(false);
+        }
+
         try {
             // subscribe to redis channel async because it's blocking the current thread
             Thread redisThread = new Thread(() -> {
@@ -519,5 +529,13 @@ public class Devi {
 
     public OkHttpClient getOkHttpClient() {
         return okHttpClient;
+    }
+
+    public boolean hasDatabaseConnection() {
+        return databaseConnection;
+    }
+
+    public void setDatabaseConnection(boolean databaseConnection) {
+        this.databaseConnection = databaseConnection;
     }
 }

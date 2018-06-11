@@ -33,7 +33,7 @@ public class ModLogListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getGuild() == null || event.getMember() == null) return;
+        if (!devi.hasDatabaseConnection() || event.getGuild() == null || event.getMember() == null) return;
         DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
 
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) &&
@@ -45,7 +45,7 @@ public class ModLogListener extends ListenerAdapter {
 
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        if (event.getGuild() == null) return;
+        if (!devi.hasDatabaseConnection() || event.getGuild() == null) return;
         DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
 
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_MESSAGE_DELETED)) {
@@ -58,7 +58,7 @@ public class ModLogListener extends ListenerAdapter {
 
     @Override
     public void onMessageUpdate(MessageUpdateEvent event) {
-        if (event.getGuild() == null) return;
+        if (!devi.hasDatabaseConnection() || event.getGuild() == null) return;
         DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
 
         if (deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && deviGuild.getSettings().getBooleanValue(GuildSettings.Settings.MOD_LOG_MESSAGE_EDITED)) {

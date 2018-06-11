@@ -2,6 +2,7 @@ package me.purox.devi.database;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
@@ -36,28 +37,63 @@ public class DatabaseManager {
     }
 
     public UpdateResult saveToDatabase(String collection, Document document, String id) {
-        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+        if (devi.hasDatabaseConnection()) {
+            try {
+                return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+            } catch (MongoTimeoutException e) {
+                devi.setDatabaseConnection(false);
+            }
+        }
+        return null;
     }
 
     public UpdateResult saveToDatabase(String collection, Document document) {
-        String id = UUID.randomUUID().toString();
-        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+        if (devi.hasDatabaseConnection()) {
+            try {
+                String id = UUID.randomUUID().toString();
+                return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+            } catch (MongoTimeoutException e) {
+                devi.setDatabaseConnection(false);
+            }
+        }
+        return null;
     }
 
     public DeleteResult removeFromDatabase(String collection, String id) {
-        return database.getCollection(collection).deleteOne(Filters.eq("_id", id));
+        if (devi.hasDatabaseConnection()) {
+            try {
+                return database.getCollection(collection).deleteOne(Filters.eq("_id", id));
+            } catch (MongoTimeoutException e) {
+                devi.setDatabaseConnection(false);
+            }
+        }
+        return null;
     }
 
     public Document getDocument(String id, String collection) {
-        Document document = database.getCollection(collection).find(Filters.eq("_id", id)).first();
-        if (document == null) return new Document();
-        return document;
+        if (devi.hasDatabaseConnection()) {
+            try {
+                Document document = database.getCollection(collection).find(Filters.eq("_id", id)).first();
+                if (document == null) return new Document();
+                return document;
+            } catch (MongoTimeoutException e) {
+                devi.setDatabaseConnection(false);
+            }
+        }
+        return null;
     }
 
     public List<Document> getDocuments(String key, String value, String collection) {
-        List<Document> documents = database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
-        if (documents == null) return new ArrayList<>();
-        return documents;
+        if (devi.hasDatabaseConnection()) {
+            try {
+                List<Document> documents = database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
+                if (documents == null) return new ArrayList<>();
+                return documents;
+            } catch (MongoTimeoutException e) {
+                devi.setDatabaseConnection(false);
+            }
+        }
+        return null;
     }
 
     public MongoDatabase getDatabase() {

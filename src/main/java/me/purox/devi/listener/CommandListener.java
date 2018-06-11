@@ -3,6 +3,7 @@ package me.purox.devi.listener;
 import me.purox.devi.commands.handler.CommandHandler;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.MessageUtils;
@@ -25,7 +26,8 @@ public class CommandListener extends ListenerAdapter {
         String message = event.getMessage().getContentRaw();
         String prefix = devi.getSettings().getDefaultPrefix();
 
-        if (event.getChannelType() == ChannelType.TEXT && event.getGuild() != null) {
+
+        if (devi.hasDatabaseConnection() && event.getChannelType() == ChannelType.TEXT && event.getGuild() != null) {
             DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
 
             //custom commands
@@ -49,6 +51,11 @@ public class CommandListener extends ListenerAdapter {
             CommandHandler commandHandler = devi.getCommandHandler();
 
             if (commandHandler.getCommands().containsKey(invoke)) {
+                if (!devi.hasDatabaseConnection()) {
+                    MessageUtils.sendMessageAsync(event.getChannel(), DeviEmote.ERROR.get() + " | Our services are currently down for an issue with our database server provider. Thanks for your patience.");
+                    return;
+                }
+
                 commandHandler.handleCommand(prefix, message, event, new CommandSender(event.getAuthor(), event));
             }
         }

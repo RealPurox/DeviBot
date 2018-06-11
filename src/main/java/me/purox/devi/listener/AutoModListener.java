@@ -29,7 +29,7 @@ public class AutoModListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getGuild() == null || event.getMember() == null) return;
+        if (!devi.hasDatabaseConnection() || event.getGuild() == null || event.getMember() == null) return;
         DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 

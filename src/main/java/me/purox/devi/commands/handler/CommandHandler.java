@@ -40,6 +40,7 @@ public class CommandHandler {
         commands.put("reload", new ReloadCommandExecutor(devi));
         commands.put("threadlist", new ThreadListCommandExecutor(devi));
         commands.put("test", new TestCommandExecutor(devi));
+        commands.put("pmowners", new PMOwnersCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));

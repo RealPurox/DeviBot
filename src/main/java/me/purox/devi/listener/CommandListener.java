@@ -53,7 +53,7 @@ public class CommandListener extends ListenerAdapter {
             if (commandHandler.getCommands().containsKey(invoke)) {
                 if (!devi.hasDatabaseConnection()) {
                     MessageUtils.sendMessageAsync(event.getChannel(), DeviEmote.ERROR.get() + " | Our services are currently down for an issue with our database server provider. Thanks for your patience.");
-                    return;
+                    //return;
                 }
 
                 commandHandler.handleCommand(prefix, message, event, new CommandSender(event.getAuthor(), event));

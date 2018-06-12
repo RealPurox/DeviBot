@@ -2,16 +2,13 @@ package me.purox.devi.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.*;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.audio.CombinedAudio;
-import net.dv8tion.jda.core.audio.UserAudio;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -25,6 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackManager extends AudioEventAdapter {
 
     private final AudioPlayer audioPlayer;
+    private boolean loopSong;
     private Queue<AudioInfo> queue;
     private Queue<AudioInfo> oldQueue = new LinkedBlockingQueue<>();
     private Devi devi;
@@ -102,6 +100,10 @@ public class TrackManager extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         AudioInfo current = queue.peek();
         if (current != null) {
+            if (loopSong) {
+                player.playTrack(track.makeClone());
+                return;
+            }
             queue.remove();
             if (!queue.isEmpty())
                 player.playTrack(queue.element().getTrack());
@@ -143,5 +145,19 @@ public class TrackManager extends AudioEventAdapter {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public void setLoopSong(boolean loopSong) {
+        this.loopSong = loopSong;
+    }
+
+    public boolean isLoopSong() {
+        return loopSong;
+    }
+
+    void skip(int amount) {
+        for (int i = 0; i < amount - 1; i++) {
+            queue.remove();
+        }
     }
 }

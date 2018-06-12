@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.music.TrackManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -39,19 +40,27 @@ public class SkipCommandExecutor implements CommandExecutor {
         try {
             amount = args.length == 0 ? 1 : Integer.parseInt(args[0]);
         } catch (NumberFormatException e){
-            amount = -1;
+            amount = 1;
         }
 
-        if (amount > 10) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 133));
-            return;
+        if (amount < 1) {
+            amount = 1;
         }
+
+        TrackManager trackManager = devi.getMusicManager().getManager(command.getEvent().getGuild());
 
         String oldTrack = devi.getMusicManager().getPlayer(command.getEvent().getGuild()).getPlayingTrack().getInfo().title;
 
-        for (int i = 0; i < amount; i++) {
-            devi.getMusicManager().skip(command.getEvent().getGuild());
+        boolean wasLoopDisabled = false;
+
+        if (trackManager.isLoopSong()) {
+            trackManager.setLoopSong(false);
+            wasLoopDisabled = true;
         }
+
+        devi.getMusicManager().skip(command.getEvent().getGuild(), amount);
+
+        if (wasLoopDisabled) trackManager.setLoopSong(true);
 
         String newTrack = devi.getMusicManager().getPlayer(command.getEvent().getGuild()).getPlayingTrack() != null ? devi.getMusicManager().getPlayer(command.getEvent().getGuild()).getPlayingTrack().getInfo().title : "QUEUE_END";
 

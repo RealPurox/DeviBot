@@ -3,13 +3,11 @@ package me.purox.devi.listener;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
-import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -25,9 +23,6 @@ public class ReadyListener extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-
         User owner = event.getGuild().getOwner().getUser();
 
         String builder = "Howdy " + owner.getAsMention() + ", thank you very much for adding me to " + "**" + event.getGuild().getName() + "**" + " :wave:" + "\n\n" +

@@ -21,6 +21,7 @@ public class TestCommandExecutor implements CommandExecutor {
         if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
     }
 
+
     @Override
     public boolean guildOnly() {
         return false;

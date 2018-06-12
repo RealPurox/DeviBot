@@ -123,7 +123,7 @@ public class MessageUtils {
         }
     }
 
-    public static Message sendMessagSync(MessageChannel channel, Object object) {
+    public static Message sendMessageSync(MessageChannel channel, Object object) {
         if (channel.getType() == ChannelType.PRIVATE) {
             return sendPrivateMessageSync(((PrivateChannel)channel).getUser(), object);
         }

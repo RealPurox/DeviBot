@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
@@ -76,9 +77,9 @@ public class BanCommandExecutor implements CommandExecutor {
                     devi.getModLogManager().logBan(command.getDeviGuild(), member, command.getEvent().getMember(), reason);
 
                     if (day > 0) {
-                        sender.reply( ":ok_hand: " + devi.getTranslation(command.getLanguage(), 18, "**"+user.getName()+"#"+user.getDiscriminator()+"**", day));
+                        sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 18, "**"+user.getName()+"#"+user.getDiscriminator()+"**", day));
                     } else {
-                        sender.reply( ":ok_hand: " + devi.getTranslation(command.getLanguage(), 67, "**"+user.getName()+"#"+user.getDiscriminator()+"**"));
+                        sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 67, "**"+user.getName()+"#"+user.getDiscriminator()+"**"));
                     }
                     MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 17, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));
                 },

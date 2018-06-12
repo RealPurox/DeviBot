@@ -51,12 +51,13 @@ public class CommandHandler {
         registerCommand("fortnite", new FortniteCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
-        //registerCommand("embed", new EmbedCommand(devi));
+        registerCommand("prefix", new PrefixCommandExecutor(devi));
+        registerCommand("language", new LanguageCommandExecutor(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
+        registerCommand("twitch", new TwitchCommandExecutor(devi));
+        registerCommand("musiclog", new MusicLogCommandExecutor(devi));
         //  - twitch commands
-        registerCommand("addstream", new AddStreamCommandExecutor(devi));
-        registerCommand("removestream", new RemoveStreamCommandExecutor(devi));
         registerCommand("streamlist", new ListStreamCommandExecutor(devi));
         //  - mod commands
         registerCommand("ban", new BanCommandExecutor(devi));
@@ -97,7 +98,7 @@ public class CommandHandler {
 
     public void handleCommand(String prefix, String raw, MessageReceivedEvent event, CommandSender commandSender){
         CommandParser.CommandContainer container = parser.parseCommand(raw, event);
-        CommandExecutor commandExecutor = commands.get(raw.toLowerCase().split( " ")[0].substring(prefix.length()));
+        CommandExecutor commandExecutor = commands.get(raw.toLowerCase().substring(prefix.length()).split( " ")[0]);
 
         //perms check
         if (event != null && event.getGuild() != null && commandExecutor.getPermission() != null) {

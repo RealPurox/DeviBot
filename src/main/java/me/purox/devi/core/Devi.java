@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.listener.*;
 import me.purox.devi.core.guild.ModLogManager;
 import me.purox.devi.commands.handler.CommandHandler;
@@ -34,7 +35,6 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -50,6 +50,7 @@ public class Devi {
     private CommandHandler commandHandler;
     private ModLogManager modLogManager;
     private ShardManager shardManager;
+    private ResponseWaiter responseWaiter;
 
     private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
@@ -71,7 +72,11 @@ public class Devi {
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
+
         this.okHttpClient = new OkHttpClient();
+
+        this.responseWaiter = new ResponseWaiter();
+
         new MessageUtils(this);
 
         songsPlayed = 0;
@@ -165,6 +170,8 @@ public class Devi {
             builder.addEventListeners(new ModLogListener(this));
             builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
 
+
+
             // build & login
             this.shardManager = builder.build();
         } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
@@ -180,12 +187,6 @@ public class Devi {
             Set<String> copy = new HashSet<>(streamIDs);
             //need this to avoid interrupt exception
             Set<String> remove = new HashSet<>();
-
-            HashMap<String, String> headers = new HashMap<>();
-            headers.put("Content-Type", "application/json");
-            headers.put("Client-ID", settings.getTwitchClientID());
-            headers.put("Authorization", "Bearer " + getSettings().getTwitchSecret());
-
 
             int attempt = 0;
             while (!copy.isEmpty()) {
@@ -523,5 +524,9 @@ public class Devi {
 
     public OkHttpClient getOkHttpClient() {
         return okHttpClient;
+    }
+
+    public ResponseWaiter getResponseWaiter() {
+        return responseWaiter;
     }
 }

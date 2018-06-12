@@ -17,7 +17,7 @@ public class ModLogMessageEditHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> Enable or disable logging edited messages\t\n\n" +
+        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 339) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 305) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +
@@ -64,8 +64,8 @@ public class ModLogMessageEditHandler {
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log will now log edited messages");
-                    else sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log will no longer log edited messages");
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 340));
+                    else sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 341));
                 },
                 15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 309)) );
     }

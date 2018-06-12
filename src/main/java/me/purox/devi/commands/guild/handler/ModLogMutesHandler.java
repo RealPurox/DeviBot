@@ -17,7 +17,7 @@ public class ModLogMutesHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> Enable or disable logging mutes\t\n\n" +
+        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 342) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 305) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +
@@ -64,8 +64,8 @@ public class ModLogMutesHandler {
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log will now log mutes");
-                    else sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log will no longer log mutes");
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 344));
+                    else sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 345));
                 },
                 15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 309)) );
     }

@@ -70,8 +70,11 @@ public class Devi {
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
+
         this.okHttpClient = new OkHttpClient();
+
         this.responseWaiter = new ResponseWaiter();
+
         new MessageUtils(this);
 
         songsPlayed = 0;

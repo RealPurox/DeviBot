@@ -17,7 +17,7 @@ public class ModLogMessageDeleteHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> Enable or disable logging deleted messages\t\n\n" +
+        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 336) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 305) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +
@@ -64,8 +64,8 @@ public class ModLogMessageDeleteHandler {
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log will now log deleted messages");
-                    else sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log will no longer log deletes messages");
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 337));
+                    else sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 338));
                 },
                 15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 309)) );
     }

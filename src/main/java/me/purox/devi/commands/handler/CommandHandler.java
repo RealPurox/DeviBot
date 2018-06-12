@@ -52,13 +52,11 @@ public class CommandHandler {
         registerCommand("settings", new SettingsCommandExecutor(devi));
         registerCommand("prefix", new PrefixCommandExecutor(devi));
         registerCommand("language", new LanguageCommandExecutor(devi));
-        //registerCommand("embed", new EmbedCommand(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
         registerCommand("twitch", new TwitchCommandExecutor(devi));
+        registerCommand("musiclog", new MusicLogCommandExecutor(devi));
         //  - twitch commands
-        registerCommand("addstream", new AddStreamCommandExecutor(devi));
-        registerCommand("removestream", new RemoveStreamCommandExecutor(devi));
         registerCommand("streamlist", new ListStreamCommandExecutor(devi));
         //  - mod commands
         registerCommand("ban", new BanCommandExecutor(devi));

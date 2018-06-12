@@ -17,7 +17,7 @@ public class ModLogEnabledHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> Enable or disable Mod-Log\t\n\n" +
+        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 333) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 305) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +
@@ -64,8 +64,8 @@ public class ModLogEnabledHandler {
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log has been enabled");
-                    else sender.reply(DeviEmote.SUCCESS.get() + " | Mod-Log has been disabled");
+                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 334));
+                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 335));
                 },
                 15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 309)) );
     }

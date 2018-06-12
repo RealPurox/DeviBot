@@ -123,31 +123,6 @@ public class DeviGuild {
         }
     }
 
-    public GuildEmbed createEmbed(Document document) {
-        GuildEmbed guildEmbed = new GuildEmbed();
-        guildEmbed.setAuthorName((String) document.get("authorName"));
-        guildEmbed.setAuthorURL((String) document.get("authorURL"));
-        guildEmbed.setAuthorIconURL((String) document.get("authorIconURL"));
-        guildEmbed.setColorRed((Integer) document.get("colorRed"));
-        guildEmbed.setColorGreen((Integer) document.get("colorGreen"));
-        guildEmbed.setColorBlue((Integer) document.get("colorBlue"));
-        guildEmbed.setFooterText((String) document.get("footerText"));
-        guildEmbed.setFooterIconURL((String) document.get("footerIconURL"));
-        guildEmbed.setDescription((String) document.get("description"));
-        guildEmbed.setImageURL((String) document.get("imageURL"));
-        guildEmbed.setThumbnailURL((String) document.get("thumbnailURL"));
-        guildEmbed.setTitle((String) document.get("title"));
-        guildEmbed.setTitleURL((String) document.get("titleURL"));
-
-        List<MessageEmbed.Field> fields = new ArrayList<>();
-        for (Document doc : (List<Document>) document.get("fields")) {
-            fields.add( new MessageEmbed.Field(doc.getString("fieldName"), doc.getString("fieldValue"), doc.getBoolean("fieldInline")));
-        }
-        guildEmbed.setFields(fields);
-
-        return guildEmbed;
-    }
-
     public GuildSettings getSettings() {
         return settings;
     }

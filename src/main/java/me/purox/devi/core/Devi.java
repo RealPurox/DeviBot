@@ -3,6 +3,7 @@ package me.purox.devi.core;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.purox.devi.core.waiter.ResponseWaiter;
@@ -58,6 +59,7 @@ public class Devi {
     private HashMap<String, List<String>> streams = new HashMap<>();
 
     private OkHttpClient okHttpClient;
+
     private Jedis redisSender;
 
     private int songsPlayed;
@@ -99,12 +101,15 @@ public class Devi {
 
     public void boot(String[] args) {
         if (Arrays.asList(args).contains("--devi")) this.settings.disableDevBot();
+
         // connect to database
         databaseManager.connect();
         // load translations
         loadTranslations();
         // load streams
         loadStreams();
+
+
         try {
             // subscribe to redis channel async because it's blocking the current thread
             Thread redisThread = new Thread(() -> {

@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -92,7 +93,14 @@ public class Request {
 
             okhttp3.Request request = builder.build();
 
-            Response response = client.newCall(request).execute();
+            Response response;
+            try {
+                response = client.newCall(request).execute();
+            } catch (ConnectException e) {
+                response = null;
+            }
+
+            if (response == null) return new StringResponse("error", null, 500);
             assert response.body() != null : "Response body is null";
             return new StringResponse(response.body().string(), response.headers(), response.code());
         } catch (IOException | NullPointerException e) {

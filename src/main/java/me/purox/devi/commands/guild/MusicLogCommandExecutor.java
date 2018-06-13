@@ -158,7 +158,7 @@ public class MusicLogCommandExecutor implements CommandExecutor {
 
                     command.getDeviGuild().getSettings().setStringValue(GuildSettings.Settings.MUSIC_LOG_CHANNEL, textChannel.getId());
                     command.getDeviGuild().saveSettings();
-                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 354));
+                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 354, textChannel.getAsMention()));
                 },
                 15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 323)));
     }

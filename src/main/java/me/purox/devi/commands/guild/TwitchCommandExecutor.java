@@ -40,7 +40,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                 " '1' => " + devi.getTranslation(command.getLanguage(), 357) + "\n" +
                 " '2' => " + devi.getTranslation(command.getLanguage(), 358) + "\n" +
                 " '3' => " + devi.getTranslation(command.getLanguage(), 356) + " (" + devi.getTranslation(command.getLanguage(), textChannel == null ? 348 : 349, "#" + (textChannel != null ? textChannel.getName() : "??")) + ")\n" +
-                devi.getTranslation(command.getLanguage(), 359) +
+                devi.getTranslation(command.getLanguage(), 359, "'" + command.getPrefix() + "streamlist'") +
                 "```\n" + devi.getTranslation(command.getLanguage(), 312, "`cancel`");
 
         sender.reply(builder);

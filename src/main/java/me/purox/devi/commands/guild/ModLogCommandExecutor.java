@@ -5,6 +5,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -109,5 +110,10 @@ public class ModLogCommandExecutor implements CommandExecutor {
     @Override
     public Permission getPermission() {
         return Permission.MANAGE_SERVER;
+    }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.MOD_LOG;
     }
 }

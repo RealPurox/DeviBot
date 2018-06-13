@@ -5,6 +5,7 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.Permission;
@@ -181,5 +182,10 @@ public class MusicLogCommandExecutor implements CommandExecutor {
     @Override
     public Permission getPermission() {
         return Permission.MANAGE_SERVER;
+    }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.MUSIC;
     }
 }

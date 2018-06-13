@@ -55,9 +55,10 @@ public class CommandHandler {
         registerCommand("language", new LanguageCommandExecutor(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
-        registerCommand("twitch", new TwitchCommandExecutor(devi));
         registerCommand("musiclog", new MusicLogCommandExecutor(devi));
+        //registerCommand("welcome", new WelcomeCommandExecutor(devi));
         //  - twitch commands
+        registerCommand("twitch", new TwitchCommandExecutor(devi));
         registerCommand("streamlist", new ListStreamCommandExecutor(devi));
         //  - mod commands
         registerCommand("ban", new BanCommandExecutor(devi));

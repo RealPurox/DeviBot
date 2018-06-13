@@ -1,5 +1,6 @@
 package me.purox.devi.commands.handler;
 
+import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
@@ -16,4 +17,5 @@ public interface CommandExecutor {
 
     Permission getPermission();
 
+    ModuleType getModuleType();
 }

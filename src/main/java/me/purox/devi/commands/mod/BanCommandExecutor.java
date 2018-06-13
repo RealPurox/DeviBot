@@ -5,6 +5,7 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
@@ -105,5 +106,10 @@ public class BanCommandExecutor implements CommandExecutor {
     @Override
     public Permission getPermission() {
         return Permission.BAN_MEMBERS;
+    }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.MODERATION;
     }
 }

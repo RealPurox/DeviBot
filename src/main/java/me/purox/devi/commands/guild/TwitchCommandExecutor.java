@@ -6,6 +6,7 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
@@ -334,5 +335,10 @@ public class TwitchCommandExecutor implements CommandExecutor {
     @Override
     public Permission getPermission() {
         return Permission.MANAGE_SERVER;
+    }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.TWITCH;
     }
 }

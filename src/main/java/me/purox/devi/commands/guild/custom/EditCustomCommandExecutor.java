@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 import org.bson.Document;
 
@@ -77,5 +78,10 @@ public class EditCustomCommandExecutor implements CommandExecutor {
     @Override
     public Permission getPermission() {
         return Permission.MANAGE_SERVER;
+    }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.CUSTOM_COMMANDS;
     }
 }

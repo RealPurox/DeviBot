@@ -97,6 +97,6 @@ public class SettingsCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.INFO_COMMANDS;
     }
 }

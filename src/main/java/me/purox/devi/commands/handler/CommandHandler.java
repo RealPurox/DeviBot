@@ -139,15 +139,10 @@ public class CommandHandler {
 
     public void startConsoleCommandListener() {
         NonblockingBufferedReader reader = new NonblockingBufferedReader(new BufferedReader(new InputStreamReader(System.in)));
-        boolean stop = false;
         try {
-            while (!stop) {
+            while (true) {
                 String line = reader.readLine();
                 if (line != null) {
-                    if (line.equals("--stop command-listener")){
-                        stop = true;
-                    }
-
                     CommandHandler commandHandler = devi.getCommandHandler();
                     String invoke = line.split(" ")[0].toLowerCase();
                     if (commandHandler.getCommands().containsKey(invoke)) {

@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.JavaUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.core.Permission;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class HelpCommandExecutor implements CommandExecutor {
@@ -24,35 +26,64 @@ public class HelpCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        List<String> raw = new ArrayList<>(devi.getCommandHandler().getUnmodifiedCommands().keySet());
-        List<List<String>> pages = JavaUtils.chopList(raw, 5);
+        HashMap<String, CommandExecutor> commands = devi.getCommandHandler().getUnmodifiedCommands();
+        if (args.length == 0 ) {
+            EmbedBuilder builder = new EmbedBuilder();
 
-        int page;
-        try {
-            page = args.length > 0 ? Integer.parseInt(args[0]) : 0;
-        } catch (NumberFormatException e) {
-            page = 1;
+            builder.setAuthor("Devi Command Help", "https://www.devibot.net/wiki");
+            builder.setColor(Color.decode("#7289da"));
+
+            builder.appendDescription("Use `" + command.getPrefix() + "help <command>` to get information about a specific command.\n");
+            builder.appendDescription("Example: `" + command.getPrefix() + "help settings`\n\n");
+            builder.appendDescription("Use `" + command.getPrefix() + "modulehelp <module>` to get information about a specific module.\n");
+            builder.appendDescription("Example: `" + command.getPrefix() + "modulehelp music`");
+
+            for (ModuleType moduleType : ModuleType.values()) {
+                if (devi.getDisabledModules().contains(moduleType))
+                    builder.addField(moduleType.getName(), "This module is currently disabled", false);
+                else if (commands.keySet().stream().anyMatch(invoke -> commands.get(invoke).getModuleType() == moduleType))
+                    builder.addField(moduleType.getName(), "`" + command.getPrefix() + commands.keySet().stream()
+                            .filter(invoke -> commands.get(invoke).getModuleType() == moduleType)
+                            .collect(Collectors.joining("`, `" + command.getPrefix())) + "`", false);
+            }
+
+            sender.reply(builder.build());
+            return;
         }
 
-        int total = pages.size();
-        if (page > total) page = total;
-        else if (page < 1 ) page = 1;
+        String invoke = args[0];
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setColor(new Color(34, 113, 126));
-        builder.setAuthor(devi.getTranslation(command.getLanguage(), 32, page, pages.size()));
-        builder.setFooter(devi.getTranslation(command.getLanguage(), 33, command.getPrefix() + "help [page]"), null);
-
-        for (String c : pages.get(page - 1)) {
-            CommandExecutor cmd = devi.getCommandHandler().getUnmodifiedCommands().get(c);
-            builder.appendDescription("**" + command.getPrefix() + c + "**\n");
-            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 34, devi.getTranslation(command.getLanguage(), cmd.getDescriptionTranslationID()))) + "\n");
-            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 35, (cmd.getPermission() == null ? "N/A" : cmd.getPermission().name()))) + "\n");
-            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 36, (cmd.getAliases() == null ? "N/A" :
-                    "`" + cmd.getAliases().stream().collect(Collectors.joining("`, `")) + "`"))) + "\n\n");
+        if (!commands.containsKey(invoke)) {
+            sender.reply(DeviEmote.ERROR.get() + " | The command `" + invoke + "` could not be found.");
+            return;
         }
 
-        sender.reply(builder.build());
+        char capital = Character.toUpperCase(invoke.charAt(0));
+        String capitalInvoke = capital + invoke.toLowerCase().substring(1);
+
+
+        CommandExecutor cmd = commands.get(invoke);
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("__**").append(capitalInvoke).append(" - Command Help**__\n\n");
+
+        if (cmd.getPermission() != null)
+            builder.append("`-` This command requires you to have the ").append(cmd.getPermission().getName()).append(" permission.").append("\n\n");
+
+        if (cmd.guildOnly()) {
+            builder.append("`-` This command can only be executed in Discord servers\n\n");
+        }
+
+        builder.append("**Module:** ").append(cmd.getModuleType().getName()).append("\n\n");
+        builder.append("**Description:** ").append(devi.getTranslation(command.getLanguage(), cmd.getDescriptionTranslationID())).append("\n\n");
+
+        if (cmd.getAliases() == null)
+            builder.append("**Aliases:** None");
+        else builder.append("**Aliases:** ").append("`").append(command.getPrefix()).append(cmd.getAliases().stream().collect(Collectors.joining("`, `" + command.getPrefix()))).append("`").append("\n\n");
+
+
+
+        sender.reply(builder.toString());
     }
 
 

@@ -18,7 +18,7 @@ public class ReloadCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (command.getEvent() != null && !devi.getAdmins().contains(sender.getId()) && !sender.getId().equals("161494492422078464") && !sender.isConsoleCommandSender()) return;
+        if (command.getEvent() != null && !devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
         devi.loadTranslations();
         sender.reply("Translations reloaded");
     }

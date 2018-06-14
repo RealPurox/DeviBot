@@ -41,6 +41,8 @@ public class CommandHandler {
         commands.put("threadlist", new ThreadListCommandExecutor(devi));
         commands.put("test", new TestCommandExecutor(devi));
         commands.put("pmowners", new PMOwnersCommandExecutor(devi));
+        commands.put("admindisable", new AdminDisableCommandExecutor(devi));
+        commands.put("adminenable", new AdminEnableCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
@@ -113,6 +115,12 @@ public class CommandHandler {
         //guild only check
         if ((commandExecutor.guildOnly() && event != null && event.getGuild() == null) || commandExecutor.guildOnly() && commandSender.isConsoleCommandSender()) {
             commandSender.reply(":warning: **" + devi.getTranslation(Language.ENGLISH, 1) + "**");
+            return;
+        }
+
+        //module check
+        if (devi.getDisabledModules().contains(commandExecutor.getModuleType())) {
+            commandSender.reply(devi.getTranslation(container.getCommand().getLanguage(), 377));
             return;
         }
 

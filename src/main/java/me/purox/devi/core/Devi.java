@@ -3,7 +3,6 @@ package me.purox.devi.core;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.purox.devi.core.waiter.ResponseWaiter;
@@ -57,6 +56,7 @@ public class Devi {
     private LoadingCache<String, DeviGuild> deviGuildLoadingCache;
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
     private HashMap<String, List<String>> streams = new HashMap<>();
+    private List<ModuleType> disabledModules = new ArrayList<>();
 
     private OkHttpClient okHttpClient;
 
@@ -151,7 +151,7 @@ public class Devi {
                     subscribeToStream.add(streamID);
                 }
             }
-            //re-sub to them
+            //(re-)sub to them
             changeTwitchSubscriptionStatus(subscribeToStream, true);
 
             // create builder
@@ -528,5 +528,9 @@ public class Devi {
 
     public ResponseWaiter getResponseWaiter() {
         return responseWaiter;
+    }
+
+    public List<ModuleType> getDisabledModules() {
+        return disabledModules;
     }
 }

@@ -51,6 +51,7 @@ public class CommandHandler {
         registerCommand("hypixel", new HypixelCommandExecutor(devi));
         registerCommand("hive", new HiveCommandExecutor(devi));
         registerCommand("fortnite", new FortniteCommandExecutor(devi));
+        registerCommand("weather", new WeatherCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         registerCommand("prefix", new PrefixCommandExecutor(devi));

@@ -350,7 +350,7 @@ public class Devi {
                             EmbedBuilder builder = new EmbedBuilder();
                             builder.setColor(new Color(100, 65, 164));
                             builder.setAuthor(userData.getString("display_name"), url, "https://www.twitch.tv/p/assets/uploads/glitch_474x356.png");
-                            builder.setImage(object.getString("thumbnail_url").replace("{width}", "1280").replace("{height}", "720"));
+                            builder.setImage(object.getString("thumbnail_url").replace("{width}", "480").replace("{height}", "270"));
                             builder.setDescription(object.getString("title"));
                             builder.addField(getTranslation(language, 208), String.valueOf(object.getInt("viewer_count")), true);
 

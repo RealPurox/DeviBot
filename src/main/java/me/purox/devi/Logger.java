@@ -47,7 +47,7 @@ public class Logger {
                         if (guild == null)return;
                         TextChannel channel = guild.getTextChannelById("422325680739713034");
                         if (channel == null)return;
-                        MessageUtils.sendMessageAsync(channel, "Devi's logs [" + dateFormat.format(new Date(lastPush)) + "] - [" + dateFormat.format(new Date()) + "]: https://hastebin.com/" + res.getBody().getString("key"));
+                        MessageUtils.sendMessageAsync(channel, "Devi's logs [" + dateFormat.format(new Date(lastPush)) + "] - [" + dateFormat.format(new Date()) + "]: https://hastebin.com/" + res.getBody().getString("key") + ".txt");
                     });
         }, 30, 30, TimeUnit.MINUTES);
     }

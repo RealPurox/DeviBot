@@ -46,7 +46,7 @@ public class TimeUtils {
         }
     }
 
-    private static String toRelative(long duration) {
+    public static String toRelative(long duration) {
         return toRelative(duration, times.size());
     }
 

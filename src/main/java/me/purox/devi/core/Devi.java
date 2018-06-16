@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import me.purox.devi.Logger;
 import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.listener.*;
 import me.purox.devi.core.guild.ModLogManager;
@@ -28,6 +29,7 @@ import okhttp3.OkHttpClient;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.omg.PortableInterceptor.LOCATION_FORWARD;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
@@ -59,8 +61,8 @@ public class Devi {
     private List<ModuleType> disabledModules = new ArrayList<>();
 
     private OkHttpClient okHttpClient;
-
     private Jedis redisSender;
+    private Logger logger;
 
     private int songsPlayed;
     private int commandsExecuted;
@@ -72,11 +74,9 @@ public class Devi {
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.modLogManager = new ModLogManager(this);
-
+        this.logger = new Logger(this);
         this.okHttpClient = new OkHttpClient();
-
         this.responseWaiter = new ResponseWaiter();
-
         new MessageUtils(this);
 
         songsPlayed = 0;
@@ -100,7 +100,10 @@ public class Devi {
     }
 
     public void boot(String[] args) {
-        if (Arrays.asList(args).contains("--devi")) this.settings.disableDevBot();
+        if (Arrays.asList(args).contains("--devi")) {
+            this.settings.disableDevBot();
+            logger.log("Starting as public bot");
+        } else logger.log("Starting as dev bot");
 
         // connect to database
         databaseManager.connect();
@@ -147,7 +150,7 @@ public class Devi {
                 long days = ((System.currentTimeMillis() - lastSubLong) / (60*60*24*1000));
                 //the subscription was more than 5 days ago, renew the subscription.
                 if (days >= 5) {
-                    System.out.println("Subscription to " + streamID + " was more than 5 days ago, renewing ...");
+                    logger.log("Twitch event subscription to stream id " + streamID + " was more than 5 days ago, renewing ...");
                     subscribeToStream.add(streamID);
                 }
             }
@@ -176,8 +179,7 @@ public class Devi {
             this.shardManager = builder.build();
         } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
             e.printStackTrace();
-            System.out.println("BOOTING FAILED - SHUTTING DOWN");
-            System.out.println(e instanceof JedisConnectionException ? "(FAILED TO CONNECT TO REDIS SERVER)" : "");
+            logger.wtf("BOOTING FAILED - SHUTTING DOWN");
             System.exit(-5);
         }
     }
@@ -369,12 +371,12 @@ public class Devi {
 
             @Override
             public void onSubscribe(String channel, int subscribedChannels) {
-                System.out.println("Subscribed to redis channel " + channel);
+                logger.log("Subscribed to redis channel " + channel);
             }
 
             @Override
             public void onUnsubscribe(String channel, int subscribedChannels) {
-                System.out.println("Unsubscribe from redis channel " + channel);
+                logger.log("Unsubscribe from redis channel " + channel);
             }
         };
     }
@@ -433,14 +435,14 @@ public class Devi {
         //post every half an hour to bot lists
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             Stats stats = new Stats();
-            Request.StringResponse response = new RequestBuilder(okHttpClient)
+            new RequestBuilder(okHttpClient)
                     .setURL("https://discordbots.org/api/bots/354361427731152907/stats")
                     .setRequestType(Request.RequestType.POST)
                     //body
                     .appendBody("server_count", stats.getGuilds())
                     //header
                     .addHeader("Authorization", settings.getDiscordBotsDotOrgToken())
-                    .build().asStringSync();
+                    .build().asString(success -> logger.log("Pushed stats to DBL"));
         }, 0, 30, TimeUnit.MINUTES);
 
         //post stats every 2 min to the website
@@ -458,7 +460,7 @@ public class Devi {
                     //header
                     .addHeader("Authorization", "Bearer " + settings.getDeviAPIAuthorization())
                     .addHeader("Content-Type", "application/json")
-                    .build().asStringSync();
+                    .build().asString(success -> logger.log("Pushed stats to website"));
         }, 0, 2, TimeUnit.MINUTES);
     }
 
@@ -532,5 +534,9 @@ public class Devi {
 
     public List<ModuleType> getDisabledModules() {
         return disabledModules;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }

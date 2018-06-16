@@ -120,7 +120,7 @@ public class GuildSettings {
 
     private void logSettingUpdate(Settings settings, Object value) {
         Guild guild = deviGuild.getDevi().getShardManager().getGuildById(deviGuild.getId());
-        System.out.println("[INFO] Set " + settings.name() + " to " + value + " in guild " + deviGuild.getId() + " (" + (guild == null ? "N/A" : guild.getName()) + ")");
+        deviGuild.getDevi().getLogger().log("Set " + settings.name() + " to " + value + " in guild " + deviGuild.getId() + " (" + (guild == null ? "N/A" : guild.getName()) + ")");
     }
 
     public void setStringValue(Settings settings, String value) {

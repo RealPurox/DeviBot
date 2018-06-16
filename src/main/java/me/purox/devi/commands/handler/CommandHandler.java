@@ -125,6 +125,7 @@ public class CommandHandler {
         }
 
         //all good, run the command
+        devi.getLogger().log("Command '" + raw + "' executed by " + commandSender.getName() + "#" + commandSender.getDiscriminator() + " in channel-type " + (event != null ? event.getChannelType() : "UNKNOWN"));
         devi.increaseCommandsExecuted();
         commandExecutor.execute(container.getArgs(), container.getCommand(), commandSender);
     }

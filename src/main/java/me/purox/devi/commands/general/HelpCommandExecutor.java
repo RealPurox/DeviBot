@@ -35,8 +35,8 @@ public class HelpCommandExecutor implements CommandExecutor {
 
             builder.appendDescription("Use `" + command.getPrefix() + "help <command>` to get information about a specific command.\n");
             builder.appendDescription("Example: `" + command.getPrefix() + "help settings`\n\n");
-            builder.appendDescription("Use `" + command.getPrefix() + "modulehelp <module>` to get information about a specific module.\n");
-            builder.appendDescription("Example: `" + command.getPrefix() + "modulehelp music`");
+            //builder.appendDescription("Use `" + command.getPrefix() + "modulehelp <module>` to get information about a specific module.\n");
+            //builder.appendDescription("Example: `" + command.getPrefix() + "modulehelp music`");
 
             for (ModuleType moduleType : ModuleType.values()) {
                 if (devi.getDisabledModules().contains(moduleType))

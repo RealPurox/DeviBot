@@ -109,7 +109,7 @@ public class WeatherCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 0;
+        return 400;
     }
 
     @Override
@@ -124,6 +124,6 @@ public class WeatherCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.INFO_COMMANDS;
     }
 }

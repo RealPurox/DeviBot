@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
@@ -49,5 +50,10 @@ public class ShuffleCommandExecutor implements CommandExecutor {
     @Override
     public Permission getPermission() {
         return Permission.MANAGE_SERVER;
+    }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.MUSIC;
     }
 }

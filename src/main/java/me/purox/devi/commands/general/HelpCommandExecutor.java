@@ -4,7 +4,8 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.utils.JavaUtils;
+import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 
@@ -23,35 +24,65 @@ public class HelpCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        List<String> raw = new ArrayList<>(devi.getCommandHandler().getUnmodifiedCommands().keySet());
-        List<List<String>> pages = JavaUtils.chopList(raw, 5);
+        HashMap<String, CommandExecutor> commands = devi.getCommandHandler().getUnmodifiedCommands();
+        if (args.length == 0 ) {
+            EmbedBuilder builder = new EmbedBuilder();
 
-        int page;
-        try {
-            page = args.length > 0 ? Integer.parseInt(args[0]) : 0;
-        } catch (NumberFormatException e) {
-            page = 1;
+            builder.setAuthor(devi.getTranslation(command.getLanguage(), 388), "https://www.devibot.net/wiki");
+            builder.setColor(Color.decode("#7289da"));
+
+            builder.appendDescription("\n");
+            builder.appendDescription(devi.getTranslation(command.getLanguage(), 389, "`" + command.getPrefix() + "help <command>`"));
+            builder.appendDescription(devi.getTranslation(command.getLanguage(), 390) + " `" + command.getPrefix() + "help settings`\n\n");
+            //builder.appendDescription("Use `" + command.getPrefix() + "modulehelp <module>` to get information about a specific module.\n");
+            //builder.appendDescription("Example: `" + command.getPrefix() + "modulehelp music`");
+
+            for (ModuleType moduleType : ModuleType.values()) {
+                if (devi.getDisabledModules().contains(moduleType))
+                    builder.addField(moduleType.getName(), devi.getTranslation(command.getLanguage(), 391), false);
+                else if (commands.keySet().stream().anyMatch(invoke -> commands.get(invoke).getModuleType() == moduleType))
+                    builder.addField(moduleType.getName(), "`" + command.getPrefix() + commands.keySet().stream()
+                            .filter(invoke -> commands.get(invoke).getModuleType() == moduleType)
+                            .collect(Collectors.joining("`, `" + command.getPrefix())) + "`", false);
+            }
+
+            sender.reply(builder.build());
+            return;
         }
 
-        int total = pages.size();
-        if (page > total) page = total;
-        else if (page < 1 ) page = 1;
+        String invoke = args[0];
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setColor(new Color(34, 113, 126));
-        builder.setAuthor(devi.getTranslation(command.getLanguage(), 32, page, pages.size()));
-        builder.setFooter(devi.getTranslation(command.getLanguage(), 33, command.getPrefix() + "help [page]"), null);
-
-        for (String c : pages.get(page - 1)) {
-            CommandExecutor cmd = devi.getCommandHandler().getUnmodifiedCommands().get(c);
-            builder.appendDescription("**" + command.getPrefix() + c + "**\n");
-            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 34, devi.getTranslation(command.getLanguage(), cmd.getDescriptionTranslationID()))) + "\n");
-            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 35, (cmd.getPermission() == null ? "N/A" : cmd.getPermission().name()))) + "\n");
-            builder.appendDescription(" - " + (devi.getTranslation(command.getLanguage(), 36, (cmd.getAliases() == null ? "N/A" :
-                    "`" + cmd.getAliases().stream().collect(Collectors.joining("`, `")) + "`"))) + "\n\n");
+        if (!commands.containsKey(invoke)) {
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 392));
+            return;
         }
 
-        sender.reply(builder.build());
+        char capital = Character.toUpperCase(invoke.charAt(0));
+        String capitalInvoke = capital + invoke.toLowerCase().substring(1);
+
+
+        CommandExecutor cmd = commands.get(invoke);
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("__**").append(capitalInvoke).append(" - ").append(devi.getTranslation(command.getLanguage(), 393)).append("**__\n\n");
+
+        if (cmd.getPermission() != null)
+            builder.append("`-` ").append(devi.getTranslation(command.getLanguage(), 394, cmd.getPermission().getName())).append("\n\n");
+
+        if (cmd.guildOnly()) {
+            builder.append("`-` ").append(devi.getTranslation(command.getLanguage(), 395)).append("\n\n");
+        }
+
+        builder.append("**").append(devi.getTranslation(command.getLanguage(), 396)).append(":** ").append(cmd.getModuleType().getName()).append("\n\n");
+        builder.append("**").append(devi.getTranslation(command.getLanguage(), 397)).append(":** ").append(devi.getTranslation(command.getLanguage(), cmd.getDescriptionTranslationID())).append("\n\n");
+
+        if (cmd.getAliases() == null)
+            builder.append("**").append(devi.getTranslation(command.getLanguage(), 398)).append(":** ").append(devi.getTranslation(command.getLanguage(), 399));
+        else builder.append("**").append(devi.getTranslation(command.getLanguage(), 398)).append(":** ").append("`").append(command.getPrefix()).append(cmd.getAliases().stream().collect(Collectors.joining("`, `" + command.getPrefix()))).append("`").append("\n\n");
+
+
+
+        sender.reply(builder.toString());
     }
 
 
@@ -74,4 +105,10 @@ public class HelpCommandExecutor implements CommandExecutor {
     public Permission getPermission() {
         return null;
     }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.INFO_COMMANDS;
+    }
 }
+

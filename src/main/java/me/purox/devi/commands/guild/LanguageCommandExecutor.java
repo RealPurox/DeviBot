@@ -6,6 +6,7 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.Language;
+import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -100,5 +101,10 @@ public class LanguageCommandExecutor implements CommandExecutor {
     @Override
     public Permission getPermission() {
         return Permission.MANAGE_SERVER;
+    }
+
+    @Override
+    public ModuleType getModuleType() {
+        return null;
     }
 }

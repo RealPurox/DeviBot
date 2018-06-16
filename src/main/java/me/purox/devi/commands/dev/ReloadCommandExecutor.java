@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class ReloadCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (command.getEvent() != null && !devi.getAdmins().contains(sender.getId()) && !sender.getId().equals("161494492422078464") && !sender.isConsoleCommandSender()) return;
+        if (command.getEvent() != null && !devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
         devi.loadTranslations();
         sender.reply("Translations reloaded");
     }
@@ -41,4 +42,10 @@ public class ReloadCommandExecutor implements CommandExecutor {
     public Permission getPermission() {
         return null;
     }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.DEV;
+    }
 }
+

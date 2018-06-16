@@ -1,4 +1,4 @@
-package me.purox.devi.commands.dev;
+package me.purox.devi.commands.guild;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
@@ -9,28 +9,26 @@ import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
 
-public class TestCommandExecutor implements CommandExecutor {
+public class WelcomeCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public TestCommandExecutor(Devi devi) {
+    public WelcomeCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
     }
-
 
     @Override
     public boolean guildOnly() {
-        return false;
+        return true;
     }
 
     @Override
     public int getDescriptionTranslationID() {
-        return 0;
+        return 376;
     }
 
     @Override
@@ -40,12 +38,11 @@ public class TestCommandExecutor implements CommandExecutor {
 
     @Override
     public Permission getPermission() {
-        return null;
+        return Permission.MANAGE_SERVER;
     }
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.DEV;
+        return ModuleType.WELCOME;
     }
 }
-

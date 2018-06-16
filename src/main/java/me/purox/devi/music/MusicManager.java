@@ -144,7 +144,8 @@ public class MusicManager {
         });
     }
 
-    public void skip(Guild g) {
+    public void skip(Guild g, int amount) {
+        getManager(g).skip(amount);
         getPlayer(g).stopTrack();
     }
 

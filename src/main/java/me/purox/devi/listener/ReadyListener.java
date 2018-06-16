@@ -34,18 +34,18 @@ public class ReadyListener extends ListenerAdapter {
                 "Okay, we've talked enough. If you want to get a list of all commands simple type `!help`. " +
                 "OH and before I forget it, you should definitely checkout our awesome website <https://www.devibot.net/>";
         MessageUtils.sendPrivateMessageAsync(event.getGuild().getOwner().getUser(), builder);
-        System.out.println("[INFO] Joined Guild " + event.getGuild().getName() + " ( " + event.getGuild().getId() + " ) " + event.getGuild().getOwner().getUser().getName() + "#" + event.getGuild().getOwner().getUser().getDiscriminator());
+        devi.getLogger().log("Joined Guild " + event.getGuild().getName() + " ( " + event.getGuild().getId() + " ) " + event.getGuild().getOwner().getUser().getName() + "#" + event.getGuild().getOwner().getUser().getDiscriminator());
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        System.out.println("[INFO] Left Guild " + event.getGuild().getName() + " ( " + event.getGuild().getId() + " ) " + event.getGuild().getOwner().getUser().getName() + "#" + event.getGuild().getOwner().getUser().getDiscriminator());
+        devi.getLogger().log("Left Guild " + event.getGuild().getName() + " ( " + event.getGuild().getId() + " ) " + event.getGuild().getOwner().getUser().getName() + "#" + event.getGuild().getOwner().getUser().getDiscriminator());
     }
 
     @Override
     public void onReady(ReadyEvent event) {
         JDA jda = event.getJDA();
-        System.out.println(jda.getShardInfo() + " is ready");
+        devi.getLogger().log(jda.getShardInfo() + " is ready");
 
         //last shard booted
         if(jda.getShardInfo().getShardId() == jda.getShardInfo().getShardTotal() - 1) {

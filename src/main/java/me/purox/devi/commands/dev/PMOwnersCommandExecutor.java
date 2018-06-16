@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -62,4 +63,10 @@ public class PMOwnersCommandExecutor implements CommandExecutor {
     public Permission getPermission() {
         return null;
     }
+
+    @Override
+    public ModuleType getModuleType() {
+        return ModuleType.DEV;
+    }
 }
+

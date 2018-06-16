@@ -41,6 +41,8 @@ public class CommandHandler {
         commands.put("threadlist", new ThreadListCommandExecutor(devi));
         commands.put("test", new TestCommandExecutor(devi));
         commands.put("pmowners", new PMOwnersCommandExecutor(devi));
+        commands.put("admindisable", new AdminDisableCommandExecutor(devi));
+        commands.put("adminenable", new AdminEnableCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
@@ -49,15 +51,17 @@ public class CommandHandler {
         registerCommand("hypixel", new HypixelCommandExecutor(devi));
         registerCommand("hive", new HiveCommandExecutor(devi));
         registerCommand("fortnite", new FortniteCommandExecutor(devi));
+        registerCommand("weather", new WeatherCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         registerCommand("prefix", new PrefixCommandExecutor(devi));
         registerCommand("language", new LanguageCommandExecutor(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
-        registerCommand("twitch", new TwitchCommandExecutor(devi));
         registerCommand("musiclog", new MusicLogCommandExecutor(devi));
+        //registerCommand("welcome", new WelcomeCommandExecutor(devi));
         //  - twitch commands
+        registerCommand("twitch", new TwitchCommandExecutor(devi));
         registerCommand("streamlist", new ListStreamCommandExecutor(devi));
         //  - mod commands
         registerCommand("ban", new BanCommandExecutor(devi));
@@ -84,6 +88,7 @@ public class CommandHandler {
         registerCommand("shuffle", new ShuffleCommandExecutor(devi));
         registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
         registerCommand("volume", new VolumeCommandExecutor(devi));
+        registerCommand("loop", new LoopCommandExecutor(devi));
     }
 
     private void registerCommand(String commandName, CommandExecutor commandExecutor){
@@ -114,7 +119,14 @@ public class CommandHandler {
             return;
         }
 
+        //module check
+        if (devi.getDisabledModules().contains(commandExecutor.getModuleType())) {
+            commandSender.reply(devi.getTranslation(container.getCommand().getLanguage(), 377));
+            return;
+        }
+
         //all good, run the command
+        devi.getLogger().log("Command '" + raw + "' executed by " + commandSender.getName() + "#" + commandSender.getDiscriminator() + " in channel-type " + (event != null ? event.getChannelType() : "UNKNOWN"));
         devi.increaseCommandsExecuted();
         commandExecutor.execute(container.getArgs(), container.getCommand(), commandSender);
     }
@@ -129,15 +141,10 @@ public class CommandHandler {
 
     public void startConsoleCommandListener() {
         NonblockingBufferedReader reader = new NonblockingBufferedReader(new BufferedReader(new InputStreamReader(System.in)));
-        boolean stop = false;
         try {
-            while (!stop) {
+            while (true) {
                 String line = reader.readLine();
                 if (line != null) {
-                    if (line.equals("--stop command-listener")){
-                        stop = true;
-                    }
-
                     CommandHandler commandHandler = devi.getCommandHandler();
                     String invoke = line.split(" ")[0].toLowerCase();
                     if (commandHandler.getCommands().containsKey(invoke)) {

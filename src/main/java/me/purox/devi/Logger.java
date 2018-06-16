@@ -26,7 +26,7 @@ public class Logger {
         this.devi = devi;
         this.logs = new ArrayList<>();
         this.debug = false;
-        this.dateFormat = new SimpleDateFormat("dd/mm/yyy hh:mm:ss");
+        this.dateFormat = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
         this.lastPush = System.currentTimeMillis();
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
@@ -47,7 +47,7 @@ public class Logger {
                         if (guild == null)return;
                         TextChannel channel = guild.getTextChannelById("422325680739713034");
                         if (channel == null)return;
-                        MessageUtils.sendMessageAsync(channel, "Devi's logs [" + dateFormat.format(new Date(lastPush)) + "] - [" + dateFormat.format(new Date()) + "]: https://hastebin.com/" + res.getBody().getString("key"));
+                        MessageUtils.sendMessageAsync(channel, "Devi's logs [" + dateFormat.format(new Date(lastPush)) + "] - [" + dateFormat.format(new Date()) + "]: https://hastebin.com/" + res.getBody().getString("key") + ".txt");
                     });
         }, 30, 30, TimeUnit.MINUTES);
     }

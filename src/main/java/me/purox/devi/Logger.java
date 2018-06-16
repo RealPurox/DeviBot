@@ -26,7 +26,7 @@ public class Logger {
         this.devi = devi;
         this.logs = new ArrayList<>();
         this.debug = false;
-        this.dateFormat = new SimpleDateFormat("dd/mm/yyy hh:mm:ss");
+        this.dateFormat = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
         this.lastPush = System.currentTimeMillis();
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {

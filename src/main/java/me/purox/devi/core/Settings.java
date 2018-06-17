@@ -34,7 +34,7 @@ public class Settings {
     }
 
     String getDeviAPIAuthorization() {
-        return System.getenv("DEVI_AUTH");
+        return "123";
     }
 
     String getDiscordBotsDotOrgToken() {

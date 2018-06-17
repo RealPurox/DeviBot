@@ -53,6 +53,7 @@ public class CommandHandler {
         registerCommand("hive", new HiveCommandExecutor(devi));
         registerCommand("fortnite", new FortniteCommandExecutor(devi));
         registerCommand("weather", new WeatherCommandExecutor(devi));
+        registerCommand("flipcoin", new FlipCoinCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         registerCommand("prefix", new PrefixCommandExecutor(devi));

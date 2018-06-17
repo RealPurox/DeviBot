@@ -29,10 +29,10 @@ import okhttp3.OkHttpClient;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.omg.PortableInterceptor.LOCATION_FORWARD;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+import redis.clients.jedis.exceptions.JedisDataException;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -66,6 +66,7 @@ public class Devi {
 
     private int songsPlayed;
     private int commandsExecuted;
+    private boolean redisConnection = false;
 
     public Devi() {
         // init handlers / managers / settings / utils
@@ -116,12 +117,17 @@ public class Devi {
         try {
             // subscribe to redis channel async because it's blocking the current thread
             Thread redisThread = new Thread(() -> {
-                redisSender = new Jedis("54.38.182.128");
-                redisSender.auth(settings.getDeviAPIAuthorization());
+                try {
+                    redisSender = new Jedis("54.38.182.128");
+                    redisSender.auth(settings.getDeviAPIAuthorization());
 
-                Jedis receiverRedis = new Jedis("54.38.182.128");
-                receiverRedis.auth(settings.getDeviAPIAuthorization());
-                receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
+                    Jedis receiverRedis = new Jedis("54.38.182.128");
+                    receiverRedis.auth(settings.getDeviAPIAuthorization());
+                    receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
+                    redisConnection = true;
+                } catch (JedisDataException e) {
+                    redisConnection = false;
+                }
             });
             redisThread.setName("Devi Redis Thread");
             redisThread.start();
@@ -137,9 +143,10 @@ public class Devi {
             // subscribe to twitch events
             Set<String> subscribeToStream = new HashSet<>();
             for (String streamID : streams.keySet()) {
+                if (!redisConnection) break;
                 //get time of last subscription
                 String lastSubscription = getRedisSender().hget("streams#2", streamID);
-                //there is not record of a last subscription, subscribe to stream events.
+                //there is no record of a last subscription, subscribe to stream events.
                 if (lastSubscription == null) {
                     subscribeToStream.add(streamID);
                     continue;

@@ -5,7 +5,7 @@ public class Settings {
     private boolean devBot = true;
 
     public String getDefaultPrefix() {
-        return devBot ? "-" : "!";
+        return devBot ? "<" : "!";
     }
 
     String getBotToken() {
@@ -34,7 +34,7 @@ public class Settings {
     }
 
     String getDeviAPIAuthorization() {
-        return System.getenv("DEVI_AUTH");
+        return "123";
     }
 
     String getDiscordBotsDotOrgToken() {

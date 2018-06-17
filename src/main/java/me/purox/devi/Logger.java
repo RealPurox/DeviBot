@@ -49,7 +49,7 @@ public class Logger {
                         if (channel == null)return;
                         MessageUtils.sendMessageAsync(channel, "Devi's logs [" + dateFormat.format(new Date(lastPush)) + "] - [" + dateFormat.format(new Date()) + "]: https://hastebin.com/" + res.getBody().getString("key") + ".txt");
                     });
-        }, 30, 30, TimeUnit.MINUTES);
+        }, 2, 2, TimeUnit.HOURS);
     }
 
     private String getTime() {

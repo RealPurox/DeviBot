@@ -43,6 +43,7 @@ public class CommandHandler {
         commands.put("pmowners", new PMOwnersCommandExecutor(devi));
         commands.put("admindisable", new AdminDisableCommandExecutor(devi));
         commands.put("adminenable", new AdminEnableCommandExecutor(devi));
+        commands.put("guilddata", new GuildDataCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));

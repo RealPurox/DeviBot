@@ -546,4 +546,8 @@ public class Devi {
     public Logger getLogger() {
         return logger;
     }
+
+    public HashMap<Language, HashMap<Integer, String>> getDeviTranslations() {
+        return deviTranslations;
+    }
 }

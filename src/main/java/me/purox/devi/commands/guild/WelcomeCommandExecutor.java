@@ -76,18 +76,23 @@ public class WelcomeCommandExecutor implements CommandExecutor {
                     }
 
                     switch (entered) {
-                        //display
                         case 1:
+                            welcomeEnabledHandler.startWaiter(1, command, sender);
                             break;
                         case 2:
+                            welcomeChannelHandler.startWaiter(1, command, sender);
                             break;
                         case 3:
+                            welcomeJoinMessageHandler.startWaiter(1, command, sender);
                             break;
                         case 4:
+                            welcomeLeaveMessageHandler.startWaiter(1, command, sender);
                             break;
                         case 5:
+                            welcomeAutoModEnabledHandler.startWaiter(1, command, sender);
                             break;
                         case 6:
+                            welcomeAutoModRoleHandler.startWaiter(1, command, sender);
                             break;
                         default:
                             sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));

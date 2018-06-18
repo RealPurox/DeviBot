@@ -2,7 +2,7 @@ package me.purox.devi.core;
 
 public class Settings {
 
-    private boolean devBot = true;
+    private boolean devBot = false;
 
     public String getDefaultPrefix() {
         return devBot ? "<" : "!";

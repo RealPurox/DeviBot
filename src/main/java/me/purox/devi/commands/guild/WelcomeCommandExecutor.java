@@ -48,6 +48,7 @@ public class WelcomeCommandExecutor implements CommandExecutor {
                 "```\nYou can cancel editing your Welcome settings by typing `cancel`\n";
 
         sender.reply(builder);
+        startWaiter(1, command, sender);
     }
 
     private void startWaiter(int attempt, Command command, CommandSender sender) {
@@ -77,6 +78,15 @@ public class WelcomeCommandExecutor implements CommandExecutor {
 
                     switch (entered) {
                         case 1:
+                            String builder = ":information_source: | You're currently editing the Welcome module => Enable or disable the Welcome module\n\n" +
+                                    "```python\n" +
+                                    "Reply with one of the options listed below to edit your Welcome module settings\n\n" +
+                                    " '1' => Enable the Welcome module\n" +
+                                    " '2' => Disable the Welcome module\n" +
+                                    "```\n:warning: | Disabling the Welcome module will only disable the join and leave messages. If you want to disable Auto-Role you have to do that separately.\n\n"+
+                                    "You can cancel editing your Welcome settings by typing `cancel`\n\n";
+
+                            sender.reply(builder);
                             welcomeEnabledHandler.startWaiter(1, command, sender);
                             break;
                         case 2:

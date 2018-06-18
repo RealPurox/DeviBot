@@ -53,7 +53,7 @@ public class HelpCommandExecutor implements CommandExecutor {
         String invoke = args[0];
 
         if (!commands.containsKey(invoke)) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 392));
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 392, "`" + invoke + "`"));
             return;
         }
 

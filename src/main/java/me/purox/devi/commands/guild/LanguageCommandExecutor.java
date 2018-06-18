@@ -78,7 +78,8 @@ public class LanguageCommandExecutor implements CommandExecutor {
                     Language language = languageMap.get(entered);
                     command.getDeviGuild().getSettings().setStringValue(GuildSettings.Settings.LANGUAGE, language.name());
                     command.getDeviGuild().saveSettings();
-                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(language, 258, "`" + language.getName() + "`"));
+                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(language, 258, "`" + language.getName() + "`") +
+                            "\n:information_source: | If you speak two languages fluently, feel free to help us translate Devi at <https://www.devibot.net/translations>");
                 },
                 15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 259)) );
     }

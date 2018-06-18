@@ -54,6 +54,8 @@ public class CommandHandler {
         registerCommand("fortnite", new FortniteCommandExecutor(devi));
         registerCommand("weather", new WeatherCommandExecutor(devi));
         registerCommand("flipcoin", new FlipCoinCommandExecutor(devi));
+        registerCommand("randomcolor", new RandomColorCommandExecutor(devi));
+
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         registerCommand("prefix", new PrefixCommandExecutor(devi));

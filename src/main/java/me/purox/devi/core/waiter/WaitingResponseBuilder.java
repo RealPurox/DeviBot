@@ -43,7 +43,7 @@ public class WaitingResponseBuilder {
         //default texts
         this.waitingResponseHashMap = new HashMap<>();
         this.infoText = "You're currently editing your settings";
-        this.typeToCancelText = "You can cancel editing your settings by typing `cancel`";
+        this.typeToCancelText = "You can cancel editing your settings by typing 'cancel'";
         this.cancelledText = "The settings selection has been cancelled.";
         this.timeOutText = "You took to long to respond to my message.";
         this.replyText = "Reply with one of the options listed below to edit your settings";
@@ -122,6 +122,6 @@ public class WaitingResponseBuilder {
 
 
     public enum WaiterType {
-        SELECTOR, CHANNEL, ROLE, USER, LANGUAGE
+        SELECTOR, CHANNEL, ROLE, USER, LANGUAGE, BOOLEAN
     }
 }

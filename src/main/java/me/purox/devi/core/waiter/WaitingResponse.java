@@ -2,7 +2,10 @@ package me.purox.devi.core.waiter;
 
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Language;
+import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
+import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
@@ -11,7 +14,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class WaitingResponse {
 
@@ -29,12 +31,13 @@ public class WaitingResponse {
     private String expectedInputText;
     private String tooManyFailures;
     private String invalidInputText;
+    private String successMessage;
     private int timeOutInSeconds;
     private HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap;
     private Devi devi;
 
     WaitingResponse(Devi devi, WaitingResponseBuilder.WaiterType waiterType, GuildSettings.Settings setting, User executor, MessageChannel channel, Message trigger, Guild guild, String infoText, String typeToCancelText, String cancelledText,
-                    String timeOutText, String replyText, String expectedInputText, String tooManyFailures, String invalidInputText, int timeOutInSeconds, HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap) {
+                    String timeOutText, String replyText, String expectedInputText, String tooManyFailures, String invalidInputText, String successMessage, int timeOutInSeconds, HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap) {
 
         this.devi = devi;
         this.waiterType = waiterType;
@@ -51,6 +54,7 @@ public class WaitingResponse {
         this.expectedInputText = expectedInputText;
         this.tooManyFailures = tooManyFailures;
         this.invalidInputText = invalidInputText;
+        this.successMessage = successMessage;
         this.timeOutInSeconds = timeOutInSeconds;
         this.waitingResponseHashMap = waitingResponseHashMap;
     }
@@ -81,7 +85,6 @@ public class WaitingResponse {
                     return devi.getResponseWaiter().checkUser(evt, trigger.getId(), executor.getId(), channel.getId());
                 },
                 response -> {
-                    System.out.println("YES");
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
                         MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + cancelledText);
                         return;
@@ -118,7 +121,7 @@ public class WaitingResponse {
                             builder.addField("waiterType", String.valueOf(waiterType), false);
                             builder.addField("setting", String.valueOf(setting), false);
                             builder.addField("executor", String.valueOf(executor), false);
-                            builder.addField("channel", String.valueOf(this.channel), false);
+                            builder.addField("channel", String.valueOf(channel), false);
                             builder.addField("trigger", String.valueOf(trigger), false);
                             builder.addField("guild", String.valueOf(guild), false);
                             builder.addField("infoText", String.valueOf(infoText), false);
@@ -136,6 +139,61 @@ public class WaitingResponse {
                             return;
                         }
                         waitingResponseHashMap.get(entered).getValue().handle();
+                    }
+                    //not a selector
+                    else {
+                        DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
+
+                        String input = response.getMessage().getContentRaw();
+                        String firstArgument = input.split(" ")[0];
+
+                        Object object = null;
+                        switch (waiterType) {
+                            case CHANNEL:
+                                //try to get the chanel with just the first argument first
+                                TextChannel channel = DiscordUtils.getTextChannel(firstArgument, guild);
+                                //channel wasn't found, let's try using the whole input
+                                if (channel == null) channel = DiscordUtils.getTextChannel(input, guild);
+                                //still null, meaning the channel does not exist
+                                if (channel == null) break;
+                                //channel not null
+                                object = channel.getId();
+                                break;
+                            case ROLE:
+                                //try to get the role with just the first argument first
+                                Role role = DiscordUtils.getRole(firstArgument, guild);
+                                //role wasn't found, let's try using the whole input
+                                if (role == null) role = DiscordUtils.getRole(input, guild);
+                                //still null, meaning the role does not exist
+                                if (role == null) break;
+                                //role not null
+                                object = role.getId();
+                                break;
+                            case USER:
+                                //try to get the user with just the first argument first
+                                User user = DiscordUtils.getUser(firstArgument, guild);
+                                //user wasn't found, let's try using the whole input
+                                if (user == null) user = DiscordUtils.getUser(input, guild);
+                                //still null, meaning the user does not exist
+                                if (user == null) break;
+                                //user not null
+                                object = user.getId();
+                                break;
+                            case LANGUAGE:
+                                //there can't be spaces in a language so we'll just use the first argument
+                                object = Language.getLanguage(firstArgument);
+                                break;
+                            case BOOLEAN:
+                                //TODO: boolean value
+                                break;
+                            default:
+                                break;
+                        }
+                        if (setting.isBooleanValue() && object instanceof Boolean)
+                            deviGuild.getSettings().setBooleanValue(setting, (Boolean) object);
+                        else if (setting.isStringValue() && object instanceof String)
+                            deviGuild.getSettings().setStringValue(setting, (String) object);
+                        MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + successMessage.replace("{0}", setting.name()).replace());
                     }
                 },
                 timeOutInSeconds, TimeUnit.SECONDS, () -> MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + executor.getAsMention() + ", " + timeOutText));

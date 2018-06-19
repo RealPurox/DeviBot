@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class Devi {
@@ -469,6 +470,20 @@ public class Devi {
                     .addHeader("Content-Type", "application/json")
                     .build().asString(success -> logger.log("Pushed stats to website"));
         }, 0, 2, TimeUnit.MINUTES);
+    }
+
+    public void sendMessageToDevelopers(Object o) {
+        AtomicReference<Guild> guild = new AtomicReference<>(null);
+        shardManager.getShards().forEach(jda -> {
+            Guild g = jda.getGuildById("392264119102996480");
+            if (g != null) guild.set(g);
+        });
+        if (guild.get() != null) {
+            TextChannel channel = guild.get().getTextChannelById("458740773614125076");
+            if (channel != null) {
+                MessageUtils.sendMessageAsync(channel, o);
+            }
+        }
     }
 
     private DeviGuild createDeviGuild(String id) {

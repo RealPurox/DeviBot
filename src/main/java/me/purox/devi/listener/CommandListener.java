@@ -33,9 +33,9 @@ public class CommandListener extends ListenerAdapter {
         //I might want to clean this one day
         ResponseWaiter waiter = devi.getResponseWaiter();
         if (event.getGuild() != null && waiter.getWaitingResponses().containsKey(event.getGuild().getId())) {
-            Set<ResponseWaiter.WaitingResponse> waitingResponses = waiter.getWaitingResponses().get(event.getGuild().getId());
-            ResponseWaiter.WaitingResponse[] toRemove = waitingResponses.toArray(new ResponseWaiter.WaitingResponse[0]);
-            Set<ResponseWaiter.WaitingResponse> filteredToRemove = Stream.of(toRemove).filter(i -> i.attempt(event, new ResponseWaiter.Response(event.getAuthor(), event.getMessage()))).collect(Collectors.toSet());
+            Set<ResponseWaiter.Waiter> waitingResponses = waiter.getWaitingResponses().get(event.getGuild().getId());
+            ResponseWaiter.Waiter[] toRemove = waitingResponses.toArray(new ResponseWaiter.Waiter[0]);
+            Set<ResponseWaiter.Waiter> filteredToRemove = Stream.of(toRemove).filter(i -> i.attempt(event, new ResponseWaiter.Response(event.getAuthor(), event.getMessage()))).collect(Collectors.toSet());
             waitingResponses.removeAll(filteredToRemove);
             if (filteredToRemove.size() != 0) return;
         }

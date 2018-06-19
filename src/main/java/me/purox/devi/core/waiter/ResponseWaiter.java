@@ -36,7 +36,7 @@ public class ResponseWaiter {
     //thread executor
     private ScheduledExecutorService threadPool;
     //Guild ID, User ID
-    private HashMap<String, Set<WaitingResponse>> waitingResponses;
+    private HashMap<String, Set<Waiter>> waitingResponses;
 
     public ResponseWaiter() {
         this.threadPool = Executors.newSingleThreadScheduledExecutor();
@@ -48,30 +48,30 @@ public class ResponseWaiter {
     }
 
     public void waitForResponse(Guild guild, Predicate<MessageReceivedEvent> condition, Consumer<Response> action, long timeout, TimeUnit timeUnit, Runnable timeOutAction) {
-        WaitingResponse waitingResponse = new WaitingResponse<>(condition, action);
+        Waiter waiter = new Waiter<>(condition, action);
 
-        Set<WaitingResponse> waitingResponseSet;
+        Set<Waiter> waiterSet;
 
         if (!this.waitingResponses.containsKey(guild.getId()))
             this.waitingResponses.put(guild.getId(), new HashSet<>());
 
-        waitingResponseSet = this.waitingResponses.get(guild.getId());
-        waitingResponseSet.add(waitingResponse);
+        waiterSet = this.waitingResponses.get(guild.getId());
+        waiterSet.add(waiter);
 
         if (timeout > 0) {
             threadPool.schedule(() -> {
-                if (waitingResponseSet.remove(waitingResponse) && timeOutAction != null) {
+                if (waiterSet.remove(waiter) && timeOutAction != null) {
                     timeOutAction.run();
                 }
             }, timeout, timeUnit);
         }
     }
 
-    public class WaitingResponse<T, R> {
+    public class Waiter<T, R> {
         final Predicate<T> condition;
         final Consumer<R> action;
 
-        WaitingResponse(Predicate<T> condition, Consumer<R> action) {
+        Waiter(Predicate<T> condition, Consumer<R> action) {
             this.condition = condition;
             this.action = action;
         }
@@ -85,7 +85,7 @@ public class ResponseWaiter {
         }
     }
 
-    public HashMap<String, Set<WaitingResponse>> getWaitingResponses() {
+    public HashMap<String, Set<Waiter>> getWaitingResponses() {
         return waitingResponses;
     }
 

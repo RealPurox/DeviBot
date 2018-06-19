@@ -26,7 +26,7 @@ public class AutoModRolesHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 275) + "\n\n" +
+        String builder = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 275) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 268) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 276) + "\n" +
@@ -70,7 +70,7 @@ public class AutoModRolesHandler {
                             break;
                         //add
                         case 2:
-                            String addResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 288) + "\n\n" +
+                            String addResponse = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 288) + "\n\n" +
                                     "```python\n" +
                                     devi.getTranslation(command.getLanguage(), 289) +
                                     "```\n" + devi.getTranslation(command.getLanguage(), 271, "`cancel`");
@@ -79,7 +79,7 @@ public class AutoModRolesHandler {
                             break;
                         //remove
                         case 3:
-                            String removeResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + "  -> " + devi.getTranslation(command.getLanguage(), 290) + "\n\n" +
+                            String removeResponse = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 266) + "  -> " + devi.getTranslation(command.getLanguage(), 290) + "\n\n" +
                                     "```python\n" +
                                     devi.getTranslation(command.getLanguage(), 291) +
                                     "```\n" + devi.getTranslation(command.getLanguage(), 271, "`cancel`");

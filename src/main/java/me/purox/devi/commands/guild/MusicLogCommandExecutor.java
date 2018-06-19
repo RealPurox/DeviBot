@@ -26,7 +26,7 @@ public class MusicLogCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         TextChannel textChannel = DiscordUtils.getTextChannel(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.MUSIC_LOG_CHANNEL), command.getEvent().getGuild());
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 345) + "\n\n" +
+        String builder = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 345) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 319) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 346) + "\n" +
@@ -65,7 +65,7 @@ public class MusicLogCommandExecutor implements CommandExecutor {
                     switch (entered) {
                         //enable / disable
                         case 1:
-                            String enabledResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 345) + " -> " + devi.getTranslation(command.getLanguage(), 346) + "\n\n" +
+                            String enabledResponse = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 345) + " -> " + devi.getTranslation(command.getLanguage(), 346) + "\n\n" +
                                     "```python\n" +
                                     " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +
                                     " '2' => " + devi.getTranslation(command.getLanguage(), 270) + "\n" +
@@ -75,7 +75,7 @@ public class MusicLogCommandExecutor implements CommandExecutor {
                             break;
                         //channel
                         case 2:
-                            String removeResponse = ":information_source: | "  + devi.getTranslation(command.getLanguage(), 345) +" -> " + devi.getTranslation(command.getLanguage(), 347) + "\n\n" +
+                            String removeResponse = DeviEmote.INFO.get() + " | "  + devi.getTranslation(command.getLanguage(), 345) +" -> " + devi.getTranslation(command.getLanguage(), 347) + "\n\n" +
                                     "```python\n" +
                                     devi.getTranslation(command.getLanguage(), 350) +
                                     "```\n" + devi.getTranslation(command.getLanguage(), 320, "`cancel`");

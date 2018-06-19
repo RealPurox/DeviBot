@@ -35,7 +35,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         TextChannel textChannel = DiscordUtils.getTextChannel(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.TWITCH_CHANNEL), command.getEvent().getGuild());
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 355) + "\n\n" +
+        String builder = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 355) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 313) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 357) + "\n" +
@@ -76,7 +76,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                     switch (entered) {
                         //display
                         case 1:
-                            String addResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 355) + " -> " + devi.getTranslation(command.getLanguage(), 360) + "\n\n" +
+                            String addResponse = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 355) + " -> " + devi.getTranslation(command.getLanguage(), 360) + "\n\n" +
                                     "```python\n" +
                                     devi.getTranslation(command.getLanguage(), 363) +
                                     "```\n" + devi.getTranslation(command.getLanguage(), 312, "`cancel`");
@@ -85,7 +85,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                             break;
                         //add
                         case 2:
-                            String removeResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 355) + " -> " + devi.getTranslation(command.getLanguage(), 361) + "\n\n" +
+                            String removeResponse = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 355) + " -> " + devi.getTranslation(command.getLanguage(), 361) + "\n\n" +
                                     "```python\n" +
                                     devi.getTranslation(command.getLanguage(), 364) +
                                     "```\n" + devi.getTranslation(command.getLanguage(), 312, "`cancel`");
@@ -94,7 +94,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                             break;
                         //remove
                         case 3:
-                            String channelResponse = ":information_source: | " + devi.getTranslation(command.getLanguage(), 355) + " -> " + devi.getTranslation(command.getLanguage(), 362) + "\n\n" +
+                            String channelResponse = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 355) + " -> " + devi.getTranslation(command.getLanguage(), 362) + "\n\n" +
                                     "```python\n" +
                                     devi.getTranslation(command.getLanguage(), 365) +
                                     "```\n" + devi.getTranslation(command.getLanguage(), 312, "`cancel`");

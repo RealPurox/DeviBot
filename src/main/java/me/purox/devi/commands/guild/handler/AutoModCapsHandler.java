@@ -17,7 +17,7 @@ public class AutoModCapsHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 272) + "\n\n" +
+        String builder = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 266) + " -> " + devi.getTranslation(command.getLanguage(), 272) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 268) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +

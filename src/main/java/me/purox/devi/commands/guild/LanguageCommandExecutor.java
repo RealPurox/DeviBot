@@ -33,7 +33,7 @@ public class LanguageCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         StringBuilder builder = new StringBuilder();
-        builder.append(":information_source: | ").append(devi.getTranslation(command.getLanguage(), 260)).append("\n\n");
+        builder.append(DeviEmote.INFO.get() + " | ").append(devi.getTranslation(command.getLanguage(), 260)).append("\n\n");
         builder.append("```python\n");
         for(Integer i : languageMap.keySet()) {
             builder.append("'").append(i).append("' => ").append(languageMap.get(i).getName()).append("\n");

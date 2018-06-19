@@ -26,7 +26,7 @@ public class PrefixCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         MessageReceivedEvent event = command.getEvent();
 
-        Message message = MessageUtils.sendMessageSync(event.getChannel(), ":information_source: | " + devi.getTranslation(command.getLanguage(), 249, "`cancel`"));
+        Message message = MessageUtils.sendMessageSync(event.getChannel(), DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 249, "`cancel`"));
         if (message == null) {
             sender.reply(devi.getTranslation(command.getLanguage(), 217));
             return;

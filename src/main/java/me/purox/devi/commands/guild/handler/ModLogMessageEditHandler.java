@@ -17,7 +17,7 @@ public class ModLogMessageEditHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 339) + "\n\n" +
+        String builder = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 339) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 305) + "\n\n" +
                 " '1' => " + devi.getTranslation(command.getLanguage(), 269) + "\n" +

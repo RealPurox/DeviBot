@@ -19,7 +19,7 @@ public class ModLogChannelHandler {
     }
 
     public void handle(Command command, CommandSender sender) {
-        String builder = ":information_source: | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 330) + "\n\n" +
+        String builder = DeviEmote.INFO.get() + " | " + devi.getTranslation(command.getLanguage(), 304) + " -> " + devi.getTranslation(command.getLanguage(), 330) + "\n\n" +
                 "```python\n" +
                 devi.getTranslation(command.getLanguage(), 327) + "\n\n" +
                 "```\n" + devi.getTranslation(command.getLanguage(), 306, "`cancel`");

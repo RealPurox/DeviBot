@@ -11,7 +11,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class WelcomeCommandExecutor implements CommandExecutor {
+public class    WelcomeCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
@@ -34,18 +34,18 @@ public class WelcomeCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        String builder = ":information_source: | You're currently editing the Welcome module\n\n" +
+        String builder = DeviEmote.INFO.get() + " | You're currently editing the Welcome module\n\n" +
                 "```python\n" +
                 "Reply with one of the options listed below to edit your Welcome module settings\n\n" +
-                " <== Welcome Module ==>\n" +
-                " '1' => Enable or disable the Welcome module\n" +
-                " '2' => Change the Welcome message channel\n" +
+                " <== Welcome Module ==>\n\n" +
+                " '1' => Enable or disable welcome messages\n" +
+                " '2' => Change the welcome message channel\n" +
                 " '3' => Edit the join message\n" +
                 " '4' => Edit the leave message\n\n" +
-                " <== Auto-Mode ==>\n" +
+                " <== Auto-Role ==>\n\n" +
                 " '5' => Enable or disable Auto-Role\n" +
                 " '6' => Change the Auto-Role role\n" +
-                "```\nYou can cancel editing your Welcome settings by typing `cancel`\n";
+                "```\nYou can cancel editing your Welcome module settings by typing `cancel`\n";
 
         sender.reply(builder);
         startWaiter(1, command, sender);
@@ -78,14 +78,12 @@ public class WelcomeCommandExecutor implements CommandExecutor {
 
                     switch (entered) {
                         case 1:
-                            String builder = ":information_source: | You're currently editing the Welcome module => Enable or disable the Welcome module\n\n" +
+                            String builder = DeviEmote.INFO.get() + " | You're currently editing the Welcome module -> Enable or disable the Welcome module\n\n" +
                                     "```python\n" +
                                     "Reply with one of the options listed below to edit your Welcome module settings\n\n" +
-                                    " '1' => Enable the Welcome module\n" +
-                                    " '2' => Disable the Welcome module\n" +
-                                    "```\n:warning: | Disabling the Welcome module will only disable the join and leave messages. If you want to disable Auto-Role you have to do that separately.\n\n"+
-                                    "You can cancel editing your Welcome settings by typing `cancel`\n\n";
-
+                                    " '1' => Enable welcome messages\n" +
+                                    " '2' => Disable welcome messages\n" +
+                                    "```\nYou can cancel editing your Welcome module settings by typing `cancel`\n\n";
                             sender.reply(builder);
                             welcomeEnabledHandler.startWaiter(1, command, sender);
                             break;

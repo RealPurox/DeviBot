@@ -40,13 +40,13 @@ public class GuildSettings {
 
         TWITCH_CHANNEL            ( "-1",       DeviEmote.TWITCH.get(),        198, "twitch"                ),
 
-        WELCOME_ENABLED           ( true,       ":wave",                       373, "welcome"               ),
-        WELCOME_AUTO_ROLE_ENABLED ( true,       ":question:",                  374, "welcome role"          ),
-        WELCOME_AUTO_ROLE         ( "-1",       ":robot:",                     374, "welcome role"          ),
-        WELCOME_JOIN_MESSAGE      ( "Hey {user}, welcome to {server}. :wave:",
+        WELCOMER_ENABLED          ( true,       ":wave",                       373, "welcome"               ),
+        JOIN_MESSAGE              ( "Hey {user}, welcome to {server}. :wave:",
                                                 DeviEmote.SUCCESS.get(),       372, "welcome join"          ),
-        WELCOME_LEAVE_MESSAGE     ( "**{user}** left {server}.",
-                                                DeviEmote.ERROR.get(),         375, "welcome leave"         );
+        LEAVE_MESSAGE             ( "**{user}** left {server}.",
+                                                DeviEmote.ERROR.get(),         375, "welcome leave"         ),
+        AUTO_ROLE_ENABLED         ( true,       ":question:",                  374, "welcome role"          ),
+        AUTO_ROLE                 ( "-1",       ":robot:",                     374, "welcome role"          );
 
 
         private Integer translationID;
@@ -122,6 +122,21 @@ public class GuildSettings {
             }
             return null;
         }
+
+        public String getName() {
+            StringBuilder rawName = new StringBuilder();
+            String raw = this.name().toLowerCase();
+            String[] rawSplit = raw.split("_");
+
+            for (String s : rawSplit) {
+                char capital = Character.toUpperCase(s.charAt(0));
+                rawName.append(capital).append(s.substring(1)).append(" ");
+            }
+
+            String name = rawName.toString().substring(0, rawName.toString().length() - 1);
+            if (name.endsWith(" Enabled")) name = name.substring(0, name.length() - 8);
+            return name;
+        }
     }
 
     private void logSettingUpdate(Settings settings, Object value) {
@@ -145,7 +160,7 @@ public class GuildSettings {
         }
     }
 
-    public void setIntegerValue(Settings settings, int value) {
+    void setIntegerValue(Settings settings, int value) {
         integerOptions.put(settings, value);
         if(deviGuild.isReady()) {
             deviGuild.saveSettings();

@@ -50,7 +50,6 @@ public class SettingsCommandExecutor implements CommandExecutor {
                 else
                     value += devi.getTranslation(command.getLanguage(), 7, channel.getAsMention());
             } else if (setting.name().contains("ROLE") && !setting.name().contains("AUTO_ROLE")) {
-                System.out.println(valObject.toString());
                 Role role = command.getEvent().getGuild().getRoleById(valObject.toString());
                 if (role == null)
                     value += devi.getTranslation(command.getLanguage(), 7, "`unknown`");

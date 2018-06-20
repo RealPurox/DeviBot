@@ -6,6 +6,7 @@ import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.DiscordUtils;
+import me.purox.devi.utils.JavaUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
@@ -31,13 +32,16 @@ public class WaitingResponse {
     private String expectedInputText;
     private String tooManyFailures;
     private String invalidInputText;
-    private String successMessage;
+    private String booleanActivatedText;
+    private String booleanDeactivatedText;
+    private String stringChangedText;
     private int timeOutInSeconds;
     private HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap;
     private Devi devi;
 
     WaitingResponse(Devi devi, WaitingResponseBuilder.WaiterType waiterType, GuildSettings.Settings setting, User executor, MessageChannel channel, Message trigger, Guild guild, String infoText, String typeToCancelText, String cancelledText,
-                    String timeOutText, String replyText, String expectedInputText, String tooManyFailures, String invalidInputText, String successMessage, int timeOutInSeconds, HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap) {
+                    String timeOutText, String replyText, String expectedInputText, String tooManyFailures, String invalidInputText, String booleanActivatedText,
+                    String booleanDeactivatedText, String stringChangedText, int timeOutInSeconds, HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap) {
 
         this.devi = devi;
         this.waiterType = waiterType;
@@ -54,7 +58,10 @@ public class WaitingResponse {
         this.expectedInputText = expectedInputText;
         this.tooManyFailures = tooManyFailures;
         this.invalidInputText = invalidInputText;
-        this.successMessage = successMessage;
+        this.booleanActivatedText = booleanActivatedText;
+        this.booleanDeactivatedText = booleanDeactivatedText;
+        this.stringChangedText = stringChangedText;
+
         this.timeOutInSeconds = timeOutInSeconds;
         this.waitingResponseHashMap = waitingResponseHashMap;
     }
@@ -62,10 +69,10 @@ public class WaitingResponse {
     public void handle() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(DeviEmote.INFO.get()).append(" | ").append(infoText).append("\n");
+        builder.append(DeviEmote.INFO.get()).append(" | ").append(infoText).append("\n\n");
         builder.append("```Markdown\n");
-        builder.append(expectedInputText);
-        builder.append("# ").append(replyText).append(" #").append("\n\n");
+        if(!expectedInputText.equals("")) builder.append("# ").append(expectedInputText).append(" #").append("\n\n");
+        if(!replyText.equals("")) builder.append("# ").append(replyText).append(" #").append("\n\n");
 
         for (int i : waitingResponseHashMap.keySet()) {
             builder.append("[").append(i).append("]: ").append(waitingResponseHashMap.get(i).getKey()).append("\n");
@@ -80,10 +87,7 @@ public class WaitingResponse {
     private void startWaiter(int attempt) {
         int nextAttempt = attempt += 1;
         devi.getResponseWaiter().waitForResponse(guild,
-                evt -> {
-                    System.out.println(devi.getResponseWaiter().checkUser(evt, trigger.getId(), executor.getId(), channel.getId()));
-                    return devi.getResponseWaiter().checkUser(evt, trigger.getId(), executor.getId(), channel.getId());
-                },
+                evt -> devi.getResponseWaiter().checkUser(evt, trigger.getId(), executor.getId(), channel.getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
                         MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + cancelledText);
@@ -148,6 +152,7 @@ public class WaitingResponse {
                         String firstArgument = input.split(" ")[0];
 
                         Object object = null;
+                        String changedTo = "";
                         switch (waiterType) {
                             case CHANNEL:
                                 //try to get the chanel with just the first argument first
@@ -158,6 +163,7 @@ public class WaitingResponse {
                                 if (channel == null) break;
                                 //channel not null
                                 object = channel.getId();
+                                changedTo = channel.getAsMention();
                                 break;
                             case ROLE:
                                 //try to get the role with just the first argument first
@@ -168,6 +174,7 @@ public class WaitingResponse {
                                 if (role == null) break;
                                 //role not null
                                 object = role.getId();
+                                changedTo = role.getName();
                                 break;
                             case USER:
                                 //try to get the user with just the first argument first
@@ -178,22 +185,43 @@ public class WaitingResponse {
                                 if (user == null) break;
                                 //user not null
                                 object = user.getId();
+                                changedTo = user.getName() + "#" + user.getDiscriminator();
                                 break;
                             case LANGUAGE:
-                                //there can't be spaces in a language so we'll just use the first argument
-                                object = Language.getLanguage(firstArgument);
+                                Language language = Language.getLanguage(firstArgument);
+                                if (language == null) break;
+                                object = language.getName().toLowerCase();
+                                changedTo = language.getName();
                                 break;
                             case BOOLEAN:
-                                //TODO: boolean value
+                                Boolean bool = JavaUtils.getBoolean(firstArgument);
+                                if (bool == null) break;
+                                object = bool;
+                                changedTo = JavaUtils.makeBooleanBeautiful(bool);
+                                break;
+                            case TEXT:
+                                object = input.toLowerCase();
+                                changedTo = input.toLowerCase();
                                 break;
                             default:
+                                changedTo = "???";
                                 break;
                         }
-                        if (setting.isBooleanValue() && object instanceof Boolean)
+
+                        if (object == null) {
+                            startWaiter(nextAttempt);
+                            return;
+                        }
+
+                        if (setting.isBooleanValue() && object instanceof Boolean) {
                             deviGuild.getSettings().setBooleanValue(setting, (Boolean) object);
-                        else if (setting.isStringValue() && object instanceof String)
+                            String message = (Boolean) object ? booleanActivatedText : booleanDeactivatedText;
+                            MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + message.replace("{0}", setting.getName()));
+                        }
+                        else if (setting.isStringValue() && object instanceof String) {
                             deviGuild.getSettings().setStringValue(setting, (String) object);
-                        MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + successMessage.replace("{0}", setting.name()).replace());
+                            MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + stringChangedText.replace("{0}", setting.getName()).replace("{1}", changedTo));
+                        }
                     }
                 },
                 timeOutInSeconds, TimeUnit.SECONDS, () -> MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + executor.getAsMention() + ", " + timeOutText));

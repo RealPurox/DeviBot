@@ -28,6 +28,9 @@ public class WaitingResponseBuilder {
     private String expectedInputText;
     private String tooManyFailures;
     private String invalidInputText;
+    private String booleanActivatedText;
+    private String booleanDeactivatedText;
+    private String stringChangedtext;
     private int timeOutInSeconds;
     private HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap;
     private Devi devi;
@@ -42,14 +45,17 @@ public class WaitingResponseBuilder {
 
         //default texts
         this.waitingResponseHashMap = new HashMap<>();
-        this.infoText = "You're currently editing your settings";
-        this.typeToCancelText = "You can cancel editing your settings by typing 'cancel'";
-        this.cancelledText = "The settings selection has been cancelled.";
+        this.infoText = "You're currently editing your server settings";
+        this.typeToCancelText = "You can cancel editing your server settings by typing 'cancel'";
+        this.cancelledText = "The server settings selection has been cancelled.";
         this.timeOutText = "You took to long to respond to my message.";
         this.replyText = "Reply with one of the options listed below to edit your settings";
         this.tooManyFailures = "You've failed to enter a valid response three times in a row. " + cancelledText;
         this.invalidInputText = "The responses you've provided is invalid. Please try again.";
         this.expectedInputText = "";
+        this.booleanActivatedText = "{0} is now enabled";
+        this.booleanDeactivatedText = "{0} is now disabled";
+        this.stringChangedtext = "{0} has been changed to {1}";
         this.timeOutInSeconds = 30;
     }
 
@@ -103,6 +109,21 @@ public class WaitingResponseBuilder {
         return this;
     }
 
+    public WaitingResponseBuilder setBooleanActivatedText(String booleanActivatedText) {
+        this.booleanActivatedText = booleanActivatedText;
+        return this;
+    }
+
+    public WaitingResponseBuilder setBooleanDeactivatedText(String booleanDeactivatedText) {
+        this.booleanDeactivatedText = booleanDeactivatedText;
+        return this;
+    }
+
+    public WaitingResponseBuilder setSetting(GuildSettings.Settings setting) {
+        this.setting = setting;
+        return this;
+    }
+
     public WaitingResponseBuilder addSelectorOption(String message, WaitingResponse waitingResponse) {
         int next = waitingResponseHashMap.size() + 1;
         waitingResponseHashMap.put(next, new AbstractMap.SimpleEntry<>(message, waitingResponse));
@@ -115,13 +136,16 @@ public class WaitingResponseBuilder {
         Checks.notNull(trigger, "trigger");
         Checks.notNull(guild, "guild");
         Checks.notNull(waiterType, "waiterType");
-        if(waiterType != WaiterType.SELECTOR) Checks.notNull(setting, "setting");
+        if(waiterType != WaiterType.SELECTOR) {
+            this.replyText = "";
+            Checks.notNull(setting, "setting");
+        }
         return new WaitingResponse(devi, waiterType, setting, executor, channel, trigger, guild, infoText, typeToCancelText, cancelledText, timeOutText, replyText, expectedInputText,
-                tooManyFailures, invalidInputText, timeOutInSeconds, waitingResponseHashMap);
+                tooManyFailures, invalidInputText, booleanActivatedText, booleanDeactivatedText, stringChangedtext, timeOutInSeconds, waitingResponseHashMap);
     }
 
 
     public enum WaiterType {
-        SELECTOR, CHANNEL, ROLE, USER, LANGUAGE, BOOLEAN
+        SELECTOR, CHANNEL, ROLE, USER, LANGUAGE, BOOLEAN, TEXT
     }
 }

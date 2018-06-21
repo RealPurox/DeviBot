@@ -71,8 +71,8 @@ public class WaitingResponse {
 
         builder.append(DeviEmote.INFO.get()).append(" | ").append(infoText).append("\n\n");
         builder.append("```Markdown\n");
-        if(!expectedInputText.equals("")) builder.append("# ").append(expectedInputText).append(" #").append("\n\n");
-        if(!replyText.equals("")) builder.append("# ").append(replyText).append(" #").append("\n\n");
+        if(!expectedInputText.equals("")) builder.append("# ").append(expectedInputText).append("\n\n");
+        if(!replyText.equals("")) builder.append("# ").append(replyText).append("\n\n");
 
         for (int i : waitingResponseHashMap.keySet()) {
             builder.append("[").append(i).append("]: ").append(waitingResponseHashMap.get(i).getKey()).append("\n");
@@ -147,12 +147,14 @@ public class WaitingResponse {
                     //not a selector
                     else {
                         DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
+                        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
                         String input = response.getMessage().getContentRaw();
                         String firstArgument = input.split(" ")[0];
 
                         Object object = null;
                         String changedTo = "";
+
                         switch (waiterType) {
                             case CHANNEL:
                                 //try to get the chanel with just the first argument first
@@ -188,10 +190,10 @@ public class WaitingResponse {
                                 changedTo = user.getName() + "#" + user.getDiscriminator();
                                 break;
                             case LANGUAGE:
-                                Language language = Language.getLanguage(firstArgument);
-                                if (language == null) break;
-                                object = language.getName().toLowerCase();
-                                changedTo = language.getName();
+                                Language lang = Language.getLanguage(firstArgument);
+                                if (lang == null) break;
+                                object = lang.getName().toLowerCase();
+                                changedTo = lang.getName();
                                 break;
                             case BOOLEAN:
                                 Boolean bool = JavaUtils.getBoolean(firstArgument);
@@ -204,11 +206,12 @@ public class WaitingResponse {
                                 changedTo = input.toLowerCase();
                                 break;
                             default:
-                                changedTo = "???";
+                                changedTo = "[??? Something Went Wrong ???]";
                                 break;
                         }
 
                         if (object == null) {
+                            MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + devi.getTranslation(language, 413));
                             startWaiter(nextAttempt);
                             return;
                         }
@@ -224,6 +227,6 @@ public class WaitingResponse {
                         }
                     }
                 },
-                timeOutInSeconds, TimeUnit.SECONDS, () -> MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + executor.getAsMention() + ", " + timeOutText));
+                timeOutInSeconds, TimeUnit.SECONDS, () -> MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + executor.getName() + ", " + timeOutText));
     }
 }

@@ -2,6 +2,7 @@ package me.purox.devi.core.waiter;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -43,19 +44,21 @@ public class WaitingResponseBuilder {
         this.guild = command.getEvent().getGuild();
         this.devi = devi;
 
+        Language language = Language.getLanguage(devi.getDeviGuild(guild.getId()).getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
         //default texts
         this.waitingResponseHashMap = new HashMap<>();
-        this.infoText = "You're currently editing your server settings";
-        this.typeToCancelText = "You can cancel editing your server settings by typing 'cancel'";
-        this.cancelledText = "The server settings selection has been cancelled.";
-        this.timeOutText = "You took to long to respond to my message.";
-        this.replyText = "Reply with one of the options listed below to edit your settings";
-        this.tooManyFailures = "You've failed to enter a valid response three times in a row. " + cancelledText;
-        this.invalidInputText = "The responses you've provided is invalid. Please try again.";
+        this.infoText = devi.getTranslation(language, 407);//407
+        this.typeToCancelText = devi.getTranslation(language, 408);
+        this.cancelledText = devi.getTranslation(language, 409);
+        this.timeOutText = devi.getTranslation(language, 410);
+        this.replyText = devi.getTranslation(language, 411);
+        this.tooManyFailures = devi.getTranslation(language, 412) + " " + cancelledText;
+        this.invalidInputText = devi.getTranslation(language, 413);
         this.expectedInputText = "";
-        this.booleanActivatedText = "{0} is now enabled";
-        this.booleanDeactivatedText = "{0} is now disabled";
-        this.stringChangedtext = "{0} has been changed to {1}";
+        this.booleanActivatedText = devi.getTranslation(language, 414);
+        this.booleanDeactivatedText = devi.getTranslation(language, 415);
+        this.stringChangedtext = devi.getTranslation(language, 416);
         this.timeOutInSeconds = 30;
     }
 

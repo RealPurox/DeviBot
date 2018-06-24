@@ -1,4 +1,4 @@
-package me.purox.devi.commands.general;
+package me.purox.devi.commands.info;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;

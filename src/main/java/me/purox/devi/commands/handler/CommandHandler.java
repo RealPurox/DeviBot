@@ -4,6 +4,9 @@ import me.purox.devi.commands.dev.*;
 import me.purox.devi.commands.guild.*;
 import me.purox.devi.commands.guild.custom.*;
 import me.purox.devi.commands.handler.impl.ConsoleCommandSenderImpl;
+import me.purox.devi.commands.info.GuildStatsCommandExecutor;
+import me.purox.devi.commands.info.HelpCommandExecutor;
+import me.purox.devi.commands.info.UserInfoCommandExecutor;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.music.*;
 import me.purox.devi.commands.general.*;
@@ -55,6 +58,10 @@ public class CommandHandler {
         registerCommand("weather", new WeatherCommandExecutor(devi));
         registerCommand("flipcoin", new FlipCoinCommandExecutor(devi));
         registerCommand("randomcolor", new RandomColorCommandExecutor(devi));
+
+        //info commands
+        registerCommand("guildstats", new GuildStatsCommandExecutor(devi));
+        registerCommand("userinfo", new UserInfoCommandExecutor(devi));
 
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));

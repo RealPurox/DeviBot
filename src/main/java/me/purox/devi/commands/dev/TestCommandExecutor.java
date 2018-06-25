@@ -22,14 +22,13 @@ public class TestCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
         new WaitingResponseBuilder(devi, command)
-                .addSelectorOption("I", null)
-                .addSelectorOption("love", null)
-                .addSelectorOption("my", null)
-                .addSelectorOption("niggas", null)
-                .addSelectorOption("but", null)
-                .addSelectorOption("where's", null)
-                .addSelectorOption("my", null)
-                .addSelectorOption("bitches", null)
+                .addSelectorOption("next waiter response", null)
+                .addSelectorOption("another next waiter response", null)
+                .addVoidSelectorOption("void response", () -> sender.reply("works"))
+                .addVoidSelectorOption("and another void res", () -> sender.reply("works"))
+                .addSelectorOption("next waiter response", null)
+                .addVoidSelectorOption("void response", () -> sender.reply("works"))
+                .addSelectorOption("next waiter response", null)
                 .setWaiterType(WaitingResponseBuilder.WaiterType.SELECTOR)
                 .build().handle();
     }

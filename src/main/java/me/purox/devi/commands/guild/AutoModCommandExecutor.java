@@ -55,7 +55,7 @@ public class AutoModCommandExecutor implements CommandExecutor {
     }
 
     private void sendAutoModEmbed(Command command, CommandSender sender) {
-        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(new Color(34, 113, 126));
+        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(Color.decode("#7289da"));
         embedBuilder.setAuthor(devi.getTranslation(command.getLanguage(), 74));
 
         for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {

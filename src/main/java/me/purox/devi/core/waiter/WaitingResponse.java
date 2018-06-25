@@ -10,6 +10,7 @@ import me.purox.devi.utils.JavaUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.utils.Checks;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -37,11 +38,13 @@ public class WaitingResponse {
     private String stringChangedText;
     private int timeOutInSeconds;
     private HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap;
+    private HashMap<Integer, Map.Entry<String, WaiterVoid>> waitingVoidResponseHashMap;
     private Devi devi;
 
     WaitingResponse(Devi devi, WaitingResponseBuilder.WaiterType waiterType, GuildSettings.Settings setting, User executor, MessageChannel channel, Message trigger, Guild guild, String infoText, String typeToCancelText, String cancelledText,
                     String timeOutText, String replyText, String expectedInputText, String tooManyFailures, String invalidInputText, String booleanActivatedText,
-                    String booleanDeactivatedText, String stringChangedText, int timeOutInSeconds, HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap) {
+                    String booleanDeactivatedText, String stringChangedText, int timeOutInSeconds, HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap,
+                    HashMap<Integer, Map.Entry<String, WaiterVoid>> waitingVoidResponseHashMap) {
 
         this.devi = devi;
         this.waiterType = waiterType;
@@ -64,6 +67,7 @@ public class WaitingResponse {
 
         this.timeOutInSeconds = timeOutInSeconds;
         this.waitingResponseHashMap = waitingResponseHashMap;
+        this.waitingVoidResponseHashMap = waitingVoidResponseHashMap;
     }
 
     public void handle() {
@@ -74,8 +78,11 @@ public class WaitingResponse {
         if(!expectedInputText.equals("")) builder.append("# ").append(expectedInputText).append("\n\n");
         if(!replyText.equals("")) builder.append("# ").append(replyText).append("\n\n");
 
-        for (int i : waitingResponseHashMap.keySet()) {
-            builder.append("[").append(i).append("]: ").append(waitingResponseHashMap.get(i).getKey()).append("\n");
+        for (int i = 1; i != waitingResponseHashMap.size() + waitingVoidResponseHashMap.size() + 1; i++) {
+            if (waitingResponseHashMap.containsKey(i))
+                builder.append("[").append(i).append("]: ").append(waitingResponseHashMap.get(i).getKey()).append("\n");
+            if (waitingVoidResponseHashMap.containsKey(i))
+                builder.append("[").append(i).append("]: ").append(waitingVoidResponseHashMap.get(i).getKey()).append("\n");
         }
         builder.append("```\n");
         builder.append(typeToCancelText);
@@ -110,42 +117,24 @@ public class WaitingResponse {
                             entered = -1;
                         }
 
-                        if (entered < 1 || entered > waitingResponseHashMap.size()) {
+                        if (!waitingResponseHashMap.containsKey(entered) && !waitingVoidResponseHashMap.containsKey(entered)) {
                             MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + invalidInputText);
                             startWaiter(nextAttempt);
                             return;
                         }
 
-                        WaitingResponse nextWaiter = waitingResponseHashMap.get(entered).getValue();
-                        if (nextWaiter == null) {
-                            EmbedBuilder builder = new EmbedBuilder();
-                            builder.setColor(new Color(179, 0,0));
-                            builder.setAuthor("FATAL ERROR");
-                            builder.setDescription("Fatal Error: Response waiter for selection response waiter was null");
-                            builder.addField("waiterType", String.valueOf(waiterType), false);
-                            builder.addField("setting", String.valueOf(setting), false);
-                            builder.addField("executor", String.valueOf(executor), false);
-                            builder.addField("channel", String.valueOf(channel), false);
-                            builder.addField("trigger", String.valueOf(trigger), false);
-                            builder.addField("guild", String.valueOf(guild), false);
-                            builder.addField("infoText", String.valueOf(infoText), false);
-                            builder.addField("typeToCancelText", String.valueOf(typeToCancelText), false);
-                            builder.addField("cancelledText", String.valueOf(cancelledText), false);
-                            builder.addField("timeOutText", String.valueOf(timeOutText), false);
-                            builder.addField("replyText", String.valueOf(replyText), false);
-                            builder.addField("expectedInputText", String.valueOf(expectedInputText), false);
-                            builder.addField("tooManyFailures", String.valueOf(tooManyFailures), false);
-                            builder.addField("invalidInputText", String.valueOf(invalidInputText), false);
-                            builder.addField("timeOutInSeconds", String.valueOf(timeOutInSeconds), false);
-                            builder.addField("waitingResponseHashMap", String.valueOf(waitingResponseHashMap), false);
-                            devi.sendMessageToDevelopers(builder.build());
-                            MessageUtils.sendMessageAsync(channel, "Jeez " + executor.getAsMention() + ", something went really really really really wrong right here. Our developers have been informed and they will fix this issue as soon as possible.");
-                            return;
-                        }
-                        waitingResponseHashMap.get(entered).getValue().handle();
-                    }
+                        if (waitingResponseHashMap.containsKey(entered)) {
+                            WaitingResponse nextWaiter = waitingResponseHashMap.get(entered).getValue();
+                            Checks.notNull(nextWaiter, "nexWaiter");
+                            waitingResponseHashMap.get(entered).getValue().handle();
+                        } else if (waitingVoidResponseHashMap.containsKey(entered)) {
+                            WaiterVoid waiterVoid = waitingVoidResponseHashMap.get(entered).getValue();
+                            Checks.notNull(waiterVoid, "waiterVoid");
+                            waiterVoid.run();
+                        } else
+                            throw new IllegalStateException("Something went wrong here");
                     //not a selector
-                    else {
+                    } else {
                         DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
                         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
@@ -157,35 +146,23 @@ public class WaitingResponse {
 
                         switch (waiterType) {
                             case CHANNEL:
-                                //try to get the chanel with just the first argument first
-                                TextChannel channel = DiscordUtils.getTextChannel(firstArgument, guild);
-                                //channel wasn't found, let's try using the whole input
-                                if (channel == null) channel = DiscordUtils.getTextChannel(input, guild);
-                                //still null, meaning the channel does not exist
+                                TextChannel channel = DiscordUtils.getTextChannel(input, guild);
+                                if (channel == null) channel = DiscordUtils.getTextChannel(firstArgument, guild);
                                 if (channel == null) break;
-                                //channel not null
                                 object = channel.getId();
                                 changedTo = channel.getAsMention();
                                 break;
                             case ROLE:
-                                //try to get the role with just the first argument first
-                                Role role = DiscordUtils.getRole(firstArgument, guild);
-                                //role wasn't found, let's try using the whole input
-                                if (role == null) role = DiscordUtils.getRole(input, guild);
-                                //still null, meaning the role does not exist
+                                Role role = DiscordUtils.getRole(input, guild);
+                                if (role == null) role = DiscordUtils.getRole(firstArgument, guild);
                                 if (role == null) break;
-                                //role not null
                                 object = role.getId();
                                 changedTo = role.getName();
                                 break;
                             case USER:
-                                //try to get the user with just the first argument first
-                                User user = DiscordUtils.getUser(firstArgument, guild);
-                                //user wasn't found, let's try using the whole input
-                                if (user == null) user = DiscordUtils.getUser(input, guild);
-                                //still null, meaning the user does not exist
+                                User user = DiscordUtils.getUser(input, guild);
+                                if (user == null) user = DiscordUtils.getUser(firstArgument , guild);
                                 if (user == null) break;
-                                //user not null
                                 object = user.getId();
                                 changedTo = user.getName() + "#" + user.getDiscriminator();
                                 break;

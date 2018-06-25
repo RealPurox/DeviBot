@@ -31,11 +31,13 @@ public class WaitingResponseBuilder {
     private String invalidInputText;
     private String booleanActivatedText;
     private String booleanDeactivatedText;
-    private String stringChangedtext;
+    private String stringChangedText;
     private int timeOutInSeconds;
     private HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap;
+    private HashMap<Integer, Map.Entry<String, WaiterVoid>> waitingVoidResponseHashMap;
     private Devi devi;
     private GuildSettings.Settings setting;
+    private int lastUsedSelectorIndex = 1;
 
     public WaitingResponseBuilder(Devi devi, Command command) {
         this.executor = command.getEvent().getAuthor();
@@ -48,7 +50,8 @@ public class WaitingResponseBuilder {
 
         //default texts
         this.waitingResponseHashMap = new HashMap<>();
-        this.infoText = devi.getTranslation(language, 407);//407
+        this.waitingVoidResponseHashMap = new HashMap<>();
+        this.infoText = devi.getTranslation(language, 407);
         this.typeToCancelText = devi.getTranslation(language, 408);
         this.cancelledText = devi.getTranslation(language, 409);
         this.timeOutText = devi.getTranslation(language, 410);
@@ -58,7 +61,7 @@ public class WaitingResponseBuilder {
         this.expectedInputText = "";
         this.booleanActivatedText = devi.getTranslation(language, 414);
         this.booleanDeactivatedText = devi.getTranslation(language, 415);
-        this.stringChangedtext = devi.getTranslation(language, 416);
+        this.stringChangedText = devi.getTranslation(language, 416);
         this.timeOutInSeconds = 30;
     }
 
@@ -128,8 +131,14 @@ public class WaitingResponseBuilder {
     }
 
     public WaitingResponseBuilder addSelectorOption(String message, WaitingResponse waitingResponse) {
-        int next = waitingResponseHashMap.size() + 1;
+        int next = lastUsedSelectorIndex ++ ;
         waitingResponseHashMap.put(next, new AbstractMap.SimpleEntry<>(message, waitingResponse));
+        return this;
+    }
+
+    public WaitingResponseBuilder addVoidSelectorOption(String message, WaiterVoid waiterVoid) {
+        int next = lastUsedSelectorIndex ++;
+        waitingVoidResponseHashMap.put(next, new AbstractMap.SimpleEntry<>(message, waiterVoid));
         return this;
     }
 
@@ -144,7 +153,8 @@ public class WaitingResponseBuilder {
             Checks.notNull(setting, "setting");
         }
         return new WaitingResponse(devi, waiterType, setting, executor, channel, trigger, guild, infoText, typeToCancelText, cancelledText, timeOutText, replyText, expectedInputText,
-                tooManyFailures, invalidInputText, booleanActivatedText, booleanDeactivatedText, stringChangedtext, timeOutInSeconds, waitingResponseHashMap);
+                tooManyFailures, invalidInputText, booleanActivatedText, booleanDeactivatedText, stringChangedText, timeOutInSeconds, waitingResponseHashMap,
+                waitingVoidResponseHashMap);
     }
 
 

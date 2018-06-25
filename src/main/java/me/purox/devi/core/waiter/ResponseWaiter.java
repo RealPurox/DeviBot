@@ -48,14 +48,11 @@ public class ResponseWaiter {
     }
 
     public void waitForResponse(Guild guild, Predicate<MessageReceivedEvent> condition, Consumer<Response> action, long timeout, TimeUnit timeUnit, Runnable timeOutAction) {
-        Waiter waiter = new Waiter<>(condition, action);
-
-        Set<Waiter> waiterSet;
-
         if (!this.waitingResponses.containsKey(guild.getId()))
             this.waitingResponses.put(guild.getId(), new HashSet<>());
 
-        waiterSet = this.waitingResponses.get(guild.getId());
+        Waiter waiter = new Waiter<>(condition, action);
+        Set<Waiter> waiterSet = this.waitingResponses.get(guild.getId());
         waiterSet.add(waiter);
 
         if (timeout > 0) {

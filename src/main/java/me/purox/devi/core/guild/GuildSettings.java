@@ -18,64 +18,70 @@ public class GuildSettings {
     }
 
     public enum Settings {
-        PREFIX                    ( "!",        ":page_with_curl:",            5,   "prefix"                ),
+        PREFIX                    ( "!",        ":page_with_curl:",            5,   "prefix"                , true ),
 
-        LANGUAGE                  ( "english",  ":earth_americas:",            6,   "language"              ),
+        LANGUAGE                  ( "english",  ":earth_americas:",            6,   "language"              , true ),
 
-        MUTE_ROLE                 ( "-1",       ":mute:",                      24,  "muterole"              ),
+        MUTE_ROLE                 ( "-1",       ":mute:",                      24,  "muterole"              , false),
 
-        MOD_LOG_ENABLED           ( false,      ":newspaper:",                 69,  "modlog"                ),
-        MOD_LOG_CHANNEL           ( "-1",       ":microphone2:",               59,  "modlog channel"        ),
-        MOD_LOG_MUTES             ( true,       DeviEmote.MUTE.get(),          71,  "modlog mutes"          ),
-        MOD_LOG_BANS              ( true,       DeviEmote.BAN.get(),           72,  "modlog bans"           ),
-        MOD_LOG_MESSAGE_EDITED    ( true,       ":pen_ballpoint:",             178, "modlog message-edit"   ),
-        MOD_LOG_MESSAGE_DELETED   ( true,       ":no_entry_sign:",             179, "modlog message-delete" ),
+        MOD_LOG_ENABLED           ( false,      ":newspaper:",                 69,  "modlog"                , true ),
+        MOD_LOG_CHANNEL           ( "-1",       ":microphone2:",               59,  "modlog channel"        , false),
+        MOD_LOG_MUTES             ( true,       DeviEmote.MUTE.get(),          71,  "modlog mutes"          , false),
+        MOD_LOG_BANS              ( true,       DeviEmote.BAN.get(),           72,  "modlog bans"           , false),
+        MOD_LOG_MESSAGE_EDITED    ( true,       ":pen_ballpoint:",             178, "modlog message-edit"   , false),
+        MOD_LOG_MESSAGE_DELETED   ( true,       ":no_entry_sign:",             179, "modlog message-delete" , false),
 
-        AUTO_MOD_ENABLED          ( true,       ":hammer_pick:",               301, "automod"               ),
-        AUTO_MOD_ANTI_ADS         ( true,       ":tv:",                        77,  "automod ads"           ),
-        AUTO_MOD_ANTI_CAPS        ( true,       ":ab:",                        81,  "automod caps"          ),
-        AUTO_MOD_ANTI_EMOJI       ( true,       ":stuck_out_tongue:",          161, "automod emoji"         ),
-        MUSIC_LOG_ENABLED         ( true,       ":checkered_flag:",            84,  "musiclog"              ),
-        MUSIC_LOG_CHANNEL         ( "-1",       ":notes:",                     83,  "musiclog channel"      ),
+        AUTO_MOD_ENABLED          ( true,       ":hammer_pick:",               301, "automod"               , true ),
+        AUTO_MOD_ANTI_ADS         ( true,       ":tv:",                        77,  "automod ads"           , false),
+        AUTO_MOD_ANTI_CAPS        ( true,       ":ab:",                        81,  "automod caps"          , false),
+        AUTO_MOD_ANTI_EMOJI       ( true,       ":stuck_out_tongue:",          161, "automod emoji"         , false),
 
-        TWITCH_CHANNEL            ( "-1",       DeviEmote.TWITCH.get(),        198, "twitch"                ),
+        MUSIC_LOG_ENABLED         ( true,       ":checkered_flag:",            84,  "musiclog"              , true ),
+        MUSIC_LOG_CHANNEL         ( "-1",       ":notes:",                     83,  "musiclog channel"      , false),
 
-        WELCOMER_ENABLED          ( true,       ":wave",                       373, "welcome"               ),
+        TWITCH_CHANNEL            ( "-1",       DeviEmote.TWITCH.get(),        198, "twitch"                , true ),
+
+        WELCOMER_ENABLED          ( true,       ":wave",                       373, "welcome"               , false),
         JOIN_MESSAGE              ( "Hey {user}, welcome to {server}. :wave:",
-                                                DeviEmote.SUCCESS.get(),       372, "welcome join"          ),
+                                                DeviEmote.SUCCESS.get(),       372, "welcome join"          , false),
         LEAVE_MESSAGE             ( "**{user}** left {server}.",
-                                                DeviEmote.ERROR.get(),         375, "welcome leave"         ),
-        AUTO_ROLE_ENABLED         ( true,       ":question:",                  374, "welcome role"          ),
-        AUTO_ROLE                 ( "-1",       ":robot:",                     374, "welcome role"          );
+                                                DeviEmote.ERROR.get(),         375, "welcome leave"         , false),
+        AUTO_ROLE_ENABLED         ( true,       ":question:",                  374, "welcome role"          , false),
+        AUTO_ROLE                 ( "-1",       ":robot:",                     374, "welcome role"          , false);
 
 
         private Integer translationID;
         private String emoji;
         private String command;
+        private boolean displayInSettings;
 
         private String defaultStringValue;
         private Boolean defaultBooleanValue;
         private Integer defaultIntegerValue;
 
-        Settings (String defaultStringValue, String emoji, Integer translationID, String command) {
+
+        Settings (String defaultStringValue, String emoji, Integer translationID, String command, boolean displayInSettings) {
             this.defaultStringValue = defaultStringValue;
             this.emoji = emoji;
             this.translationID = translationID;
             this.command = command;
+            this.displayInSettings = displayInSettings;
         }
 
-        Settings (Boolean defaultBooleanValue, String emoji, Integer translationID, String command) {
+        Settings (Boolean defaultBooleanValue, String emoji, Integer translationID, String command, boolean displayInSettings) {
             this.defaultBooleanValue = defaultBooleanValue;
             this.emoji = emoji;
             this.translationID = translationID;
             this.command = command;
+            this.displayInSettings = displayInSettings;
         }
 
-        Settings (Integer defaultIntegerValue, String emoji, Integer translationID, String command) {
+        Settings (Integer defaultIntegerValue, String emoji, Integer translationID, String command, boolean displayInSettings) {
             this.defaultIntegerValue = defaultIntegerValue;
             this.emoji = emoji;
             this.translationID = translationID;
             this.command = command;
+            this.displayInSettings = displayInSettings;
         }
 
         public String getEmoji() {
@@ -121,6 +127,10 @@ public class GuildSettings {
                 }
             }
             return null;
+        }
+
+        public boolean isDisplayedInSettings() {
+            return displayInSettings;
         }
 
         public String getName() {

@@ -1,11 +1,7 @@
 package me.purox.devi;
 
 import me.purox.devi.core.Devi;
-import me.purox.devi.request.Request;
-import me.purox.devi.request.RequestBuilder;
-import me.purox.devi.utils.MessageUtils;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
+import org.bson.Document;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,10 +12,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Logger {
 
-    private List<String> logs;
+    private List<Document> logs;
     private boolean debug;
     private SimpleDateFormat dateFormat;
-    private long lastPush;
     private Devi devi;
 
     public Logger(Devi devi) {
@@ -27,28 +22,11 @@ public class Logger {
         this.logs = new ArrayList<>();
         this.debug = false;
         this.dateFormat = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
-        this.lastPush = System.currentTimeMillis();
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            StringBuilder builder = new StringBuilder();
-
-            for (String log : logs) {
-                builder.append(log).append("\n");
-            }
-
+            devi.getDatabaseManager().getClient().getDatabase("website").getCollection("devi_logs")
+                    .insertMany(logs);
             logs.clear();
-
-            new RequestBuilder(devi.getOkHttpClient()).setURL("https://hastebin.com/documents").setRequestType(Request.RequestType.POST)
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .setStringBody(builder.toString())
-                    .build()
-                    .asJSON(res -> {
-                        Guild guild = devi.getShardManager().getGuildById("392264119102996480");
-                        if (guild == null)return;
-                        TextChannel channel = guild.getTextChannelById("422325680739713034");
-                        if (channel == null)return;
-                        MessageUtils.sendMessageAsync(channel, "Devi's logs [" + dateFormat.format(new Date(lastPush)) + "] - [" + dateFormat.format(new Date()) + "]: https://hastebin.com/" + res.getBody().getString("key") + ".txt");
-                    });
         }, 30, 30, TimeUnit.MINUTES);
     }
 
@@ -82,7 +60,14 @@ public class Logger {
 
     private void log(String prefix, Object object) {
         String log = getTime()  + "[" + prefix + "] " + object.toString();
-        logs.add(log);
+
+        Document logDoc = new Document();
+        logDoc.put("bot", devi.getSettings().isDevBot() ? "DEV" : "PUBLIC");
+        logDoc.put("type", prefix.toLowerCase());
+        logDoc.put("time", System.currentTimeMillis());
+        logDoc.put("message", object.toString());
+
+        logs.add(logDoc);
         System.out.println(log);
     }
 }

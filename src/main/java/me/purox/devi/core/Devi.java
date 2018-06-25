@@ -449,7 +449,7 @@ public class Devi {
                     .appendBody("server_count", stats.getGuilds())
                     //header
                     .addHeader("Authorization", settings.getDiscordBotsDotOrgToken())
-                    .build().asString(success -> logger.log("Pushed stats to DBL. Response: " + success.getBody()));
+                    .build().asStringSync();
         }, 0, 30, TimeUnit.MINUTES);
 
         //post stats every 2 min to the website
@@ -467,7 +467,7 @@ public class Devi {
                     //header
                     .addHeader("Authorization", "Bearer " + settings.getDeviAPIAuthorization())
                     .addHeader("Content-Type", "application/json")
-                    .build().asString(success -> logger.log("Pushed stats to website. Response: " + success.getBody()));
+                    .build().asStringSync();
         }, 0, 2, TimeUnit.MINUTES);
     }
 

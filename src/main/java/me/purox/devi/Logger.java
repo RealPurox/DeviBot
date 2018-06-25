@@ -27,7 +27,7 @@ public class Logger {
             devi.getDatabaseManager().getClient().getDatabase("website").getCollection("devi_logs")
                     .insertMany(logs);
             logs.clear();
-        }, 30, 30, TimeUnit.MINUTES);
+        }, 2, 2 TimeUnit.MINUTES);
     }
 
     private String getTime() {

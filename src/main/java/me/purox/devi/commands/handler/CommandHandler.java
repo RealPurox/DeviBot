@@ -5,7 +5,7 @@ import me.purox.devi.commands.guild.*;
 import me.purox.devi.commands.guild.custom.*;
 import me.purox.devi.commands.handler.impl.ConsoleCommandSenderImpl;
 import me.purox.devi.commands.info.GuildStatsCommandExecutor;
-import me.purox.devi.commands.info.HelpCommandExecutor;
+import me.purox.devi.commands.general.HelpCommandExecutor;
 import me.purox.devi.commands.info.UserInfoCommandExecutor;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.music.*;

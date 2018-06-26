@@ -25,12 +25,11 @@ public class FlipCoinCommandExecutor implements CommandExecutor {
         Random random = new Random();
 
         int result = random.nextInt(2);
-
         if(result == 0){
             sender.reply(devi.getTranslation(command.getLanguage(), 402));
-        }else{
+            }else{
             sender.reply(devi.getTranslation(command.getLanguage(), 403));
-            }
+        }
         }
 
 

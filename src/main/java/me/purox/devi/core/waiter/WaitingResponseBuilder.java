@@ -16,11 +16,15 @@ import java.util.Map;
 
 public class WaitingResponseBuilder {
 
+    private Devi devi;
+    private GuildSettings.Settings setting;
+
     private WaiterType waiterType;
     private User executor;
     private MessageChannel channel;
     private Message trigger;
     private Guild guild;
+
     private String infoText;
     private String typeToCancelText;
     private String cancelledText;
@@ -32,12 +36,18 @@ public class WaitingResponseBuilder {
     private String booleanActivatedText;
     private String booleanDeactivatedText;
     private String stringChangedText;
-    private int timeOutInSeconds;
+
     private HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap;
     private HashMap<Integer, Map.Entry<String, WaiterVoid>> waitingVoidResponseHashMap;
-    private Devi devi;
-    private GuildSettings.Settings setting;
+
     private int lastUsedSelectorIndex = 1;
+    private int timeOutInSeconds;
+
+    private WaiterCheck customCheck;
+    private String customCheckFailureText;
+    private boolean tryAgainAfterCustomCheckFail;
+
+    private WaiterVoid customVoid;
 
     public WaitingResponseBuilder(Devi devi, Command command) {
         this.executor = command.getEvent().getAuthor();
@@ -63,6 +73,26 @@ public class WaitingResponseBuilder {
         this.booleanDeactivatedText = devi.getTranslation(language, 415);
         this.stringChangedText = devi.getTranslation(language, 416);
         this.timeOutInSeconds = 30;
+    }
+
+    public WaitingResponseBuilder withCustomCheck(WaiterCheck customCheck) {
+        this.customCheck = customCheck;
+        return this;
+    }
+
+    public WaitingResponseBuilder withCustomVoid(WaiterVoid waiterVoid) {
+        this.customVoid = waiterVoid;
+        return this;
+    }
+
+    public WaitingResponseBuilder setCustomCheckFailureText(String customCheckFailureText) {
+        this.customCheckFailureText = customCheckFailureText;
+        return this;
+    }
+
+    public WaitingResponseBuilder setTryAgainAfterCustomCheckFail(boolean tryAgainAfterCustomCheckFail) {
+        this.tryAgainAfterCustomCheckFail = tryAgainAfterCustomCheckFail;
+        return this;
     }
 
     public WaitingResponseBuilder setWaiterType(WaiterType waiterType) {
@@ -148,17 +178,17 @@ public class WaitingResponseBuilder {
         Checks.notNull(trigger, "trigger");
         Checks.notNull(guild, "guild");
         Checks.notNull(waiterType, "waiterType");
-        if(waiterType != WaiterType.SELECTOR) {
+        if(waiterType != WaiterType.SELECTOR && waiterType != WaiterType.CUSTOM) {
             this.replyText = "";
             Checks.notNull(setting, "setting");
         }
         return new WaitingResponse(devi, waiterType, setting, executor, channel, trigger, guild, infoText, typeToCancelText, cancelledText, timeOutText, replyText, expectedInputText,
                 tooManyFailures, invalidInputText, booleanActivatedText, booleanDeactivatedText, stringChangedText, timeOutInSeconds, waitingResponseHashMap,
-                waitingVoidResponseHashMap);
+                waitingVoidResponseHashMap, customCheck, customCheckFailureText, tryAgainAfterCustomCheckFail, customVoid);
     }
 
 
     public enum WaiterType {
-        SELECTOR, CHANNEL, ROLE, USER, LANGUAGE, BOOLEAN, TEXT
+        SELECTOR, CHANNEL, ROLE, USER, LANGUAGE, BOOLEAN, TEXT, CUSTOM
     }
 }

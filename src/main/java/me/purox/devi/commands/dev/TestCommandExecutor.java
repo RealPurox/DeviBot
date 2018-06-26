@@ -24,10 +24,10 @@ public class TestCommandExecutor implements CommandExecutor {
         new WaitingResponseBuilder(devi, command)
                 .addSelectorOption("next waiter response", null)
                 .addSelectorOption("another next waiter response", null)
-                .addVoidSelectorOption("void response", () -> sender.reply("works"))
-                .addVoidSelectorOption("and another void res", () -> sender.reply("works"))
+                .addVoidSelectorOption("void response", (o) -> sender.reply("works"))
+                .addVoidSelectorOption("and another void res", (o) -> sender.reply("works"))
                 .addSelectorOption("next waiter response", null)
-                .addVoidSelectorOption("void response", () -> sender.reply("works"))
+                .addVoidSelectorOption("void response", (o) -> sender.reply("works"))
                 .addSelectorOption("next waiter response", null)
                 .setWaiterType(WaitingResponseBuilder.WaiterType.SELECTOR)
                 .build().handle();

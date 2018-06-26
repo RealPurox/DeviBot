@@ -59,7 +59,7 @@ public class CommandHandler {
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
         registerCommand("musiclog", new MusicLogCommandExecutor(devi));
-        registerCommand("welcome", new WelcomeCommandExecutor(devi));
+        //registerCommand("welcome", new WelcomeCommandExecutor(devi));
         //  - twitch commands
         registerCommand("twitch", new TwitchCommandExecutor(devi));
         registerCommand("streamlist", new ListStreamCommandExecutor(devi));

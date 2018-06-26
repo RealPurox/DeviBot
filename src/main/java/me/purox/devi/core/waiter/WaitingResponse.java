@@ -8,11 +8,9 @@ import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.JavaUtils;
 import me.purox.devi.utils.MessageUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.Checks;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -41,10 +39,19 @@ public class WaitingResponse {
     private HashMap<Integer, Map.Entry<String, WaiterVoid>> waitingVoidResponseHashMap;
     private Devi devi;
 
+    private WaiterCheck customCheck;
+    private String customCheckFailureText;
+    private boolean tryAgainAfterCustomCheckFail;
+
+    private WaiterVoid customVoid;
+
+
+
     WaitingResponse(Devi devi, WaitingResponseBuilder.WaiterType waiterType, GuildSettings.Settings setting, User executor, MessageChannel channel, Message trigger, Guild guild, String infoText, String typeToCancelText, String cancelledText,
                     String timeOutText, String replyText, String expectedInputText, String tooManyFailures, String invalidInputText, String booleanActivatedText,
                     String booleanDeactivatedText, String stringChangedText, int timeOutInSeconds, HashMap<Integer, Map.Entry<String, WaitingResponse>> waitingResponseHashMap,
-                    HashMap<Integer, Map.Entry<String, WaiterVoid>> waitingVoidResponseHashMap) {
+                    HashMap<Integer, Map.Entry<String, WaiterVoid>> waitingVoidResponseHashMap, WaiterCheck customCheck, String customCheckFailureText, boolean tryAgainAfterCustomCheckFail,
+                    WaiterVoid customVoid) {
 
         this.devi = devi;
         this.waiterType = waiterType;
@@ -68,6 +75,11 @@ public class WaitingResponse {
         this.timeOutInSeconds = timeOutInSeconds;
         this.waitingResponseHashMap = waitingResponseHashMap;
         this.waitingVoidResponseHashMap = waitingVoidResponseHashMap;
+
+        this.customCheck = customCheck;
+        this.customCheckFailureText = customCheckFailureText;
+        this.tryAgainAfterCustomCheckFail = tryAgainAfterCustomCheckFail;
+        this.customVoid = customVoid;
     }
 
     public void handle() {
@@ -75,7 +87,6 @@ public class WaitingResponse {
 
         builder.append(DeviEmote.INFO.get()).append(" | ").append(infoText).append("\n\n");
         builder.append("```Markdown\n");
-        if(!expectedInputText.equals("")) builder.append("# ").append(expectedInputText).append("\n\n");
         if(!replyText.equals("")) builder.append("# ").append(replyText).append("\n\n");
 
         for (int i = 1; i != waitingResponseHashMap.size() + waitingVoidResponseHashMap.size() + 1; i++) {
@@ -84,6 +95,7 @@ public class WaitingResponse {
             if (waitingVoidResponseHashMap.containsKey(i))
                 builder.append("[").append(i).append("]: ").append(waitingVoidResponseHashMap.get(i).getKey()).append("\n");
         }
+        if(!expectedInputText.equals("")) builder.append("\n# ").append(expectedInputText).append("\n\n");
         builder.append("```\n");
         builder.append(typeToCancelText);
 
@@ -96,17 +108,13 @@ public class WaitingResponse {
         devi.getResponseWaiter().waitForResponse(guild,
                 evt -> devi.getResponseWaiter().checkUser(evt, trigger.getId(), executor.getId(), channel.getId()),
                 response -> {
+                    //cancel waiter
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
                         MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + cancelledText);
                         return;
                     }
 
-                    if (nextAttempt >= 4) {
-                        MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + tooManyFailures);
-                        return;
-                    }
-
-
+                    //It's a void or ResponseWaiter selector
                     if (waiterType == WaitingResponseBuilder.WaiterType.SELECTOR) {
                         String input = response.getMessage().getContentRaw().split(" ")[0];
 
@@ -117,24 +125,55 @@ public class WaitingResponse {
                             entered = -1;
                         }
 
+                        //not a valid number
                         if (!waitingResponseHashMap.containsKey(entered) && !waitingVoidResponseHashMap.containsKey(entered)) {
-                            MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + invalidInputText);
-                            startWaiter(nextAttempt);
+                            if (nextAttempt >= 4) {
+                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + tooManyFailures);
+                                return;
+                            } else {
+                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + invalidInputText);
+                                startWaiter(nextAttempt);
+                            }
                             return;
                         }
 
+                        //next waiter
                         if (waitingResponseHashMap.containsKey(entered)) {
                             WaitingResponse nextWaiter = waitingResponseHashMap.get(entered).getValue();
                             Checks.notNull(nextWaiter, "nexWaiter");
-                            waitingResponseHashMap.get(entered).getValue().handle();
+                            nextWaiter.handle();
+                        //next void
                         } else if (waitingVoidResponseHashMap.containsKey(entered)) {
                             WaiterVoid waiterVoid = waitingVoidResponseHashMap.get(entered).getValue();
                             Checks.notNull(waiterVoid, "waiterVoid");
-                            waiterVoid.run();
+                            waiterVoid.run(null);
                         } else
+                            //should never happen
                             throw new IllegalStateException("Something went wrong here");
                     //not a selector
                     } else {
+                        //custom check
+                        if (customCheck != null) {
+                            Object check = customCheck.check(response);
+                            if (check == null) {
+                                if (tryAgainAfterCustomCheckFail) {
+                                    if (nextAttempt >= 4) {
+                                        MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + tooManyFailures);
+                                        return;
+                                    } else {
+                                        if (customCheckFailureText != null)
+                                            MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + customCheckFailureText);
+                                        startWaiter(nextAttempt);
+                                    }
+                                }
+                            }
+                            //custom void, mostly used if stuff is saved in a different DB collection.
+                            if (customVoid != null) {
+                                customVoid.run(check);
+                                return;
+                            }
+                        }
+
                         DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
                         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
@@ -188,8 +227,13 @@ public class WaitingResponse {
                         }
 
                         if (object == null) {
-                            MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + devi.getTranslation(language, 413));
-                            startWaiter(nextAttempt);
+                            if (nextAttempt >= 4) {
+                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + tooManyFailures);
+                                return;
+                            } else {
+                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + devi.getTranslation(language, 413));
+                                startWaiter(nextAttempt);
+                            }
                             return;
                         }
 

@@ -43,6 +43,8 @@ public class CommandHandler {
         commands.put("pmowners", new PMOwnersCommandExecutor(devi));
         commands.put("admindisable", new AdminDisableCommandExecutor(devi));
         commands.put("adminenable", new AdminEnableCommandExecutor(devi));
+        commands.put("guilddata", new GuildDataCommandExecutor(devi));
+        commands.put("adminstats", new AdminStatsCommand(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
@@ -52,6 +54,7 @@ public class CommandHandler {
         registerCommand("hive", new HiveCommandExecutor(devi));
         registerCommand("fortnite", new FortniteCommandExecutor(devi));
         registerCommand("weather", new WeatherCommandExecutor(devi));
+        registerCommand("flipcoin", new FlipCoinCommandExecutor(devi));
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
         registerCommand("prefix", new PrefixCommandExecutor(devi));

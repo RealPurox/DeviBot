@@ -24,9 +24,9 @@ public class Logger {
         this.dateFormat = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            devi.getDatabaseManager().getClient().getDatabase("website").getCollection("devi_logs")
-                    .insertMany(logs);
+            if (logs.size() != 0) devi.getDatabaseManager().getClient().getDatabase("website").getCollection("devi_logs").insertMany(logs);
             logs.clear();
+            System.out.println("inserted logs");
         }, 1, 1, TimeUnit.MINUTES);
     }
 

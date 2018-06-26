@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.Permission;
 import java.awt.*;
 import java.lang.management.ManagementFactory;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PerformanceCommandExecutor implements CommandExecutor {
 
@@ -28,24 +29,30 @@ public class PerformanceCommandExecutor implements CommandExecutor {
         Runtime runtime = Runtime.getRuntime();
         int mb = 1024 * 1024;
 
+        long millis = ManagementFactory.getRuntimeMXBean().getUptime();
+
         int threads = Thread.activeCount();
         long usingMemory = ((runtime.totalMemory() - runtime.freeMemory()) / mb);
         long freeMemory = runtime.freeMemory() / mb;
-        long allocatedMemory = runtime.totalMemory() / mb;
-        long maxMemory = runtime.maxMemory() / mb;
 
-        long millis = ManagementFactory.getRuntimeMXBean().getUptime();
+        String uptime = TimeUtils.toRelative(millis);
+        uptime = uptime.substring(0, uptime.length() - 3);
 
-        EmbedBuilder builder = new EmbedBuilder().setAuthor("Performance").setColor(new Color(38, 169, 213));
+        AtomicLong audioConnections = new AtomicLong();
+        devi.getShardManager().getShards().forEach(jda -> jda.getAudioManagers().forEach(audioManager -> { if (audioManager.isConnected())
+            audioConnections.getAndIncrement();
+        }));
+
+
+        EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
         builder.addField("Threads", String.valueOf(threads), true);
-        builder.addField("Using Memory (MB)", String.valueOf(usingMemory), true);
+        builder.addField("Using Memory", String.valueOf(usingMemory), true);
         builder.addField("Free Memory (MB)", String.valueOf(freeMemory), true);
-        builder.addField("Allocated Memory (MB)", String.valueOf(allocatedMemory), true);
-        builder.addField("Max Memory (MB)", String.valueOf(maxMemory), true);
-        builder.addField("Music Player" , String.valueOf(devi.getMusicManager().getAudioPlayers().size()), true);
+        builder.addField("Registered Music Players" , String.valueOf(devi.getMusicManager().getAudioPlayers().size()), true);
+        builder.addField("Audio Connections" , String.valueOf(audioConnections.get()), true);
         builder.addField("Commands Executed", String.valueOf(devi.getCommandsExecuted()), true);
         builder.addField("Songs Played", String.valueOf(devi.getSongsPlayed()), true);
-        builder.addField("Uptime", "Devi was booted " + TimeUtils.toRelative(millis), false);
+        builder.addField("Uptime", uptime, false);
 
         sender.reply(builder.build());
     }

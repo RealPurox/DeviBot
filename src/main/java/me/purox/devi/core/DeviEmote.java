@@ -6,7 +6,8 @@ public enum DeviEmote {
     SUCCESS("<:success:455049950930403348>"),
     MUTE("<:devi_mute:435785844759068672>"),
     BAN("<:devi_ban:435786345445851136>"),
-    TWITCH("<:twitch:448893462767599616>");
+    TWITCH("<:twitch:448893462767599616>"),
+    INFO("<:info:458663927568400397>");
 
     private String get;
     DeviEmote(String get) {

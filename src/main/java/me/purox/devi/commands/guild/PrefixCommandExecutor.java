@@ -7,6 +7,7 @@ import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
+import me.purox.devi.core.waiter.WaitingResponseBuilder;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -24,28 +25,11 @@ public class PrefixCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        MessageReceivedEvent event = command.getEvent();
-
-        Message message = MessageUtils.sendMessageSync(event.getChannel(), ":information_source: | " + devi.getTranslation(command.getLanguage(), 249, "`cancel`"));
-        if (message == null) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 217));
-            return;
-        }
-
-        devi.getResponseWaiter().waitForResponse(event.getGuild(),
-                evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
-                response -> {
-                    if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 250));
-                        return;
-                    }
-
-                    String prefix = response.getMessage().getContentRaw().split(" ")[0];
-                    command.getDeviGuild().getSettings().setStringValue(GuildSettings.Settings.PREFIX, prefix);
-                    command.getDeviGuild().saveSettings();
-                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 251, "`" + prefix + "`"));
-                },
-                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 252)));
+        new WaitingResponseBuilder(devi, command)
+                .setWaiterType(WaitingResponseBuilder.WaiterType.TEXT)
+                .setSetting(GuildSettings.Settings.PREFIX)
+                .setExpectedInputText(devi.getTranslation(command.getLanguage(), 406))
+                .build().handle();
     }
 
     @Override

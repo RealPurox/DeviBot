@@ -5,6 +5,7 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.core.waiter.WaitingResponseBuilder;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
@@ -20,6 +21,16 @@ public class TestCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
+        new WaitingResponseBuilder(devi, command)
+                .addSelectorOption("next waiter response", null)
+                .addSelectorOption("another next waiter response", null)
+                .addVoidSelectorOption("void response", (o) -> sender.reply("works"))
+                .addVoidSelectorOption("and another void res", (o) -> sender.reply("works"))
+                .addSelectorOption("next waiter response", null)
+                .addVoidSelectorOption("void response", (o) -> sender.reply("works"))
+                .addSelectorOption("next waiter response", null)
+                .setWaiterType(WaitingResponseBuilder.WaiterType.SELECTOR)
+                .build().handle();
     }
 
 

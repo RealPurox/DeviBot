@@ -27,17 +27,13 @@ public class SettingsCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         //create builder
-        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(new Color(34, 113, 126));
+        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(Color.decode("#7289da"));
         embedBuilder.setAuthor(devi.getTranslation(command.getLanguage(), 3, command.getEvent().getGuild().getName()));
 
         // add fields
         for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {
-            if (setting.name().startsWith("MOD_LOG") && setting != GuildSettings.Settings.MOD_LOG_ENABLED ||
-                    setting.name().startsWith("AUTO_MOD") && setting != GuildSettings.Settings.AUTO_MOD_ENABLED ||
-                    setting.name().startsWith("MUSIC_LOG") && setting != GuildSettings.Settings.MUSIC_LOG_ENABLED ||
-                    setting == GuildSettings.Settings.MUTE_ROLE || setting.name().contains("AUTO_ROLE") || setting.name().contains("WELCOME")) {
-                continue;
-            }
+            if (!setting.isDisplayedInSettings()) continue;
+
 
             Object valObject = command.getDeviGuild().getSettings().getValue(setting);
             String key = setting.getEmoji() + " " + devi.getTranslation(command.getLanguage(), setting.getTranslationID());
@@ -50,7 +46,6 @@ public class SettingsCommandExecutor implements CommandExecutor {
                 else
                     value += devi.getTranslation(command.getLanguage(), 7, channel.getAsMention());
             } else if (setting.name().contains("ROLE") && !setting.name().contains("AUTO_ROLE")) {
-                System.out.println(valObject.toString());
                 Role role = command.getEvent().getGuild().getRoleById(valObject.toString());
                 if (role == null)
                     value += devi.getTranslation(command.getLanguage(), 7, "`unknown`");

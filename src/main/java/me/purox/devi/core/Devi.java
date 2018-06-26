@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class Devi {
@@ -180,8 +182,6 @@ public class Devi {
             builder.addEventListeners(new ModLogListener(this));
             builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
 
-
-
             // build & login
             this.shardManager = builder.build();
         } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
@@ -224,7 +224,7 @@ public class Devi {
                             .appendBody("hub.lease_seconds", 864000).build().asStringSync();
 
                     if (response != null && response.getStatus() != 202) {
-                        System.err.println("[INFO] Failed to subscribe to twitch stream: " + id + ", retrying in 60 seconds.");
+                        logger.error("Failed to subscribe to twitch stream: " + id + ", retrying in 60 seconds.");
                     } else {
                         getRedisSender().hset("streams#2", id, String.valueOf(System.currentTimeMillis()));
                         remove.add(id);
@@ -243,13 +243,16 @@ public class Devi {
 
     private void loadStreams() {
         MongoCollection<Document> streams = getDatabaseManager().getDatabase().getCollection("streams");
+        AtomicInteger total = new AtomicInteger();
         streams.find().forEach((Consumer<? super Document>) document -> {
             String stream = document.getString("stream");
             if (!this.streams.containsKey(stream)) {
                 this.streams.put(stream, new ArrayList<>());
             }
+            total.getAndIncrement();
             this.streams.get(stream).add(document.getString("guild"));
         });
+        logger.log("Loaded twitch streams (Total: " + total.get() + ")");
     }
 
     public void loadTranslations() {
@@ -258,15 +261,18 @@ public class Devi {
         MongoCollection<Document> translations = securityDatabase.getCollection("translations");
 
         // register translations
+        AtomicInteger total = new AtomicInteger();
         translations.find().forEach((Consumer<? super Document>) document -> {
             int id = Integer.parseInt(document.getString("_id"));
             for (Language language : Language.values()) {
                 String translation = document.getString(language.getRegistry().toLowerCase());
                 if(translation != null && !translation.equals("none")) {
+                    total.getAndIncrement();
                     deviTranslations.get(language).put(id, translation);
                 }
             }
         });
+        logger.log("Loaded translations (Total: " + total.get() + ")");
     }
 
     public String getTranslation(Language language, int id, Object ... args) {
@@ -298,6 +304,7 @@ public class Devi {
         return new JedisPubSub() {
             @Override
             public void onMessage(String channel, String message) {
+                logger.log("Received a message from the website: " + message);
                 //<editor-fold desc="devi_update channel">
                 if (channel.equals("devi_update")) {
                     JSONObject update = new JSONObject(message);
@@ -366,6 +373,7 @@ public class Devi {
 
                             builder.setThumbnail(userData.getString("profile_image_url"));
 
+                            logger.log("Sending stream announcement for twitch streamer " + userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
                             MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
                                     .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
                                     .setEmbed(builder.build()).build());
@@ -469,6 +477,20 @@ public class Devi {
                     .addHeader("Content-Type", "application/json")
                     .build().asStringSync();
         }, 0, 2, TimeUnit.MINUTES);
+    }
+
+    public void sendMessageToDevelopers(Object o) {
+        AtomicReference<Guild> guild = new AtomicReference<>(null);
+        shardManager.getShards().forEach(jda -> {
+            Guild g = jda.getGuildById("392264119102996480");
+            if (g != null) guild.set(g);
+        });
+        if (guild.get() != null) {
+            TextChannel channel = guild.get().getTextChannelById("458740773614125076");
+            if (channel != null) {
+                MessageUtils.sendMessageAsync(channel, o);
+            }
+        }
     }
 
     private DeviGuild createDeviGuild(String id) {

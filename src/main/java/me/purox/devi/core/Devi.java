@@ -115,7 +115,6 @@ public class Devi {
         // load streams
         loadStreams();
 
-
         try {
             // subscribe to redis channel async because it's blocking the current thread
             Thread redisThread = new Thread(() -> {
@@ -167,9 +166,12 @@ public class Devi {
             changeTwitchSubscriptionStatus(subscribeToStream, true);
 
             // create builder
+            int shards = 1;
+
             DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder();
             builder.setToken(settings.getBotToken());
             builder.setAutoReconnect(true);
+            builder.setShardsTotal(shards);
 
             // make the dev bot listen to code | display website on main bot
             builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.watching("devibot.net"));

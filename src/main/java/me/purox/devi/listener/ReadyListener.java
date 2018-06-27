@@ -58,8 +58,6 @@ public class ReadyListener extends ListenerAdapter {
                     // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.
                     if (guild.getSelfMember().getVoiceState().inVoiceChannel()) {
                         guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
-                        //create player if it doesn't exist
-                        devi.getMusicManager().getPlayer(guild);
                     }
                 }
             }).start();

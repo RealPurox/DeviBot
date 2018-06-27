@@ -10,6 +10,7 @@ public enum DeviEmote {
     INFO("<:info:458663927568400397>");
 
     private String get;
+
     DeviEmote(String get) {
         this.get = get;
     }

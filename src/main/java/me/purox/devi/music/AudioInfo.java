@@ -1,24 +1,27 @@
 package me.purox.devi.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.User;
 
 public class AudioInfo {
 
-    private final AudioTrack track;
-    private final VoiceChannel channel;
+    private final AudioTrack audioTrack;
+    private final User requester;
 
-
-    AudioInfo(AudioTrack track, VoiceChannel channel) {
-        this.track = track;
-        this.channel = channel;
+    public AudioInfo(AudioTrack audioTrack, User requester) {
+        this.audioTrack = audioTrack;
+        this.requester = requester;
     }
 
-    public AudioTrack getTrack() {
-        return track;
+    public AudioTrack getAudioTrack() {
+        return audioTrack;
     }
 
-    public VoiceChannel getChannel() {
-        return channel;
+    public User getRequester() {
+        return requester;
+    }
+
+    public AudioInfo createNew() {
+        return new AudioInfo(audioTrack.makeClone(), requester);
     }
 }

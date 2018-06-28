@@ -12,6 +12,7 @@ import me.purox.devi.commands.general.*;
 import me.purox.devi.commands.music.JoinCommandExecutor;
 import me.purox.devi.commands.music.LeaveCommandExecutor;
 import me.purox.devi.commands.music.PlayCommandExecutor;
+import me.purox.devi.commands.music.QueueCommandExecutor;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
@@ -94,8 +95,8 @@ public class CommandHandler {
         registerCommand("join", new JoinCommandExecutor(devi));
         registerCommand("leave", new LeaveCommandExecutor(devi));
         registerCommand("play", new PlayCommandExecutor(devi));
-        /*registerCommand("queue", new QueueCommandExecutor(devi));
-        registerCommand("pause", new PauseCommandExecutor(devi));
+        registerCommand("queue", new QueueCommandExecutor(devi));
+        /*registerCommand("pause", new PauseCommandExecutor(devi));
         registerCommand("resume", new ResumeCommandExecutor(devi));
         registerCommand("current", new CurrentCommandExecutor(devi));
         registerCommand("skip", new SkipCommandExecutor(devi));

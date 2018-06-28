@@ -46,18 +46,30 @@ public class GuildPlayer extends AudioEventAdapter {
         return audioPlayer;
     }
 
-    private void destroy() {
-        audioPlayer.destroy();
-        currentQueueIndex = -1;
-        queue.clear();
-        devi.getMusicManager().getGuildPlayers().remove(guild.getId());
-    }
-
     private void addToQueue(AudioTrack audioTrack, User requester) {
         AudioInfo audioInfo = new AudioInfo(audioTrack, requester);
         queue.add(audioInfo);
 
         if (currentQueueIndex == -1) playNext();
+    }
+
+    public AudioInfo getAudioInfo(AudioTrack track) {
+        return this.queue.stream().filter(audioInfo -> audioInfo.getAudioTrack().equals(track)).findFirst().orElse(null);
+    }
+
+    public List<AudioInfo> getQueue() {
+        return queue;
+    }
+
+    public int getCurrentQueueIndex() {
+        return currentQueueIndex;
+    }
+
+    private void destroy() {
+        audioPlayer.destroy();
+        currentQueueIndex = -1;
+        queue.clear();
+        devi.getMusicManager().getGuildPlayers().remove(guild.getId());
     }
 
     private void playNext() {
@@ -66,10 +78,6 @@ public class GuildPlayer extends AudioEventAdapter {
 
         AudioTrack audioTrack = queue.get(currentQueueIndex).getAudioTrack();
         audioPlayer.playTrack(audioTrack);
-    }
-
-    public AudioInfo getAudioInfo(AudioTrack track) {
-        return this.queue.stream().filter(audioInfo -> audioInfo.getAudioTrack().equals(track)).findFirst().orElse(null);
     }
 
     @Override

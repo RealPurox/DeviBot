@@ -24,4 +24,10 @@ public class AudioInfo {
     public AudioInfo createNew() {
         return new AudioInfo(audioTrack.makeClone(), requester);
     }
+
+    public boolean isEqualTo(AudioInfo audioInfo) {
+        return this.audioTrack.getInfo().author.equals(audioInfo.getAudioTrack().getInfo().author) && this.audioTrack.getInfo().title.equals(audioInfo.getAudioTrack().getInfo().title) &&
+                this.audioTrack.getInfo().identifier.equals(audioInfo.getAudioTrack().getInfo().identifier) && this.audioTrack.getInfo().length == audioInfo.getAudioTrack().getInfo().length &&
+                this.audioTrack.getInfo().uri.equals(audioInfo.getAudioTrack().getInfo().uri) && audioInfo.getRequester().getIdLong() == this.requester.getIdLong();
+    }
 }

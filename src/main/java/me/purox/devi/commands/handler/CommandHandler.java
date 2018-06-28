@@ -138,7 +138,9 @@ public class CommandHandler {
         }
 
         //all good, run the command
-        devi.getLogger().log("Command '" + raw + "' executed by " + commandSender.getName() + "#" + commandSender.getDiscriminator() + " in channel-type " + (event != null ? event.getChannelType() : "UNKNOWN"));
+        devi.getLogger().log("Command '" + raw + "' executed by " + commandSender.getName() + "#" + commandSender.getDiscriminator() +
+                (event == null || event.getGuild() == null ? " in DMs" : " in channel #" + event.getChannel().getName() + " (" + event.getChannel().getId() + "), " +
+                        "guild " + event.getGuild().getName() + " (" + event.getGuild().getId() + ")"));
         devi.increaseCommandsExecuted();
         commandExecutor.execute(container.getArgs(), container.getCommand(), commandSender);
     }

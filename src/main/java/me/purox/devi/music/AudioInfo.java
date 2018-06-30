@@ -30,4 +30,9 @@ public class AudioInfo {
                 this.audioTrack.getInfo().identifier.equals(audioInfo.getAudioTrack().getInfo().identifier) && this.audioTrack.getInfo().length == audioInfo.getAudioTrack().getInfo().length &&
                 this.audioTrack.getInfo().uri.equals(audioInfo.getAudioTrack().getInfo().uri) && audioInfo.getRequester().getIdLong() == this.requester.getIdLong();
     }
+
+    @Override
+    public String toString() {
+        return "[AudioInfo: Title:" + audioTrack.getInfo().title + "|| URI:" + audioTrack.getInfo().uri + "|| Requester: " + requester.getName() + "#" + requester.getDiscriminator() + "]";
+    }
 }

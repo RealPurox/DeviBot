@@ -23,6 +23,7 @@ import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 public class GuildPlayer extends AudioEventAdapter {
 
@@ -40,6 +41,27 @@ public class GuildPlayer extends AudioEventAdapter {
 
         this.audioPlayer.addListener(this);
         guild.getAudioManager().setSendingHandler(new PlayerSendHandler(audioPlayer));
+    }
+
+    public String getQueueDuration() {
+        long dura = 0;
+        for (AudioInfo audioInfo : queue) {
+            dura += audioInfo.getAudioTrack().getInfo().length;
+        }
+        return devi.getMusicManager().getTrackTime(dura);
+    }
+
+    public AudioInfo getAudioInfoById(int id) {
+        return queue.get(id - 1);
+    }
+
+    public int getAudioInfoId(AudioInfo audioInfo) {
+        for (int i = 0; i < queue.size(); i++) {
+            if (queue.get(i).isEqualTo(audioInfo)) {
+                return i + 1;
+            }
+        }
+        return -1;
     }
 
     public AudioPlayer getAudioPlayer() {
@@ -96,7 +118,12 @@ public class GuildPlayer extends AudioEventAdapter {
         devi.getMusicManager().getGuildPlayers().remove(guild.getId());
     }
 
-    private void playNext() {
+    public void playNext() {
+        if (queue.size() == 0) {
+            leave(null, null, true);
+            return;
+        }
+
         currentQueueIndex += 1;
         if (currentQueueIndex == queue.size()) currentQueueIndex = 0;
 
@@ -113,6 +140,10 @@ public class GuildPlayer extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         devi.getLogger().debug("Track with index " + currentQueueIndex + " has ended");
+        if (endReason == AudioTrackEndReason.STOPPED) {
+            audioPlayer.playTrack(queue.get(currentQueueIndex).getAudioTrack().makeClone());
+            return;
+        }
         queue.set(currentQueueIndex, queue.get(currentQueueIndex).createNew());
         playNext();
     }

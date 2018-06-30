@@ -33,7 +33,7 @@ public class JoinCommandExecutor implements CommandExecutor {
         VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(guild);
 
-        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), channel)) {
+        if (!devi.getMusicManager(). isDJorAlone(command.getEvent().getMember(), channel)) {
             sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
             return;
         }

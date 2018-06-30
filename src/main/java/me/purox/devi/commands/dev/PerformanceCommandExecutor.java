@@ -27,14 +27,8 @@ public class PerformanceCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
 
-        Runtime runtime = Runtime.getRuntime();
-        int mb = 1024 * 1024;
-
         long millis = ManagementFactory.getRuntimeMXBean().getUptime();
-
         int threads = Thread.activeCount();
-        long usingMemory = ((runtime.totalMemory() - runtime.freeMemory()) / mb);
-        long freeMemory = runtime.freeMemory() / mb;
 
         String uptime = TimeUtils.toRelative(millis);
         uptime = uptime.substring(0, uptime.length() - 3);
@@ -76,11 +70,11 @@ public class PerformanceCommandExecutor implements CommandExecutor {
                 }
             }
         }
-        String status = DeviEmote.SUCCESS.get() + " Good";
+        String status = "Good " + DeviEmote.SUCCESS.get();
         if (points >= 30) {
-            status = ":warning: Critical";
+            status = "Critical :warning:";
         } else if (points >= 20) {
-            status = DeviEmote.ERROR.get() + " Low";
+            status = "Low " + DeviEmote.ERROR.get();
         }
         return status;
     }

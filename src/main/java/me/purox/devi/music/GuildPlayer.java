@@ -65,6 +65,30 @@ public class GuildPlayer extends AudioEventAdapter {
         return currentQueueIndex;
     }
 
+    public List<AudioInfo> getNextSongs(int amount) {
+        List<AudioInfo> songs = new ArrayList<>();
+        int index = currentQueueIndex;
+
+        for (int i = 0; i < amount; i++) {
+            index += 1;
+            if (index == queue.size()) index = 0;
+
+            AudioInfo audioInfo = queue.get(index);
+
+            boolean isInSongsAlready = false;
+            for (AudioInfo a : songs) if (a.isEqualTo(audioInfo)) isInSongsAlready = true;
+
+            if(!isInSongsAlready) songs.add(audioInfo);
+        }
+
+        return songs;
+    }
+
+    public AudioInfo getCurrent() {
+        if (audioPlayer.isPaused() || audioPlayer.getPlayingTrack() == null) return null;
+        return queue.get(currentQueueIndex);
+    }
+
     private void destroy() {
         audioPlayer.destroy();
         currentQueueIndex = -1;
@@ -73,18 +97,22 @@ public class GuildPlayer extends AudioEventAdapter {
     }
 
     private void playNext() {
-        currentQueueIndex = currentQueueIndex + 1;
+        currentQueueIndex += 1;
         if (currentQueueIndex == queue.size()) currentQueueIndex = 0;
 
         AudioTrack audioTrack = queue.get(currentQueueIndex).getAudioTrack();
         audioPlayer.playTrack(audioTrack);
     }
 
+
     @Override
-    public void onTrackStart(AudioPlayer player, AudioTrack track) { }
+    public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        devi.getLogger().debug("Starting track with index "  + currentQueueIndex + ". Queue size: " + queue.size());
+    }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        devi.getLogger().debug("Track with index " + currentQueueIndex + " has ended");
         queue.set(currentQueueIndex, queue.get(currentQueueIndex).createNew());
         playNext();
     }
@@ -96,7 +124,8 @@ public class GuildPlayer extends AudioEventAdapter {
                 if (!command.getEvent().getGuild().getSelfMember().getVoiceState().inVoiceChannel())
                     join(command, sender, true);
                 addToQueue(audioTrack, sender);
-                sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 457, "`" + audioTrack.getInfo().title + "`", "__" + audioTrack.getInfo().author + "__"));
+                sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 457, "`" + audioTrack.getInfo().title + "`", "__" + audioTrack.getInfo().author + "__") + " "
+                        + devi.getMusicManager().getTrackTime(audioTrack.getInfo().length));
             }
 
             @Override
@@ -106,10 +135,13 @@ public class GuildPlayer extends AudioEventAdapter {
                 } else {
                     if (!command.getEvent().getGuild().getSelfMember().getVoiceState().inVoiceChannel())
                         join(command, sender, true);
+                    long time = 0;
                     for (int i = 0; i < audioPlaylist.getTracks().size(); i++) {
+                        time += audioPlaylist.getTracks().get(i).getInfo().length;
                         addToQueue(audioPlaylist.getTracks().get(i), sender);
                     }
-                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(),458, "`" + audioPlaylist.getName() + "`", "__" + audioPlaylist.getTracks().size() + "__"));
+                    sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(),458, "`" + audioPlaylist.getName() + "`", "__" + audioPlaylist.getTracks().size() + "__") + " "
+                            + devi.getMusicManager().getTrackTime(time));
                 }
             }
 

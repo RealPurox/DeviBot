@@ -43,20 +43,28 @@ public class MusicManager {
         //IDs of members in that voice channel
         Set<String> voiceMembers = voiceChannel.getMembers().stream().map(mem -> mem.getUser().getId()).collect(Collectors.toSet());
         if (member.getRoles().stream().anyMatch(role -> role.getName().equalsIgnoreCase("DJ"))) {
-            devi.getLogger().debug("Member has DJ role");
+            devi.getLogger().debug("Member has DJ role in guild " + voiceChannel.getGuild().getName() + " (" + voiceChannel.getGuild().getId() + ")");
             return true;
         } else if (member.hasPermission(Permission.MANAGE_CHANNEL)) {
-            devi.getLogger().debug("Members has Manage Channel permission");
+            devi.getLogger().debug("Members has Manage Channel permission in guild " + voiceChannel.getGuild().getName() + " (" + voiceChannel.getGuild().getId() + ")");
             return true;
         } else if (voiceMembers.containsAll(Arrays.asList(member.getUser().getId(), voiceChannel.getJDA().getSelfUser().getId()))) {
-            devi.getLogger().debug("Member is with just the bot in the channel");
+            devi.getLogger().debug("Member is with just the bot in the channel in guild " + voiceChannel.getGuild().getName() + " (" + voiceChannel.getGuild().getId() + ")");
             return true;
         } else if (voiceMembers.size() == 1 && voiceMembers.contains(member.getUser().getId())) {
-            devi.getLogger().debug("Member is totally alone in the channel");
+            devi.getLogger().debug("Member is totally alone in the channel in guild " + voiceChannel.getGuild().getName() + " (" + voiceChannel.getGuild().getId() + ")");
             return true;
         }
-        devi.getLogger().debug("Member has not authority to use that command");
+        devi.getLogger().debug("Member has not authority to use that command in guild " + voiceChannel.getGuild().getName() + " (" + voiceChannel.getGuild().getId() + ")");
         return false;
+    }
+
+    public String getTrackTime(long milliseconds) {
+        long totalSecs = milliseconds / 1000;
+        long hours = (totalSecs / 3600);
+        long mins = (totalSecs / 60) % 60;
+        long secs = totalSecs % 60;
+        return "(`" + (hours == 0 ? "" : String.format("%02d", hours) + "`:`") + String.format("%02d", mins) + "`:`" + String.format("%02d", secs) + "`)";
     }
 
     public HashMap<String, GuildPlayer> getGuildPlayers() {

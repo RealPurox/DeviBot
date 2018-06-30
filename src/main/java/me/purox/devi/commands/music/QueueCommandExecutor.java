@@ -1,14 +1,18 @@
 package me.purox.devi.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 
+import java.awt.*;
 import java.util.List;
 
 public class QueueCommandExecutor implements CommandExecutor {
@@ -22,20 +26,45 @@ public class QueueCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
-        List<AudioInfo> queue = guildPlayer.getQueue();
 
-        StringBuilder sb = new StringBuilder();
+        EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
+        builder.setAuthor(command.getEvent().getGuild().getName() + " - Music Queue");
+        builder.appendDescription(DeviEmote.MUSIC.get() + " __**Currently Playing**__ " + DeviEmote.MUSIC.get() + "\n\n");
 
-        int i = 1;
-        for (AudioInfo audioInfo : queue) {
-            int next = i++;
-            System.out.println(next);
-            System.out.println(guildPlayer.getCurrentQueueIndex());
-            if (next == guildPlayer.getCurrentQueueIndex() + 1)  sb.append("->>> ");
-            sb.append(next).append(") `").append(audioInfo.getAudioTrack().getInfo().title).append("` - requested by **").append(audioInfo.getRequester().getName()).append("#").append(audioInfo.getRequester().getDiscriminator()).append("**\n");
+        boolean displayNext = false;
+
+        if (guildPlayer.getAudioPlayer().isPaused()) {
+            builder.appendDescription(DeviEmote.ERROR.get() + " | The music player is currently paused!\n\n");
+        } else if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
+            builder.appendDescription(DeviEmote.ERROR.get() + " | The music player is not playing any music right now!\n\n");
+        } else {
+            displayNext = true;
+            AudioInfo currentInfo = guildPlayer.getCurrent();
+            AudioTrack current = currentInfo.getAudioTrack();
+
+            builder.appendDescription("[" + current.getInfo().title +"](" + current.getInfo().uri + ") - requested by **"
+                    + currentInfo.getRequester().getName() + "#" + currentInfo.getRequester().getDiscriminator() + "**\n\n");
         }
 
-        sender.reply(sb.toString());
+        if (displayNext) {
+            builder.appendDescription(":arrow_double_down: __**Up Next**__ :arrow_double_down:\n\n");
+
+            int amount = 5;
+            List<AudioInfo> audioInfos = guildPlayer.getNextSongs(amount);
+            boolean isMore = audioInfos.size() >= amount;
+
+            for (AudioInfo audioInfo : audioInfos) {
+                AudioTrack current = audioInfo.getAudioTrack();
+                builder.appendDescription("[" + current.getInfo().title +"](" + current.getInfo().uri + ") - requested by **"
+                        + audioInfo.getRequester().getName() + "#" + audioInfo.getRequester().getDiscriminator() + "**\n\n");
+            }
+
+            if (isMore) {
+                builder.appendDescription("[Click here](https://www.devibot.net/guild/" + command.getEvent().getGuild().getId() + "/queue) to display the rest of the queue");
+            }
+        }
+
+        sender.reply(builder.build());
     }
 
     @Override

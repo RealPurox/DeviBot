@@ -29,7 +29,7 @@ public class RemoveCommandExecutor implements CommandExecutor {
             return;
         }
 
-        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), command.getEvent().getGuild().getSelfMember().getVoiceState().getChannel())) {
+        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), command.getEvent().getGuild().getSelfMember().getVoiceState().getChannel(), command.getEvent().getGuild())) {
             sender.reply(DeviEmote.ERROR.get() + " | You don't have permission to remove songs from the queue");
             return;
         }

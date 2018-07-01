@@ -21,7 +21,7 @@ public class AdminDisableCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
+        if (!devi.getAdmins().contains(sender.getId())) return;
 
         if (args.length == 0) {
             sender.reply("Invalid amount of arguments provided. Correct usage: `" + command.getPrefix() + "admindisable [--list, --all, <module type>]`");

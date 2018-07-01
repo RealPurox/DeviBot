@@ -27,7 +27,7 @@ public class LeaveCommandExecutor implements CommandExecutor {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(guild);
         VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
 
-        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), channel)) {
+        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), channel, guild)) {
             sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
             return;
         }

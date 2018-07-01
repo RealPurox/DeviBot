@@ -21,7 +21,7 @@ public class ThreadListCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
+        if (!devi.getAdmins().contains(sender.getId())) return;
 
         StringBuilder builder = new StringBuilder();
         builder.append("id -> name - thread group name - thread state\n");

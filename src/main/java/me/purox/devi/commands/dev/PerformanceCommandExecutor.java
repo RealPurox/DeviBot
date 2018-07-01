@@ -25,7 +25,7 @@ public class PerformanceCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
+        if (!devi.getAdmins().contains(sender.getId())) return;
 
         long millis = ManagementFactory.getRuntimeMXBean().getUptime();
         int threads = Thread.activeCount();

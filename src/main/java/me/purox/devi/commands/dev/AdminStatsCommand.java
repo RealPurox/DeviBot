@@ -20,13 +20,14 @@ public class AdminStatsCommand implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
+        if (!devi.getAdmins().contains(sender.getId())) return;
+
         StringBuilder builder = new StringBuilder();
 
         builder.append("```").append("-- == Translations == --\n\n");
 
         int totalTrans = devi.getDeviTranslations().get(Language.ENGLISH).keySet().size();
 
-        System.out.println("Total: " + totalTrans);
         for (Language language : Language.values()) {
             int translated = devi.getDeviTranslations().get(language).keySet().size();
             System.out.println(language.getName() + " - " + translated);

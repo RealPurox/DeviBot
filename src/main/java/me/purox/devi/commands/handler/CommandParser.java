@@ -11,7 +11,7 @@ import java.util.List;
 class CommandParser {
 
     private Devi devi;
-    public CommandParser(Devi devi) {
+    CommandParser(Devi devi) {
         this.devi = devi;
     }
 

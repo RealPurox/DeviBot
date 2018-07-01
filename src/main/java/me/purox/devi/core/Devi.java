@@ -133,11 +133,6 @@ public class Devi {
             redisThread.setName("Devi Redis Thread");
             redisThread.start();
 
-            // start console command listener async because it's blocking the current thread
-            Thread consoleCommandThread = new Thread(() -> commandHandler.startConsoleCommandListener());
-            consoleCommandThread.setName("Devi Console Command Thread");
-            consoleCommandThread.start();
-
             // block current thread for 1 second to make sure redis is connected
             Thread.sleep(1000);
 

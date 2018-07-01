@@ -8,6 +8,9 @@ import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.GuildVoiceState;
+import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.VoiceState;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +31,19 @@ public class PlayCommandExecutor implements CommandExecutor {
 
         if (args.length == 0) {
             sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 456));
+            return;
+        }
+
+        VoiceChannel deviChannel = command.getEvent().getGuild().getSelfMember().getVoiceState().getChannel();
+        GuildVoiceState userState = command.getEvent().getGuild().getMember(sender).getVoiceState();
+
+        if (!userState.inVoiceChannel()) {
+            sender.reply(DeviEmote.ERROR.get() + " | You're not in a voice channel!");
+            return;
+        }
+
+        if (deviChannel != null && userState.getChannel().getIdLong() != deviChannel.getIdLong()) {
+            sender.reply(DeviEmote.ERROR.get() + " | I'm in another voice channel already");
             return;
         }
 

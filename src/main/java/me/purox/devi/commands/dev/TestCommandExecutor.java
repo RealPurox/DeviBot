@@ -20,7 +20,8 @@ public class TestCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
+        if (!devi.getAdmins().contains(sender.getId())) return;
+
         new WaitingResponseBuilder(devi, command)
                 .addSelectorOption("next waiter response", null)
                 .addSelectorOption("another next waiter response", null)

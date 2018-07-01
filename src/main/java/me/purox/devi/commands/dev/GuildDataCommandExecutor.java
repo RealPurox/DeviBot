@@ -26,7 +26,7 @@ public class GuildDataCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
+        if (!devi.getAdmins().contains(sender.getId())) return;
 
         Message message = MessageUtils.sendMessageSync(command.getEvent().getChannel(), "Collecting guild data..");
         if (message == null) return;

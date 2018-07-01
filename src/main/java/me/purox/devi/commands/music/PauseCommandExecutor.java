@@ -1,5 +1,6 @@
 package me.purox.devi.commands.music;
 
+import com.sun.java.accessibility.util.GUIInitializedListener;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
@@ -8,37 +9,33 @@ import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JoinCommandExecutor implements CommandExecutor {
+public class PauseCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-
-    public JoinCommandExecutor(Devi devi) {
+    public PauseCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!command.getEvent().getMember().getVoiceState().inVoiceChannel()) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 100));
-            return;
-        }
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
-
-        Guild guild = command.getEvent().getGuild();
-        VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
-        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(guild);
-
-        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), channel, guild)) {
+        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), command.getEvent().getGuild().getMember(sender).getVoiceState().getChannel(), command.getEvent().getGuild())) {
             sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
             return;
         }
 
-        guildPlayer.join(command, sender, false);
+        if (guildPlayer.getAudioPlayer().isPaused()) {
+            sender.reply(DeviEmote.ERROR.get() + " | The music player is already paused. Use `!unpause` to resume the music player.");
+            return;
+        }
+
+        guildPlayer.getAudioPlayer().setPaused(true);
+        sender.reply(DeviEmote.SUCCESS.get() + " | The music player has been paused!");
     }
 
     @Override
@@ -48,12 +45,12 @@ public class JoinCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 99;
+        return 122;
     }
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("summon");
+        return Collections.singletonList("stop");
     }
 
     @Override

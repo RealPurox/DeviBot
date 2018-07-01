@@ -52,7 +52,7 @@ public class QueueCommandExecutor implements CommandExecutor {
         if (guildPlayer.getAudioPlayer().isPaused()) {
             builder.appendDescription(DeviEmote.ERROR.get() + " | The music player is currently paused!\n\n");
         } else if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
-            builder.appendDescription(DeviEmote.ERROR.get() + " | The music player is not playing any music right now!\n\n");
+            builder.appendDescription(DeviEmote.ERROR.get() + " | I'm not playing music at the moment!\n\n");
         } else {
             displayNext = true;
             AudioInfo currentInfo = guildPlayer.getCurrent();

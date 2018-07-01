@@ -32,12 +32,14 @@ public class GuildPlayer extends AudioEventAdapter {
     private AudioPlayer audioPlayer;
     private List<AudioInfo> queue;
     private int currentQueueIndex = -1;
+    private long destroyTime;
 
     GuildPlayer(Devi devi, Guild guild) {
         this.devi = devi;
         this.guild = guild;
         this.audioPlayer = devi.getMusicManager().getAudioPlayerManager().createPlayer();
         this.queue = new ArrayList<>();
+        this.destroyTime = System.currentTimeMillis() + 300000; //5 mins
 
         this.audioPlayer.addListener(this);
         guild.getAudioManager().setSendingHandler(new PlayerSendHandler(audioPlayer));
@@ -111,14 +113,15 @@ public class GuildPlayer extends AudioEventAdapter {
         return queue.get(currentQueueIndex);
     }
 
-    private void destroy() {
+    void destroy(boolean leave) {
+        if (leave) leave(null, null, true);
         audioPlayer.destroy();
-        currentQueueIndex = -1;
         queue.clear();
+        currentQueueIndex = -1;
         devi.getMusicManager().getGuildPlayers().remove(guild.getId());
     }
 
-    public void playNext() {
+    private void playNext() {
         if (queue.size() == 0) {
             leave(null, null, true);
             return;
@@ -132,10 +135,14 @@ public class GuildPlayer extends AudioEventAdapter {
         audioPlayer.playTrack(audioTrack);
     }
 
+    long getDestroyTime() {
+        return destroyTime;
+    }
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         if (currentQueueIndex == -1) currentQueueIndex = 0;
+        this.destroyTime = System.currentTimeMillis() + track.getInfo().length + 300000;
         devi.getLogger().debug("Starting track with index "  + currentQueueIndex + ". Queue size: " + queue.size());
     }
 
@@ -228,12 +235,12 @@ public class GuildPlayer extends AudioEventAdapter {
                 } else if (connectionStatus == ConnectionStatus.DISCONNECTED_LOST_PERMISSION) {
                     devi.getLogger().log("Lost permissions while joining voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
                     if(!silent) sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 102));
-                    destroy();
+                    destroy(false);
                     //an error occurred
                 } else if ((connectionStatus.name().startsWith("ERROR") || connectionStatus.name().startsWith("DISCONNECTED")) && !connectionStatus.name().equals("DISCONNECTED_LOST_PERMISSION")) {
                     devi.getLogger().log("An error occurred while joining voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
                     if(!silent) sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 111));
-                    destroy();
+                    destroy(false);
                 }
             }
 
@@ -255,16 +262,16 @@ public class GuildPlayer extends AudioEventAdapter {
             //Audio disabled due to internal error
             devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ") (UnsupportedOperationException)");
             if(!silent) sender.reply(devi.getTranslation(command.getLanguage(), 103));
-            destroy();
+            destroy(true);
         } catch (GuildUnavailableException e) {
             //Guild not available
             devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ") (GuildUnavailableException)");
             if(!silent) sender.reply(devi.getTranslation(command.getLanguage(), 104));
-            destroy();
+            destroy(true);
         } catch (InsufficientPermissionException e) {
             //Insufficient permission to join that channel
             if(!silent) sender.reply(devi.getTranslation(command.getLanguage(), 102));
-            destroy();
+            destroy(true);
         }
     }
 
@@ -284,7 +291,7 @@ public class GuildPlayer extends AudioEventAdapter {
 
             @Override
             public void onStatusChange(ConnectionStatus connectionStatus) {
-                destroy();
+                destroy(false);
                 audioManager.setConnectionListener(null);
                 if(!silent) sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 455));
                 devi.getLogger().log("Left voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");

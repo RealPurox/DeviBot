@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class MusicManager {
@@ -26,6 +28,15 @@ public class MusicManager {
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.guildPlayers = new HashMap<>();
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
+
+        //check every 2 min if we can destroy GuildPlayers
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            guildPlayers.values().forEach(guildPlayer -> {
+                if (guildPlayer.getDestroyTime() <= System.currentTimeMillis()) {
+                    guildPlayer.destroy();
+                }
+            });
+        }, 2, 2, TimeUnit.MINUTES);
     }
 
     public GuildPlayer getGuildPlayer(Guild guild) {

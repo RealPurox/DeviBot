@@ -125,6 +125,7 @@ public class GuildPlayer extends AudioEventAdapter {
         }
 
         currentQueueIndex += 1;
+        if (currentQueueIndex == -1) currentQueueIndex = 0;
         if (currentQueueIndex == queue.size()) currentQueueIndex = 0;
 
         AudioTrack audioTrack = queue.get(currentQueueIndex).getAudioTrack();
@@ -134,6 +135,7 @@ public class GuildPlayer extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        if (currentQueueIndex == -1) currentQueueIndex = 0;
         devi.getLogger().debug("Starting track with index "  + currentQueueIndex + ". Queue size: " + queue.size());
     }
 

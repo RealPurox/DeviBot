@@ -2,10 +2,7 @@ package me.purox.devi.commands.handler;
 
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.requests.RestAction;
 
@@ -98,6 +95,10 @@ public class CommandSender implements User {
     @Override
     public long getIdLong() {
         return user.getIdLong();
+    }
+
+    public Member getMember() {
+        return event.getGuild().getMember(this);
     }
 
     public void reply(String message) {

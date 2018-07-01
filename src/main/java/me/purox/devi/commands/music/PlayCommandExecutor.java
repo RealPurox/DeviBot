@@ -10,7 +10,6 @@ import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.GuildVoiceState;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.entities.VoiceState;
 
 import java.util.Arrays;
 import java.util.Collections;

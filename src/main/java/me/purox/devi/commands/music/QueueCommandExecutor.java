@@ -44,11 +44,10 @@ public class QueueCommandExecutor implements CommandExecutor {
         }
 
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
-        //builder.setAuthor(command.getEvent().getGuild().getName() + " - Music Queue");
+
         builder.appendDescription(DeviEmote.MUSIC.get() + " __**Currently Playing**__ " + DeviEmote.MUSIC.get() + "\n\n");
 
         boolean displayNext = false;
-
         if (guildPlayer.getAudioPlayer().isPaused()) {
             builder.appendDescription(DeviEmote.ERROR.get() + " | The music player is currently paused!\n\n");
         } else if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {

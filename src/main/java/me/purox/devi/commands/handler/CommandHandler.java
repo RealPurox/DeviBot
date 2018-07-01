@@ -90,8 +90,8 @@ public class CommandHandler {
         registerCommand("remove", new RemoveCommandExecutor(devi));
         registerCommand("pause", new PauseCommandExecutor(devi));
         registerCommand("unpause", new UnPauseCommandExecutor(devi));
-        /*registerCommand("current", new CurrentCommandExecutor(devi));
-        registerCommand("skip", new SkipCommandExecutor(devi));
+        registerCommand("current", new CurrentCommandExecutor(devi));
+        /*registerCommand("skip", new SkipCommandExecutor(devi));
         registerCommand("shuffle", new ShuffleCommandExecutor(devi));
         registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
         registerCommand("volume", new VolumeCommandExecutor(devi));

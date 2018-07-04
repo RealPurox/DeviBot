@@ -61,6 +61,7 @@ public class Devi {
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
     private HashMap<String, List<String>> streams = new HashMap<>();
     private List<ModuleType> disabledModules = new ArrayList<>();
+    private List<String> voters = new ArrayList<>();
 
     private OkHttpClient okHttpClient;
     private Jedis redisSender;
@@ -442,6 +443,22 @@ public class Devi {
         }
     }
 
+    public void startVoteChecker() {
+        // update voters every 5 mins
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> new RequestBuilder(okHttpClient)
+                .setRequestType(Request.RequestType.GET)
+                .setURL("https://discordbots.org/api/bots/354361427731152907/votes")
+                .addHeader("Authorization", settings.getDiscordBotsDotOrgToken())
+                .build().asString(json -> {
+                    if (json.getBody().startsWith("{")) return;
+                    JSONArray jsonArray = new JSONArray(json.getBody());
+                    jsonArray.forEach(object -> {
+                        JSONObject vote = (JSONObject) object;
+                        if(!vote.has(vote.getString("id"))) voters.add(vote.getString("id"));
+                    });
+                }), 0, 1, TimeUnit.MINUTES);
+    }
+
     public void startStatsPusher(){
         if (this.settings.isDevBot()) return;
         //post every half an hour to bot lists
@@ -568,5 +585,9 @@ public class Devi {
 
     public HashMap<Language, HashMap<Integer, String>> getDeviTranslations() {
         return deviTranslations;
+    }
+
+    public List<String> getVoters() {
+        return voters;
     }
 }

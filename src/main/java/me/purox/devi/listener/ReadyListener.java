@@ -50,6 +50,7 @@ public class ReadyListener extends ListenerAdapter {
         //last shard booted
         if(jda.getShardInfo().getShardId() == jda.getShardInfo().getShardTotal() - 1) {
             devi.startStatsPusher();
+            devi.startVoteChecker();
 
             new Thread(() -> {
                 for (Guild guild : event.getJDA().getGuilds()) {

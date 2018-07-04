@@ -33,7 +33,7 @@ public class MusicManager {
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             guildPlayers.values().forEach(guildPlayer -> {
                 if (guildPlayer.getDestroyTime() <= System.currentTimeMillis()) {
-                    guildPlayer.destroy();
+                    guildPlayer.destroy(true);
                 }
             });
         }, 2, 2, TimeUnit.MINUTES);

@@ -299,6 +299,9 @@ public class Devi {
         }
         return null;
     }
+    public Stats getCurrentStats() {
+        return new Stats();
+    }
 
     private JedisPubSub getJedisPubSub() {
         return new JedisPubSub() {
@@ -396,7 +399,7 @@ public class Devi {
         };
     }
 
-    private class Stats {
+    public class Stats {
 
         private long shards;
         private long guilds;
@@ -404,7 +407,7 @@ public class Devi {
         private long channels;
         private long ping;
 
-        private Stats() {
+        public Stats() {
             this.shards = shardManager.getShards().size();
             this.guilds = 0;
             this.users = 0;
@@ -424,23 +427,23 @@ public class Devi {
             this.ping = this.ping / this.shards;
         }
 
-        long getShards() {
+        public long getShards() {
             return shards;
         }
 
-        long getChannels() {
+        public long getChannels() {
             return channels;
         }
 
-        long getGuilds() {
+        public long getGuilds() {
             return guilds;
         }
 
-        long getPing() {
+        public long getPing() {
             return ping;
         }
 
-        long getUsers() {
+        public long getUsers() {
             return users;
         }
     }

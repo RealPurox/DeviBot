@@ -43,7 +43,7 @@ public class PerformanceCommandExecutor implements CommandExecutor {
             audioConnections.getAndIncrement();
         }));
 
-
+        Devi.Stats stats = devi.getCurrentStats();
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
         builder.addField("Threads", String.valueOf(threads), true);
         builder.addField("Using Memory", String.valueOf(usingMemory), true);
@@ -52,6 +52,10 @@ public class PerformanceCommandExecutor implements CommandExecutor {
         builder.addField("Audio Connections" , String.valueOf(audioConnections.get()), true);
         builder.addField("Commands Executed", String.valueOf(devi.getCommandsExecuted()), true);
         builder.addField("Songs Played", String.valueOf(devi.getSongsPlayed()), true);
+        builder.addField("Total Guilds", String.valueOf(stats.getGuilds()), true);
+        builder.addField("Total Users", String.valueOf(stats.getUsers()), true);
+        builder.addField("Total Channels", String.valueOf(stats.getChannels()), true);
+        builder.addField("Ping", String.valueOf(stats.getPing()), true);
         builder.addField("Uptime", uptime, false);
 
         sender.reply(builder.build());

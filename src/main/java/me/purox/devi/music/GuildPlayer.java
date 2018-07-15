@@ -164,7 +164,6 @@ public class GuildPlayer extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         devi.getLogger().debug("Track with index " + currentQueueIndex + " has ended");
-        System.out.println(endReason.name());
         if (endReason == AudioTrackEndReason.STOPPED) {
             if (queue.size() == 0) {
                 leave(null, null, true);

@@ -109,11 +109,6 @@ public class Devi {
             logger.log("Starting as public bot");
         } else logger.log("Starting as dev bot");
 
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            System.out.println("yep");
-            sendMessageToDevelopers("An exception occurred in thread " + thread.getName() + "\n\n" + throwable.getMessage());
-        });
-
         // connect to database
         databaseManager.connect();
         // load translations

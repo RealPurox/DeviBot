@@ -155,6 +155,7 @@ public class GuildPlayer extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        devi.increaseSongsPlayed();
         if (currentQueueIndex == -1) currentQueueIndex = getAudioInfoId(getAudioInfo(track));
         this.destroyTime = System.currentTimeMillis() + track.getInfo().length + 300000;
     }

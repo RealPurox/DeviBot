@@ -24,7 +24,6 @@ import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Queue;
 
 public class GuildPlayer extends AudioEventAdapter {
 
@@ -43,7 +42,7 @@ public class GuildPlayer extends AudioEventAdapter {
         this.destroyTime = System.currentTimeMillis() + 300000; //5 mins
 
         this.audioPlayer.addListener(this);
-        guild.getAudioManager().setSendingHandler(new PlayerSendHandler(audioPlayer));
+        guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
     }
 
     public String getQueueDuration() {
@@ -136,7 +135,7 @@ public class GuildPlayer extends AudioEventAdapter {
         devi.getMusicManager().getGuildPlayers().remove(guild.getId());
     }
 
-    public void playNext() {
+    private void playNext() {
         if (queue.size() == 0) {
             leave(null, null, true);
             return;
@@ -156,19 +155,18 @@ public class GuildPlayer extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        if (currentQueueIndex == -1) currentQueueIndex = 0;
+        if (currentQueueIndex == -1) currentQueueIndex = getAudioInfoId(getAudioInfo(track));
         this.destroyTime = System.currentTimeMillis() + track.getInfo().length + 300000;
-        devi.getLogger().debug("Starting track with index "  + currentQueueIndex + ". Queue size: " + queue.size());
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        devi.getLogger().debug("Track with index " + currentQueueIndex + " has ended");
         if (endReason == AudioTrackEndReason.STOPPED) {
             if (queue.size() == 0) {
                 leave(null, null, true);
                 return;
             }
+            //TODO: why did I do this?
             audioPlayer.playTrack(queue.get(currentQueueIndex).getAudioTrack().makeClone());
             return;
         }

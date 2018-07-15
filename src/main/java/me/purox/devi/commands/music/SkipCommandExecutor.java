@@ -52,13 +52,11 @@ public class SkipCommandExecutor implements CommandExecutor {
         int size = guildPlayer.getQueue().size();
 
         for (int i = 0; i != amount; i++) {
+            index += 1;
             if (index == -1 || index == size) {
                 index = 0;
-                continue;
             }
-            index += 1;
         }
-
 
         guildPlayer.setCurrentQueueIndex(index);
         guildPlayer.getAudioPlayer().stopTrack();

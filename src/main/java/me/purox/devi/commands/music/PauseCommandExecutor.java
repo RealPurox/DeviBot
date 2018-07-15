@@ -30,12 +30,12 @@ public class PauseCommandExecutor implements CommandExecutor {
         }
 
         if (guildPlayer.getAudioPlayer().isPaused()) {
-            sender.reply(DeviEmote.ERROR.get() + " | The music player is already paused. Use `!unpause` to resume the music player.");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 477, "`" + command.getPrefix() + "unpause`"));
             return;
         }
 
         guildPlayer.getAudioPlayer().setPaused(true);
-        sender.reply(DeviEmote.SUCCESS.get() + " | The music player has been paused!");
+        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 478));
     }
 
     @Override

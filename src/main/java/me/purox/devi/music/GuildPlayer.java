@@ -22,6 +22,7 @@ import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 
@@ -89,6 +90,10 @@ public class GuildPlayer extends AudioEventAdapter {
         return currentQueueIndex;
     }
 
+    public void setCurrentQueueIndex(int currentQueueIndex) {
+        this.currentQueueIndex = currentQueueIndex;
+    }
+
     public List<AudioInfo> getNextSongs(int amount) {
         List<AudioInfo> songs = new ArrayList<>();
         int index = currentQueueIndex;
@@ -113,6 +118,16 @@ public class GuildPlayer extends AudioEventAdapter {
         return queue.get(currentQueueIndex);
     }
 
+    public void shuffle() {
+        AudioInfo currentTrack = this.queue.get(this.currentQueueIndex);
+
+        this.currentQueueIndex = 0;
+
+        queue.remove(0);
+        Collections.shuffle(queue);
+        queue.add(0, currentTrack);
+    }
+
     void destroy(boolean leave) {
         if (leave) leave(null, null, true);
         audioPlayer.destroy();
@@ -121,7 +136,7 @@ public class GuildPlayer extends AudioEventAdapter {
         devi.getMusicManager().getGuildPlayers().remove(guild.getId());
     }
 
-    private void playNext() {
+    public void playNext() {
         if (queue.size() == 0) {
             leave(null, null, true);
             return;
@@ -149,6 +164,7 @@ public class GuildPlayer extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         devi.getLogger().debug("Track with index " + currentQueueIndex + " has ended");
+        System.out.println(endReason.name());
         if (endReason == AudioTrackEndReason.STOPPED) {
             if (queue.size() == 0) {
                 leave(null, null, true);

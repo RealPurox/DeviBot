@@ -25,18 +25,18 @@ public class RemoveCommandExecutor implements CommandExecutor {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
         if (!command.getEvent().getGuild().getSelfMember().getVoiceState().inVoiceChannel() || guildPlayer.getQueue().size() == 0) {
-            sender.reply(DeviEmote.ERROR.get() + " | There are no songs in the queue");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 469));
             return;
         }
 
         if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), command.getEvent().getGuild().getSelfMember().getVoiceState().getChannel(), command.getEvent().getGuild())) {
-            sender.reply(DeviEmote.ERROR.get() + " | You don't have permission to remove songs from the queue");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 470));
             return;
         }
 
         if (args.length == 0) {
-            sender.reply(DeviEmote.ERROR.get() + " | Please specify the song ID you want to remove. Song ID's can be found in `" + command.getPrefix() + "queue`. " +
-                    "For Example, `" + command.getPrefix() + "remove 1` will remove \"" + guildPlayer.getAudioInfoById(1).getAudioTrack().getInfo().title + "\"");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 471, "`" + command.getPrefix() + "queue`",
+                    "`" + command.getPrefix() + "remove 1`", "\"" + guildPlayer.getAudioInfoById(1).getAudioTrack().getInfo().title + "\""));
             return;
         }
 
@@ -44,18 +44,18 @@ public class RemoveCommandExecutor implements CommandExecutor {
         try {
             remove = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            sender.reply(DeviEmote.ERROR.get() + " | Please enter the queue position of the song you want to be removed from the queue");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 472));
             return;
         }
 
         if (remove < 1 || remove > guildPlayer.getQueue().size()) {
-            sender.reply(DeviEmote.ERROR.get() + " | There is no song at position " + remove + " in the queue!");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), remove));
             return;
         }
 
         AudioInfo audioInfo = guildPlayer.getAudioInfoById(remove);
         if (audioInfo == null) {
-            sender.reply(DeviEmote.ERROR.get() + " | There is no song at position " + remove + " in the queue!");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), remove));
             return;
         }
 
@@ -63,7 +63,7 @@ public class RemoveCommandExecutor implements CommandExecutor {
         if (remove == guildPlayer.getCurrentQueueIndex() + 1) {
             guildPlayer.getAudioPlayer().stopTrack();
         }
-        sender.reply(DeviEmote.SUCCESS.get() + " | The song \"" + audioInfo.getAudioTrack().getInfo().title + "\" has been removed from the queue");
+        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 474, "\"" + audioInfo.getAudioTrack().getInfo().title + "\""));
     }
 
     @Override

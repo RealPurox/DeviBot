@@ -55,19 +55,19 @@ public class MusicManager {
         //IDs of members in that voice channel
         Set<String> voiceMembers = voiceChannel == null ? new HashSet<>() : voiceChannel.getMembers().stream().map(mem -> mem.getUser().getId()).collect(Collectors.toSet());
         if (member.getRoles().stream().anyMatch(role -> role.getName().equalsIgnoreCase("DJ"))) {
-            devi.getLogger().debug("Member has DJ role in guild " + guild.getName() + " (" + guild.getId() + ")");
+            devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " has DJ role in guild " + guild.getName() + " (" + guild.getId() + ")");
             return true;
         } else if (member.hasPermission(Permission.MANAGE_CHANNEL)) {
-            devi.getLogger().debug("Members has Manage Channel permission in guild " + guild.getName() + " (" + guild.getId() + ")");
+            devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " has Manage Channel permission in guild " + guild.getName() + " (" + guild.getId() + ")");
             return true;
         } else if (voiceMembers.containsAll(Arrays.asList(member.getUser().getId(), guild.getJDA().getSelfUser().getId()))) {
-            devi.getLogger().debug("Member is with just the bot in the channel in guild " + guild.getName() + " (" + guild.getId() + ")");
+            devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " is with just the bot in the channel in guild " + guild.getName() + " (" + guild.getId() + ")");
             return true;
         } else if (voiceMembers.size() == 1 && voiceMembers.contains(member.getUser().getId())) {
-            devi.getLogger().debug("Member is totally alone in the channel in guild " + guild.getName() + " (" + guild.getId() + ")");
+            devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " is totally alone in the channel in guild " + guild.getName() + " (" + guild.getId() + ")");
             return true;
-        }
-        devi.getLogger().debug("Member has not authority to use that command in guild " + guild.getName() + " (" + guild.getId() + ")");
+    }
+        devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " has not authority to use that command in guild " + guild.getName() + " (" + guild.getId() + ")");
         return false;
     }
 

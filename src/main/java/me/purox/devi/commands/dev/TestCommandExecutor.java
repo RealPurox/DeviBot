@@ -22,16 +22,6 @@ public class TestCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId())) return;
 
-        new WaitingResponseBuilder(devi, command)
-                .addSelectorOption("next waiter response", null)
-                .addSelectorOption("another next waiter response", null)
-                .addVoidSelectorOption("void response", (o) -> sender.reply("works"))
-                .addVoidSelectorOption("and another void res", (o) -> sender.reply("works"))
-                .addSelectorOption("next waiter response", null)
-                .addVoidSelectorOption("void response", (o) -> sender.reply("works"))
-                .addSelectorOption("next waiter response", null)
-                .setWaiterType(WaitingResponseBuilder.WaiterType.SELECTOR)
-                .build().handle();
     }
 
 

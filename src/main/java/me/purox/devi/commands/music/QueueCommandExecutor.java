@@ -45,24 +45,25 @@ public class QueueCommandExecutor implements CommandExecutor {
 
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
 
-        builder.appendDescription(DeviEmote.MUSIC.get() + " __**Currently Playing**__ " + DeviEmote.MUSIC.get() + "\n\n");
-
+        builder.appendDescription(DeviEmote.MUSIC.get() + " __**" + devi.getTranslation(command.getLanguage(), 463) + "**__ " + DeviEmote.MUSIC.get() + "\n\n");
+        //devi.getTranslation(command.getLanguage(), 463)
         boolean displayNext = false;
         if (guildPlayer.getAudioPlayer().isPaused()) {
-            builder.appendDescription(DeviEmote.ERROR.get() + " | The music player is currently paused!\n\n");
+            builder.appendDescription(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 464) + "\n\n");
         } else if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
-            builder.appendDescription(DeviEmote.ERROR.get() + " | I'm not playing music at the moment!\n\n");
+            builder.appendDescription(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 465) + "\n\n");
         } else {
             displayNext = true;
             AudioInfo currentInfo = guildPlayer.getCurrent();
             AudioTrack current = currentInfo.getAudioTrack();
 
-            builder.appendDescription(songIdToString(guildPlayer.getAudioInfoId(currentInfo)) + " " + "[" + current.getInfo().title +"](" + current.getInfo().uri + ") - requested by **"
+            builder.appendDescription(songIdToString(guildPlayer.getAudioInfoId(currentInfo)) + " " + "[" + current.getInfo().title +"](" + current.getInfo().uri + ") -  " +
+                    devi.getTranslation(command.getLanguage(), 466) + " **"
                     + currentInfo.getRequester().getName() + "#" + currentInfo.getRequester().getDiscriminator() + "**\n\n");
         }
 
         if (displayNext) {
-            builder.appendDescription(":arrow_double_down: __**Up Next**__ :arrow_double_down:\n\n");
+            builder.appendDescription(":arrow_double_down: __**" + devi.getTranslation(command.getLanguage(), 467) + "**__ :arrow_double_down:\n\n");
 
             int amount = 5;
             List<AudioInfo> audioInfos = guildPlayer.getNextSongs(amount);
@@ -70,7 +71,8 @@ public class QueueCommandExecutor implements CommandExecutor {
 
             for (AudioInfo audioInfo : audioInfos) {
                 AudioTrack current = audioInfo.getAudioTrack();
-                builder.appendDescription(songIdToString(guildPlayer.getAudioInfoId(audioInfo)) + " " + "[" + current.getInfo().title +"](" + current.getInfo().uri + ") - requested by **"
+                builder.appendDescription(songIdToString(guildPlayer.getAudioInfoId(audioInfo)) + " " + "[" + current.getInfo().title +"](" + current.getInfo().uri + ") -  " +
+                        devi.getTranslation(command.getLanguage(), 466) + " **"
                         + audioInfo.getRequester().getName() + "#" + audioInfo.getRequester().getDiscriminator() + "**\n\n");
             }
 
@@ -79,7 +81,7 @@ public class QueueCommandExecutor implements CommandExecutor {
             }*/
         }
 
-        builder.setFooter("Songs: " + guildPlayer.getQueue().size() + " " + guildPlayer.getQueueDuration().replaceAll("`", ""), null);
+        builder.setFooter(devi.getTranslation(command.getLanguage(), 468) + ": " + guildPlayer.getQueue().size() + " " + guildPlayer.getQueueDuration().replaceAll("`", ""), null);
         sender.reply(builder.build());
     }
 

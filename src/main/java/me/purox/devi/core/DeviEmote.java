@@ -19,4 +19,9 @@ public enum DeviEmote {
     public String get() {
         return get;
     }
+
+    @Override
+    public String toString() {
+        return get;
+    }
 }

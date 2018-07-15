@@ -30,7 +30,6 @@ public class AdminStatsCommand implements CommandExecutor {
 
         for (Language language : Language.values()) {
             int translated = devi.getDeviTranslations().get(language).keySet().size();
-            System.out.println(language.getName() + " - " + translated);
             builder.append(language.getName()).append(" -> ").append(Math.round(((double) translated / (double) totalTrans) * 100)).append("%\n");
         }
 

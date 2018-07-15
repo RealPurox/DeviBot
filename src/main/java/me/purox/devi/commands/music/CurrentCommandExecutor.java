@@ -36,9 +36,9 @@ public class CurrentCommandExecutor implements CommandExecutor {
 
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
 
-        builder.setAuthor("Currently Playing Song");
-        builder.addField("Song", "[" + current.getAudioTrack().getInfo().title + "](" + current.getAudioTrack().getInfo().uri + ")\n\n", false);
-        builder.addField("Requester", current.getRequester().getName() + "#" + current.getRequester().getDiscriminator() + "\n\n", false);
+        builder.setAuthor(devi.getTranslation(command.getLanguage(), 479));
+        builder.addField(devi.getTranslation(command.getLanguage(), 480), "[" + current.getAudioTrack().getInfo().title + "](" + current.getAudioTrack().getInfo().uri + ")\n\n", false);
+        builder.addField(devi.getTranslation(command.getLanguage(), 481), current.getRequester().getName() + "#" + current.getRequester().getDiscriminator() + "\n\n", false);
 
         String position = devi.getMusicManager().getTrackTime(current.getAudioTrack().getPosition()).replaceAll("[()]", "");
         String duration = devi.getMusicManager().getTrackTime(current.getAudioTrack().getDuration()).replaceAll("[()]", "");
@@ -56,7 +56,7 @@ public class CurrentCommandExecutor implements CommandExecutor {
         }
         progressBar.append("**~~ ");
 
-        builder.addField("Duration", position + progressBar.toString() + duration, false);
+        builder.addField(devi.getTranslation(command.getLanguage(), 482), position + progressBar.toString() + duration, false);
 
         sender.reply(builder.build());
     }

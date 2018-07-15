@@ -6,17 +6,19 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 
 import java.util.Collections;
 import java.util.List;
 
-public class UnPauseCommandExecutor implements CommandExecutor {
+public class ShuffleCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public UnPauseCommandExecutor(Devi devi) {
+    public ShuffleCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
@@ -24,19 +26,19 @@ public class UnPauseCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
-        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), command.getEvent().getGuild().getMember(sender).getVoiceState().getChannel(), command.getEvent().getGuild())) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
+        if (guildPlayer.getQueue().isEmpty()) {
+            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 139));
             return;
         }
 
-        if (!guildPlayer.getAudioPlayer().isPaused()) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 475));
+        Member member = command.getEvent().getMember();
+        if (!devi.getMusicManager().isDJorAlone(member, member.getVoiceState().getChannel(), member.getGuild())) {
+            sender.reply(devi.getTranslation(command.getLanguage(), 454));
             return;
         }
 
-        guildPlayer.getAudioPlayer().setPaused(false);
-        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 476));
-
+        guildPlayer.shuffle();
+        sender.reply(DeviEmote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 140));
     }
 
     @Override
@@ -46,12 +48,12 @@ public class UnPauseCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 125;
+        return 138;
     }
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("resume");
+        return null;
     }
 
     @Override

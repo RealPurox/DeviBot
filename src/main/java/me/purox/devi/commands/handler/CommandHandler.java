@@ -64,7 +64,8 @@ public class CommandHandler {
         registerCommand("language", new LanguageCommandExecutor(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
-        registerCommand("musiclog", new MusicLogCommandExecutor(devi));
+        //TODO: implement this again
+        //registerCommand("musiclog", new MusicLogCommandExecutor(devi));
         //registerCommand("welcome", new WelcomeCommandExecutor(devi));
         //  - twitch commands
         registerCommand("twitch", new TwitchCommandExecutor(devi));
@@ -91,9 +92,9 @@ public class CommandHandler {
         registerCommand("pause", new PauseCommandExecutor(devi));
         registerCommand("unpause", new UnPauseCommandExecutor(devi));
         registerCommand("current", new CurrentCommandExecutor(devi));
-        /*registerCommand("skip", new SkipCommandExecutor(devi));
+        registerCommand("skip", new SkipCommandExecutor(devi));
         registerCommand("shuffle", new ShuffleCommandExecutor(devi));
-        registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
+        /*registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
         registerCommand("volume", new VolumeCommandExecutor(devi));
         registerCommand("loop", new LoopCommandExecutor(devi));*/
     }

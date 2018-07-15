@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.ExceptionEvent;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -71,5 +72,12 @@ public class ReadyListener extends ListenerAdapter {
             staffGuild.getMembersWithRoles(seniorAdministrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
             staffGuild.getMembersWithRoles(administrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
         }
+    }
+
+
+    @Override
+    public void onException(ExceptionEvent event) {
+        System.out.println("YES");
+        devi.sendMessageToDevelopers(event.getCause().toString());
     }
 }

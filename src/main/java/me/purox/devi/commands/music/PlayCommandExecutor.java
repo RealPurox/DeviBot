@@ -12,7 +12,6 @@ import net.dv8tion.jda.core.entities.GuildVoiceState;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,12 +36,12 @@ public class PlayCommandExecutor implements CommandExecutor {
         GuildVoiceState userState = command.getEvent().getGuild().getMember(sender).getVoiceState();
 
         if (!userState.inVoiceChannel()) {
-            sender.reply(DeviEmote.ERROR.get() + " | You're not in a voice channel!");
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 461));
             return;
         }
 
         if (deviChannel != null && userState.getChannel().getIdLong() != deviChannel.getIdLong()) {
-            sender.reply(DeviEmote.ERROR.get() + " | I'm in another voice channel already");
+            sender.reply(DeviEmote.ERROR.get() + " |  " + devi.getTranslation(command.getLanguage(), 462));
             return;
         }
 
@@ -63,7 +62,7 @@ public class PlayCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("addqueue");
+        return Arrays.asList("addqueue", "p");
     }
 
     @Override

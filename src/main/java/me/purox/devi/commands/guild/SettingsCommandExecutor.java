@@ -32,6 +32,7 @@ public class SettingsCommandExecutor implements CommandExecutor {
 
         // add fields
         for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {
+            if (setting == GuildSettings.Settings.MUSIC_LOG_ENABLED) continue;
             if (!setting.isDisplayedInSettings()) continue;
 
 

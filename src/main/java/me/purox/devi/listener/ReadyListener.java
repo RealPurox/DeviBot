@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.ExceptionEvent;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -50,6 +51,7 @@ public class ReadyListener extends ListenerAdapter {
         //last shard booted
         if(jda.getShardInfo().getShardId() == jda.getShardInfo().getShardTotal() - 1) {
             devi.startStatsPusher();
+            devi.startVoteChecker();
 
             new Thread(() -> {
                 for (Guild guild : event.getJDA().getGuilds()) {
@@ -58,8 +60,6 @@ public class ReadyListener extends ListenerAdapter {
                     // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.
                     if (guild.getSelfMember().getVoiceState().inVoiceChannel()) {
                         guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
-                        //create player if it doesn't exist
-                        devi.getMusicManager().getPlayer(guild);
                     }
                 }
             }).start();
@@ -72,5 +72,12 @@ public class ReadyListener extends ListenerAdapter {
             staffGuild.getMembersWithRoles(seniorAdministrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
             staffGuild.getMembersWithRoles(administrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
         }
+    }
+
+
+    @Override
+    public void onException(ExceptionEvent event) {
+        System.out.println("YES");
+        devi.sendMessageToDevelopers(event.getCause().toString());
     }
 }

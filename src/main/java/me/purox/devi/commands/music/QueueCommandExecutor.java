@@ -1,58 +1,102 @@
 package me.purox.devi.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.AudioInfo;
-import me.purox.devi.utils.JavaUtils;
+import me.purox.devi.music.GuildPlayer;
+import me.purox.devi.request.Request;
+import me.purox.devi.request.RequestBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class QueueCommandExecutor implements CommandExecutor {
 
     private Devi devi;
+
     public QueueCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setColor(new Color(34, 113, 126));
-        builder.setAuthor(devi.getTranslation(command.getLanguage(), 118), null, "https://i.pinimg.com/736x/9d/83/17/9d8317162494a004969b79c85d88b5c1--music-logo-dj-music.jpg");
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
-        List<AudioInfo> raw = new ArrayList<>(devi.getMusicManager().getManager(command.getEvent().getGuild()).getQueue());
-        List<List<AudioInfo>> pages = JavaUtils.chopList(raw, 5);
-
-        int page;
-        try {
-            page = args.length > 0 ? (Integer.parseInt(args[0]) - 1) : 0;
-        } catch (NumberFormatException e) {
-            page = 0;
-        }
-
-        int totalPages = pages.size();
-
-        if (page > (totalPages - 1)) page = totalPages - 1;
-        if (page < 1) page = 0;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(devi.getTranslation(command.getLanguage(), 119)).append(": ").append(devi.getMusicManager().getTimestamp(raw.stream().mapToLong(info -> info.getTrack().getDuration()).sum(), command.getLanguage())).append("\n");
-        sb.append(devi.getTranslation(command.getLanguage(), 120)).append(": ").append(raw.size()).append("\n\n");
-        if (!pages.isEmpty()) {
-            for (AudioInfo audioInfo : pages.get(page)) {
-                sb.append(devi.getMusicManager().buildQueueMessage(audioInfo, command.getLanguage()));
+        if (Arrays.asList(args).contains("--raw") && devi.getAdmins().contains(sender.getId())) {
+            StringBuilder sb = new StringBuilder();
+            for (AudioInfo audioInfo : guildPlayer.getQueue()) {
+                sb.append(audioInfo.toString()).append("\n");
             }
+            new RequestBuilder(devi.getOkHttpClient()).setURL("https://hastebin.com/documents").setRequestType(Request.RequestType.POST)
+                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .setStringBody(sb.toString())
+                    .build()
+                    .asJSON(res -> sender.reply("Raw Queue: https://hastebin.com/" + res.getBody().getString("key")));
+            return;
         }
-        builder.setDescription(sb.toString());
-        builder.setFooter(devi.getTranslation(command.getLanguage(), 121, (page + 1), totalPages == 0 ? 1 : totalPages, command.getPrefix() + "queue, <page>"), null);
+
+        EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
+
+        builder.appendDescription(DeviEmote.MUSIC.get() + " __**" + devi.getTranslation(command.getLanguage(), 463) + "**__ " + DeviEmote.MUSIC.get() + "\n\n");
+        //devi.getTranslation(command.getLanguage(), 463)
+        boolean displayNext = false;
+        if (guildPlayer.getAudioPlayer().isPaused()) {
+            builder.appendDescription(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 464) + "\n\n");
+        } else if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
+            builder.appendDescription(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 465) + "\n\n");
+        } else {
+            displayNext = true;
+            AudioInfo currentInfo = guildPlayer.getCurrent();
+            AudioTrack current = currentInfo.getAudioTrack();
+
+            builder.appendDescription(songIdToString(guildPlayer.getAudioInfoId(currentInfo)) + " " + "[" + current.getInfo().title +"](" + current.getInfo().uri + ") -  " +
+                    devi.getTranslation(command.getLanguage(), 466) + " **"
+                    + currentInfo.getRequester().getName() + "#" + currentInfo.getRequester().getDiscriminator() + "**\n\n");
+        }
+
+        if (displayNext) {
+            builder.appendDescription(":arrow_double_down: __**" + devi.getTranslation(command.getLanguage(), 467) + "**__ :arrow_double_down:\n\n");
+
+            int amount = 5;
+            List<AudioInfo> audioInfos = guildPlayer.getNextSongs(amount);
+            //boolean isMore = audioInfos.size() >= amount;
+
+            for (AudioInfo audioInfo : audioInfos) {
+                AudioTrack current = audioInfo.getAudioTrack();
+                builder.appendDescription(songIdToString(guildPlayer.getAudioInfoId(audioInfo)) + " " + "[" + current.getInfo().title +"](" + current.getInfo().uri + ") -  " +
+                        devi.getTranslation(command.getLanguage(), 466) + " **"
+                        + audioInfo.getRequester().getName() + "#" + audioInfo.getRequester().getDiscriminator() + "**\n\n");
+            }
+
+            /*if (isMore) {
+                builder.appendDescription("[Click here](https://www.devibot.net/guild/" + command.getEvent().getGuild().getId() + "/queue) to display the rest of the queue");
+            }*/
+        }
+
+        builder.setFooter(devi.getTranslation(command.getLanguage(), 468) + ": " + guildPlayer.getQueue().size() + " " + guildPlayer.getQueueDuration().replaceAll("`", ""), null);
         sender.reply(builder.build());
+    }
+
+    private String songIdToString(int id) {
+        return String.valueOf(id)
+                .replaceAll("0", ":zero:")
+                .replaceAll("1", ":one:")
+                .replaceAll("2", ":two:")
+                .replaceAll("3", ":three:")
+                .replaceAll("4", ":four:")
+                .replaceAll("5", ":five:")
+                .replaceAll("6", ":six:")
+                .replaceAll("7", ":seven:")
+                .replaceAll("8", ":eight:")
+                .replaceAll("9", ":nine:");
     }
 
     @Override

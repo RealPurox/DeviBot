@@ -4,32 +4,41 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.music.AudioInfo;
+import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ShuffleCommandExecutor implements CommandExecutor {
 
     private Devi devi;
+
     public ShuffleCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (devi.getMusicManager().getManager(command.getEvent().getGuild()).getQueue().isEmpty()) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 139));
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
+
+        if (guildPlayer.getQueue().isEmpty()) {
+            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 139));
             return;
         }
 
-        if (!command.getEvent().getMember().getVoiceState().inVoiceChannel()) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 100));
+        Member member = command.getEvent().getMember();
+        if (!devi.getMusicManager().isDJorAlone(member, member.getVoiceState().getChannel(), member.getGuild())) {
+            sender.reply(devi.getTranslation(command.getLanguage(), 454));
             return;
         }
 
-        devi.getMusicManager().getManager(command.getEvent().getGuild()).shuffleQueue();
-        sender.reply(devi.getTranslation(command.getLanguage(), 140));
+        guildPlayer.shuffle();
+        sender.reply(DeviEmote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 140));
     }
 
     @Override
@@ -49,7 +58,7 @@ public class ShuffleCommandExecutor implements CommandExecutor {
 
     @Override
     public Permission getPermission() {
-        return Permission.MANAGE_SERVER;
+        return null;
     }
 
     @Override

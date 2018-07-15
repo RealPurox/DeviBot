@@ -61,6 +61,7 @@ public class Devi {
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
     private HashMap<String, List<String>> streams = new HashMap<>();
     private List<ModuleType> disabledModules = new ArrayList<>();
+    private List<String> voters = new ArrayList<>();
 
     private OkHttpClient okHttpClient;
     private Jedis redisSender;
@@ -108,13 +109,17 @@ public class Devi {
             logger.log("Starting as public bot");
         } else logger.log("Starting as dev bot");
 
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            System.out.println("yep");
+            sendMessageToDevelopers("An exception occurred in thread " + thread.getName() + "\n\n" + throwable.getMessage());
+        });
+
         // connect to database
         databaseManager.connect();
         // load translations
         loadTranslations();
         // load streams
         loadStreams();
-
 
         try {
             // subscribe to redis channel async because it's blocking the current thread
@@ -133,11 +138,6 @@ public class Devi {
             });
             redisThread.setName("Devi Redis Thread");
             redisThread.start();
-
-            // start console command listener async because it's blocking the current thread
-            Thread consoleCommandThread = new Thread(() -> commandHandler.startConsoleCommandListener());
-            consoleCommandThread.setName("Devi Console Command Thread");
-            consoleCommandThread.start();
 
             // block current thread for 1 second to make sure redis is connected
             Thread.sleep(1000);
@@ -167,9 +167,12 @@ public class Devi {
             changeTwitchSubscriptionStatus(subscribeToStream, true);
 
             // create builder
+            int shards = 1;
+
             DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder();
             builder.setToken(settings.getBotToken());
             builder.setAutoReconnect(true);
+            builder.setShardsTotal(shards);
 
             // make the dev bot listen to code | display website on main bot
             builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.watching("devibot.net"));
@@ -448,6 +451,22 @@ public class Devi {
         }
     }
 
+    public void startVoteChecker() {
+        // update voters every 5 mins
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> new RequestBuilder(okHttpClient)
+                .setRequestType(Request.RequestType.GET)
+                .setURL("https://discordbots.org/api/bots/354361427731152907/votes")
+                .addHeader("Authorization", settings.getDiscordBotsDotOrgToken())
+                .build().asString(json -> {
+                    if (json.getBody().startsWith("{")) return;
+                    JSONArray jsonArray = new JSONArray(json.getBody());
+                    jsonArray.forEach(object -> {
+                        JSONObject vote = (JSONObject) object;
+                        if(!vote.has(vote.getString("id"))) voters.add(vote.getString("id"));
+                    });
+                }), 0, 1, TimeUnit.MINUTES);
+    }
+
     public void startStatsPusher(){
         if (this.settings.isDevBot()) return;
         //post every half an hour to bot lists
@@ -574,5 +593,9 @@ public class Devi {
 
     public HashMap<Language, HashMap<Integer, String>> getDeviTranslations() {
         return deviTranslations;
+    }
+
+    public List<String> getVoters() {
+        return voters;
     }
 }

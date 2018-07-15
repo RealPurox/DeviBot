@@ -4,35 +4,35 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.audio.hooks.ConnectionStatus;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.util.List;
 
 public class LeaveCommandExecutor implements CommandExecutor {
 
     private Devi devi;
+
     public LeaveCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getMusicManager().getManager(command.getEvent().getGuild()).getAudioPlayer().isPaused() && !devi.getMusicManager().isIdle(command.getEvent().getGuild())){
-            sender.reply(devi.getTranslation(command.getLanguage(), 112, "`" + command.getPrefix() + "stop`"));
+        Guild guild = command.getEvent().getGuild();
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(guild);
+        VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
+
+        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), channel, guild)) {
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
             return;
         }
 
-        if (command.getEvent().getGuild().getAudioManager().getConnectionStatus() != ConnectionStatus.CONNECTED) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 113));
-            return;
-        }
-
-        command.getEvent().getGuild().getAudioManager().closeAudioConnection();
-        devi.getMusicManager().getManager(command.getEvent().getGuild()).clearQueue();
-        devi.getMusicManager().getAudioPlayers().remove(command.getEvent().getGuild());
-        sender.reply(devi.getTranslation(command.getLanguage(), 114));
+        guildPlayer.leave(command, sender, false);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class LeaveCommandExecutor implements CommandExecutor {
 
     @Override
     public Permission getPermission() {
-        return Permission.MANAGE_SERVER;
+        return null;
     }
 
     @Override

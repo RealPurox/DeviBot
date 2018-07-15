@@ -4,22 +4,18 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.music.TrackManager;
-import net.dv8tion.jda.core.EmbedBuilder;
+import me.purox.devi.music.AudioInfo;
+import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 
-import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SkipCommandExecutor implements CommandExecutor {
 
-
     private Devi devi;
-    private HashMap<Guild, Map.Entry<Integer, Integer>> guildVotes = new HashMap<>();
 
     public SkipCommandExecutor(Devi devi) {
         this.devi = devi;
@@ -27,54 +23,48 @@ public class SkipCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (devi.getMusicManager().isIdle(command.getEvent().getGuild()) || devi.getMusicManager().getPlayer(command.getEvent().getGuild()).isPaused()) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 129));
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
+
+        Member member = command.getEvent().getMember();
+        if (!devi.getMusicManager().isDJorAlone(member, member.getVoiceState().getChannel(), member.getGuild())) {
+            sender.reply(devi.getTranslation(command.getLanguage(), 454));
             return;
         }
 
-        if (!command.getEvent().getMember().getVoiceState().inVoiceChannel()) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 100));
+        if (guildPlayer.getAudioPlayer().isPaused()) {
+            sender.reply(DeviEmote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 464));
             return;
         }
 
+        if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
+            sender.reply(DeviEmote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 465));
+            return;
+        }
         int amount;
         try {
             amount = args.length == 0 ? 1 : Integer.parseInt(args[0]);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             amount = 1;
         }
+        if (amount < 1) amount = 1;
 
-        if (amount < 1) {
-            amount = 1;
+        int index = guildPlayer.getCurrentQueueIndex();
+        int size = guildPlayer.getQueue().size();
+
+        for (int i = 0; i != amount; i++) {
+            if (index == -1 || index == size) {
+                index = 0;
+                continue;
+            }
+            index += 1;
         }
 
-        TrackManager trackManager = devi.getMusicManager().getManager(command.getEvent().getGuild());
 
-        String oldTrack = devi.getMusicManager().getPlayer(command.getEvent().getGuild()).getPlayingTrack().getInfo().title;
+        guildPlayer.setCurrentQueueIndex(index);
+        guildPlayer.getAudioPlayer().stopTrack();
 
-        boolean wasLoopDisabled = false;
-
-        if (trackManager.isLoopSong()) {
-            trackManager.setLoopSong(false);
-            wasLoopDisabled = true;
-        }
-
-        devi.getMusicManager().skip(command.getEvent().getGuild(), amount);
-
-        if (wasLoopDisabled) trackManager.setLoopSong(true);
-
-        String newTrack = devi.getMusicManager().getPlayer(command.getEvent().getGuild()).getPlayingTrack() != null ? devi.getMusicManager().getPlayer(command.getEvent().getGuild()).getPlayingTrack().getInfo().title : "QUEUE_END";
-
-        EmbedBuilder builder = new EmbedBuilder().setColor(new Color(34, 113, 126));
-        builder.setAuthor(devi.getTranslation(command.getLanguage(), 85), null, "https://i.pinimg.com/736x/9d/83/17/9d8317162494a004969b79c85d88b5c1--music-logo-dj-music.jpg");
-
-        if (amount == 1) builder.setDescription(":white_check_mark:" + devi.getTranslation(command.getLanguage(), 134, "`" + oldTrack + "`"));
-        else builder.setDescription(":white_check_mark:" + devi.getTranslation(command.getLanguage(), 135, amount));
-
-        if (newTrack.equals("QUEUE_END")) builder.appendDescription("\n:track_next: " + devi.getTranslation(command.getLanguage(), 136));
-        else builder.appendDescription("\n:track_next: " + devi.getTranslation(command.getLanguage(), 137, "`" + newTrack + "`"));
-
-        sender.reply(builder.build());
+        AudioInfo next = guildPlayer.getCurrent();
+        sender.reply(DeviEmote.MUSIC.get() + " | " + devi.getTranslation(command.getLanguage(), 137, "**" + next.getAudioTrack().getInfo().title + "**"));
     }
 
     @Override
@@ -94,7 +84,7 @@ public class SkipCommandExecutor implements CommandExecutor {
 
     @Override
     public Permission getPermission() {
-        return Permission.MANAGE_SERVER;
+        return null;
     }
 
     @Override

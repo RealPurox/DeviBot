@@ -4,41 +4,50 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.audio.hooks.ConnectionStatus;
+import net.dv8tion.jda.core.entities.GuildVoiceState;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlayCommandExecutor implements CommandExecutor {
 
     private Devi devi;
+
     public PlayCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if(command.getEvent().getGuild().getAudioManager().getConnectionStatus() != ConnectionStatus.CONNECTED) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 116, "`" + command.getPrefix() + "join`"));
-            return;
-        }
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
         if (args.length == 0) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "play <link or yt search>`"));
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 456));
             return;
         }
 
-        String input = Arrays.stream(args).skip(0).collect(Collectors.joining(" "));
+        VoiceChannel deviChannel = command.getEvent().getGuild().getSelfMember().getVoiceState().getChannel();
+        GuildVoiceState userState = command.getEvent().getGuild().getMember(sender).getVoiceState();
 
-        if(!args[0].startsWith("https://") && !args[0].startsWith("http://")) {
-            input = "ytsearch:" + input;
+        if (!userState.inVoiceChannel()) {
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 461));
+            return;
         }
 
-        devi.getMusicManager().loadTrack(command.getEvent(), input, command.getEvent().getGuild().getSelfMember().getVoiceState().getChannel());
+        if (deviChannel != null && userState.getChannel().getIdLong() != deviChannel.getIdLong()) {
+            sender.reply(DeviEmote.ERROR.get() + " |  " + devi.getTranslation(command.getLanguage(), 462));
+            return;
+        }
+
+        String query = Arrays.stream(args).skip(0).collect(Collectors.joining(" "));
+        if (!args[0].startsWith("http")) query = "ytsearch:" + query;
+        guildPlayer.loadSong(query, command, sender);
     }
 
     @Override
@@ -53,7 +62,7 @@ public class PlayCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("addqueue");
+        return Arrays.asList("addqueue", "p");
     }
 
     @Override
@@ -65,4 +74,5 @@ public class PlayCommandExecutor implements CommandExecutor {
     public ModuleType getModuleType() {
         return ModuleType.MUSIC;
     }
+
 }

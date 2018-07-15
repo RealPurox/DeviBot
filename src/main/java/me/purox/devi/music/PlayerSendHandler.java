@@ -9,7 +9,7 @@ public class PlayerSendHandler implements AudioSendHandler {
     private final AudioPlayer audioPlayer;
     private AudioFrame lastFrame;
 
-    public PlayerSendHandler(AudioPlayer audioPlayer) {
+    PlayerSendHandler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
     }
 
@@ -23,7 +23,7 @@ public class PlayerSendHandler implements AudioSendHandler {
     @Override
     public byte[] provide20MsAudio() {
         if (lastFrame == null) lastFrame = audioPlayer.provide();
-        byte[] data = lastFrame != null ? lastFrame.data : null;
+        byte[] data = lastFrame != null ? lastFrame.getData() : null;
         lastFrame = null;
         return data;
     }

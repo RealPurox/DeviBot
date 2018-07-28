@@ -28,6 +28,7 @@ public class ChangelogCommandExecutor implements CommandExecutor {
         embed.setColor(Color.decode("#4775d1"));
         embed.setTitle(" ");
         embed.setDescription(devi.getTranslation(command.getLanguage(), 492));
+        sender.reply(embed.build());
 
     }
 

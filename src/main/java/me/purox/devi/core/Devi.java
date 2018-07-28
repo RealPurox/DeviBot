@@ -127,10 +127,11 @@ public class Devi {
 
                     Jedis receiverRedis = new Jedis("54.38.182.128");
                     receiverRedis.auth(settings.getDeviAPIAuthorization());
-                    receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
                     redisConnection = true;
+                    receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
                 } catch (JedisDataException e) {
                     redisConnection = false;
+                    e.printStackTrace();
                 }
             });
             redisThread.setName("Devi Redis Thread");

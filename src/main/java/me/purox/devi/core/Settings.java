@@ -5,7 +5,7 @@ public class Settings {
     private boolean devBot = true;
 
     public String getDefaultPrefix() {
-        return devBot ? "-" : "!";
+        return devBot ? "." : "!";
     }
 
     String getBotToken() {

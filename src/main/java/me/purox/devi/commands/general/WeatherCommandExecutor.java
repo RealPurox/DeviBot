@@ -57,7 +57,7 @@ public class WeatherCommandExecutor implements CommandExecutor {
             Channel city = list.get(0);
             if(city != null) {
                 //wind
-                direction = city.getWind().getDirection() == null ? "Couldn't grab data." : city.getWind().getDirection() + "°";
+                direction = city.getWind().getDirection() + "°";
                 speed = city.getWind().getSpeed() + "km/h";
                 wind = devi.getTranslation(command.getLanguage(), 378) + ": " + direction + "\n" + devi.getTranslation(command.getLanguage(), 379) + ": " + speed;
 

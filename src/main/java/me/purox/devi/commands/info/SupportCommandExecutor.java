@@ -28,7 +28,7 @@ public class SupportCommandExecutor implements CommandExecutor {
         embed.setTitle(" ");
         embed.setDescription(devi.getTranslation(command.getLanguage(), 489));
         MessageUtils.sendMessageAsync(command.getEvent().getChannel(), new MessageBuilder()
-                .setContent("https  ://discord.gg/6Ac4uqZ")
+                .setContent("https://discord.gg/6Ac4uqZ")
                 .setEmbed(embed.build()).build());
     }
 

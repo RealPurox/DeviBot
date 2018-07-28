@@ -75,7 +75,7 @@ public class FeedbackCommandExecutor implements CommandExecutor {
             message.addField("Message", messageRaw, false);
             devi.sendFeedbackMessage(message.build());
 
-            devi.getDatabaseManager().getClient().getDatabase("website_dev").getCollection("users_feedback").insertOne(doc);
+            devi.getDatabaseManager().getClient().getDatabase("website").getCollection("users_feedback").insertOne(doc);
 
             EmbedBuilder success;
             success = new EmbedBuilder();

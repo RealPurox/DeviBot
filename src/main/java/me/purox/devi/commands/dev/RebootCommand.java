@@ -4,39 +4,31 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.request.Request;
+import me.purox.devi.request.RequestBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Game;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class AdminStatsCommand implements CommandExecutor {
+public class RebootCommand implements CommandExecutor {
 
     private Devi devi;
 
-    public AdminStatsCommand(Devi devi) {
+    public RebootCommand(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId())) return;
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("```").append("-- == Translations == --\n\n");
-
-        int totalTrans = devi.getDeviTranslations().get(Language.ENGLISH).keySet().size();
-
-        for (Language language : Language.values()) {
-            int translated = devi.getDeviTranslations().get(language).keySet().size();
-            builder.append(language.getName()).append(" -> ").append(Math.round(((double) translated / (double) totalTrans) * 100)).append("%\n");
-        }
-
-
-        builder.append("```");
-
-        sender.reply(builder.toString());
+        int min = args.length > 0 && args[0].equalsIgnoreCase("--urgent") ? 1 : 5;
+        devi.reboot(min, command.getEvent().getChannel());
+        sender.reply(DeviEmote.SUCCESS + " | Devi will be rebooting in " + min + " minute" + (min == 1 ? "" : "s"));
     }
 
     @Override
@@ -61,6 +53,6 @@ public class AdminStatsCommand implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.DEV;
     }
 }

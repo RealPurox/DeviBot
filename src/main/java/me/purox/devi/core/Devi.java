@@ -509,6 +509,19 @@ public class Devi {
             }
         }
     }
+    public void sendFeedbackMessage(Object o) {
+        AtomicReference<Guild> guild = new AtomicReference<>(null);
+        shardManager.getShards().forEach(jda -> {
+            Guild g = jda.getGuildById("392264119102996480");
+            if (g != null) guild.set(g);
+        });
+        if (guild.get() != null) {
+            TextChannel channel = guild.get().getTextChannelById("472755048833613824");
+            if (channel != null) {
+                MessageUtils.sendMessageAsync(channel, o);
+            }
+        }
+    }
 
     private DeviGuild createDeviGuild(String id) {
         return new DeviGuild(id, this);

@@ -33,8 +33,7 @@ public class WeatherCommandExecutor implements CommandExecutor {
             return;
         }
 
-        String title, wind;
-
+        String wind;
         //Wind
         String direction, speed;
 
@@ -57,10 +56,6 @@ public class WeatherCommandExecutor implements CommandExecutor {
             List<Channel> list = limit.first(1);
             Channel city = list.get(0);
 
-            //Global
-            title = city.getTitle();
-            title = title.substring(16);
-
             //wind
             direction = city.getWind().getDirection() + "°";
             speed = city.getWind().getSpeed() + "km/h";
@@ -81,20 +76,96 @@ public class WeatherCommandExecutor implements CommandExecutor {
             double temper = (double) Math.round((city.getItem().getCondition().getTemp() * 1.8 + 32) * 100) / 100;
             tempF = temper + "°F";
 
-            EmbedBuilder embedw = new EmbedBuilder();
+            EmbedBuilder embed = new EmbedBuilder();
 
-            embedw.setAuthor(devi.getTranslation(command.getLanguage(), 380, title));
-            embedw.setColor(Color.ORANGE);
-            embedw.setFooter(devi.getTranslation(command.getLanguage(), 380, title) + " | " + date, null);
+            switch (city.getItem().getCondition().getCode()){
 
-            embedw.addField(devi.getTranslation(command.getLanguage(), 381), temp + "/" + tempF, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 382), wind, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 383), humidity, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 384), pressure, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 385), visibility, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 386), conditions, true);
+                case 29: // partly cloudy night
+                    embed.setColor(Color.decode("#cccccc"));
+                    break;
+                case 30: // partly cloudy day
+                    embed.setColor(Color.decode("#cccccc"));
+                    break;
+                case 27: //mostly cloudy night
+                    embed.setColor(Color.decode("#bfbfbf"));
+                    break;
+                case 28: //mostly clody day
+                    embed.setColor(Color.decode("#bfbfbf"));
+                    break;
+                case 26: // clody
+                    embed.setColor(Color.decode("#a6a6a6"));
+                    break;
+                case 31: //clear night
+                    embed.setColor(Color.cyan);
+                    break;
+                case 32: // sunny
+                    embed.setColor(Color.yellow);
+                    break;
+                case 24: //windy
+                    embed.setColor(Color.decode("#bfbfbf"));
+                    break;
+                case 36: // hot
+                    embed.setColor(Color.orange);
+                    break;
+                case 2:
+                    embed.setColor(Color.decode("#737373"));
+                    break;
+                case 3:
+                    embed.setColor(Color.decode("#404040"));
+                    break;
+                case 4:
+                    embed.setColor(Color.decode("#404040"));
+                    break;
+                case 5:
+                    embed.setColor(Color.decode("#ccffff"));
+                    break;
+                case 8:
+                    embed.setColor(Color.decode("#00cccc"));
+                    break;
+                case 9:
+                    embed.setColor(Color.decode("#0080ff"));
+                    break;
+                case 10:
+                    embed.setColor(Color.decode("#00cccc"));
+                    break;
+                case 11:
+                    embed.setColor(Color.decode("#0066cc"));
+                    break;
+                case 12:
+                    embed.setColor(Color.decode("#0066cc"));
+                    break;
+                case 13:
+                    embed.setColor(Color.white);
+                    break;
+                case 14:
+                    embed.setColor(Color.white);
+                    break;
+                case 15:
+                    embed.setColor(Color.white);
+                    break;
+                case 41:
+                    embed.setColor(Color.white);
+                    break;
+                case 42:
+                    embed.setColor(Color.white);
+                    break;
+                case 43:
+                    embed.setColor(Color.white);
+                    break;
+            }
 
-            sender.reply(embedw.build());
+
+            embed.setAuthor(devi.getTranslation(command.getLanguage(), 380, city.getTitle().substring(17)));
+            embed.setFooter(devi.getTranslation(command.getLanguage(), 380, city.getTitle().substring(17)) + " | " + date, null);
+
+            embed.addField(devi.getTranslation(command.getLanguage(), 381), temp + "/" + tempF, true);
+            embed.addField(devi.getTranslation(command.getLanguage(), 382), wind, true);
+            embed.addField(devi.getTranslation(command.getLanguage(), 383), humidity, true);
+            embed.addField(devi.getTranslation(command.getLanguage(), 384), pressure, true);
+            embed.addField(devi.getTranslation(command.getLanguage(), 385), visibility, true);
+            embed.addField(devi.getTranslation(command.getLanguage(), 386), conditions, true);
+
+            sender.reply(embed.build());
         } catch (IOException | JAXBException ex) {
             sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 217));
         } catch (IndexOutOfBoundsException ioobe) {

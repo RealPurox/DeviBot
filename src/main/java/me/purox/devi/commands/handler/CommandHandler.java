@@ -3,35 +3,30 @@ package me.purox.devi.commands.handler;
 import me.purox.devi.commands.dev.*;
 import me.purox.devi.commands.guild.*;
 import me.purox.devi.commands.guild.custom.*;
-import me.purox.devi.commands.handler.impl.ConsoleCommandSenderImpl;
+import me.purox.devi.commands.info.FeedbackCommandExecutor;
 import me.purox.devi.commands.info.GuildStatsCommandExecutor;
 import me.purox.devi.commands.general.HelpCommandExecutor;
 import me.purox.devi.commands.info.UserInfoCommandExecutor;
 import me.purox.devi.commands.mod.*;
-import me.purox.devi.commands.music.*;
 import me.purox.devi.commands.general.*;
+import me.purox.devi.commands.music.*;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 
 public class CommandHandler {
 
     private Devi devi;
-    private ConsoleCommandSender consoleCommandSender;
     private CommandParser parser;
     private LinkedHashMap<String, CommandExecutor> commands = new LinkedHashMap<>();
     private LinkedHashMap<String, CommandExecutor> unmodifiedCommands = new LinkedHashMap<>();
 
     public CommandHandler(Devi devi) {
         this.devi = devi;
-        this.consoleCommandSender = new ConsoleCommandSenderImpl(devi);
         this.parser = new CommandParser(devi);
 
         /*
@@ -63,6 +58,7 @@ public class CommandHandler {
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));
         registerCommand("userinfo", new UserInfoCommandExecutor(devi));
+        registerCommand("feedback", new FeedbackCommandExecutor(devi));
 
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));
@@ -70,7 +66,8 @@ public class CommandHandler {
         registerCommand("language", new LanguageCommandExecutor(devi));
         registerCommand("modlog", new ModLogCommandExecutor(devi));
         registerCommand("automod", new AutoModCommandExecutor(devi));
-        registerCommand("musiclog", new MusicLogCommandExecutor(devi));
+        //TODO: implement this again
+        //registerCommand("musiclog", new MusicLogCommandExecutor(devi));
         //registerCommand("welcome", new WelcomeCommandExecutor(devi));
         //  - twitch commands
         registerCommand("twitch", new TwitchCommandExecutor(devi));
@@ -93,14 +90,15 @@ public class CommandHandler {
         registerCommand("leave", new LeaveCommandExecutor(devi));
         registerCommand("play", new PlayCommandExecutor(devi));
         registerCommand("queue", new QueueCommandExecutor(devi));
+        registerCommand("remove", new RemoveCommandExecutor(devi));
         registerCommand("pause", new PauseCommandExecutor(devi));
-        registerCommand("resume", new ResumeCommandExecutor(devi));
+        registerCommand("unpause", new UnPauseCommandExecutor(devi));
         registerCommand("current", new CurrentCommandExecutor(devi));
         registerCommand("skip", new SkipCommandExecutor(devi));
         registerCommand("shuffle", new ShuffleCommandExecutor(devi));
-        registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
+        /*registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
         registerCommand("volume", new VolumeCommandExecutor(devi));
-        registerCommand("loop", new LoopCommandExecutor(devi));
+        registerCommand("loop", new LoopCommandExecutor(devi));*/
     }
 
     private void registerCommand(String commandName, CommandExecutor commandExecutor){
@@ -126,7 +124,7 @@ public class CommandHandler {
         }
 
         //guild only check
-        if ((commandExecutor.guildOnly() && event != null && event.getGuild() == null) || commandExecutor.guildOnly() && commandSender.isConsoleCommandSender()) {
+        if ((commandExecutor.guildOnly() && event != null && event.getGuild() == null)) {
             commandSender.reply(":warning: **" + devi.getTranslation(Language.ENGLISH, 1) + "**");
             return;
         }
@@ -138,7 +136,9 @@ public class CommandHandler {
         }
 
         //all good, run the command
-        devi.getLogger().log("Command '" + raw + "' executed by " + commandSender.getName() + "#" + commandSender.getDiscriminator() + " in channel-type " + (event != null ? event.getChannelType() : "UNKNOWN"));
+        devi.getLogger().log("Command '" + raw + "' executed by " + commandSender.getName() + "#" + commandSender.getDiscriminator() +
+                (event == null || event.getGuild() == null ? " in DMs" : " in channel #" + event.getChannel().getName() + " (" + event.getChannel().getId() + "), " +
+                        "guild " + event.getGuild().getName() + " (" + event.getGuild().getId() + ")"));
         devi.increaseCommandsExecuted();
         commandExecutor.execute(container.getArgs(), container.getCommand(), commandSender);
     }
@@ -151,22 +151,5 @@ public class CommandHandler {
         return unmodifiedCommands;
     }
 
-    public void startConsoleCommandListener() {
-        NonblockingBufferedReader reader = new NonblockingBufferedReader(new BufferedReader(new InputStreamReader(System.in)));
-        try {
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    CommandHandler commandHandler = devi.getCommandHandler();
-                    String invoke = line.split(" ")[0].toLowerCase();
-                    if (commandHandler.getCommands().containsKey(invoke)) {
-                        commandHandler.handleCommand("", line, null, new CommandSender(consoleCommandSender, null));
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
 

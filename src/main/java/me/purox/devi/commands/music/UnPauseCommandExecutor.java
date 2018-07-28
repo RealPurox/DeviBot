@@ -8,37 +8,35 @@ import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JoinCommandExecutor implements CommandExecutor {
+public class UnPauseCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public JoinCommandExecutor(Devi devi) {
+    public UnPauseCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!command.getEvent().getMember().getVoiceState().inVoiceChannel()) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 100));
-            return;
-        }
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
-
-        Guild guild = command.getEvent().getGuild();
-        VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
-        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(guild);
-
-        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), channel, guild)) {
+        if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), command.getEvent().getGuild().getMember(sender).getVoiceState().getChannel(), command.getEvent().getGuild())) {
             sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
             return;
         }
 
-        guildPlayer.join(command, sender, false);
+        if (!guildPlayer.getAudioPlayer().isPaused()) {
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 475));
+            return;
+        }
+
+        guildPlayer.getAudioPlayer().setPaused(false);
+        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 476));
+
     }
 
     @Override
@@ -48,12 +46,12 @@ public class JoinCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 99;
+        return 125;
     }
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("summon");
+        return Collections.singletonList("resume");
     }
 
     @Override

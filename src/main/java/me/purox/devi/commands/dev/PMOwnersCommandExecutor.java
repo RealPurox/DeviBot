@@ -23,7 +23,7 @@ public class PMOwnersCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId()) && !sender.isConsoleCommandSender()) return;
+        if (!devi.getAdmins().contains(sender.getId())) return;
 
         if (args.length == 0) {
             sender.reply("Please provide a message");

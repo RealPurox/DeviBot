@@ -24,26 +24,17 @@ public class RandomColorCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-
         Random random = new Random();
-
-        float r = random.nextFloat();
-        float g = random.nextFloat();
-        float b = random.nextFloat();
-
-        Color randomColor = new Color(r, g ,b);
-
+        Color randomColor = new Color(random.nextFloat(), random.nextFloat(), random.nextFloat());
         String hexValue = "#" + Integer.toHexString(randomColor.getRGB()).substring(2);
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(devi.getTranslation(command.getLanguage(), 405));
         embed.addField("HEX", hexValue, false);
         embed.addField("RGB", "R: " + randomColor.getRed() + " G: " + randomColor.getGreen() + " B: " + randomColor.getBlue(), false);
-        embed.setColor(randomColor.getRGB());
+        embed.setColor(randomColor);
 
-        MessageEmbed build = embed.build();
-
-        sender.reply(build);
+        sender.reply(embed.build());
     }
 
     @Override

@@ -39,8 +39,10 @@ public class LanguageCommandExecutor implements CommandExecutor {
 
         StringBuilder inputBuilder = new StringBuilder(devi.getTranslation(command.getLanguage(), 260) + "\n\n");
 
+        int totalTrans = devi.getDeviTranslations().get(Language.ENGLISH).keySet().size();
         for (Language language : Language.values()) {
-            inputBuilder.append(" > ").append(language.getName()).append("\n");
+            int translated = devi.getDeviTranslations().get(language).keySet().size();
+            inputBuilder.append(" > ").append(language.getName()).append(" (").append(Math.round(((double) translated / (double) totalTrans) * 100)).append("%)\n");
         }
 
         builder.setExpectedInputText(inputBuilder.toString());

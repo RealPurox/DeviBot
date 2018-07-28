@@ -26,14 +26,12 @@ public class GuildStatsCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         Guild guild = command.getEvent().getGuild();
 
+        int channels = guild.getVoiceChannels().size() + guild.getTextChannels().size();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
         EmbedBuilder embed = new EmbedBuilder();
-
         embed.setTitle(devi.getTranslation(command.getLanguage(), 427));
         embed.setColor(Color.decode("#7289da"));
-
-        int allchannels = Integer.valueOf(guild.getVoiceChannels().size() + Integer.valueOf(guild.getTextChannels().size()));
 
         embed.addField(devi.getTranslation(command.getLanguage(), 428), guild.getName(), true);
         embed.addField(devi.getTranslation(command.getLanguage(), 430), guild.getId(), true);
@@ -42,14 +40,11 @@ public class GuildStatsCommandExecutor implements CommandExecutor {
         embed.addField(devi.getTranslation(command.getLanguage(), 432), guild.getCreationTime().format(formatter), true);
         embed.addField(devi.getTranslation(command.getLanguage(), 433), Integer.valueOf(guild.getRoles().size()).toString(), true);
         embed.addField(devi.getTranslation(command.getLanguage(), 435), Integer.valueOf(guild.getMembers().size()).toString(), true);
-        embed.addField(devi.getTranslation(command.getLanguage(), 437), allchannels +
+        embed.addField(devi.getTranslation(command.getLanguage(), 437), channels +
                 " [ " + devi.getTranslation(command.getLanguage(), 434) + ": " + Integer.valueOf(guild.getTextChannels().size()).toString() +
-                " | " + devi.getTranslation(command.getLanguage(), 436) + ": " + Integer.valueOf(guild.getVoiceChannels().size()).toString() + " ] ", true);
+                " | " + devi.getTranslation(command.getLanguage(), 436) + ": " + Integer.valueOf(guild.getVoiceChannels().size()).toString() + " ] ", false);
 
-        MessageEmbed build = embed.build();
-
-        sender.reply(build);
-
+        sender.reply(embed.build());
     }
 
     @Override

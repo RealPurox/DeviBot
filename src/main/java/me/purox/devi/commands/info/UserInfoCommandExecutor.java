@@ -32,20 +32,19 @@ public class UserInfoCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-
         if(args.length == 0){
             sender.reply(devi.getTranslation(command.getLanguage(), 439));
             return;
         }
+
         User user = DiscordUtils.getUser(args[0], command.getEvent().getGuild());
         if (user == null) {
             sender.reply(devi.getTranslation(command.getLanguage(), 440));
             return;
         }
+
         Member target = command.getEvent().getGuild().getMember(user);
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setTitle(devi.getTranslation(command.getLanguage(), 441) + " | " + target.getUser().getName());
@@ -57,11 +56,9 @@ public class UserInfoCommandExecutor implements CommandExecutor {
         embed.addField(devi.getTranslation(command.getLanguage(), 444), target.getNickname() == null ? devi.getTranslation(command.getLanguage(), 445) : target.getNickname(), true); // nickname
         embed.addField(devi.getTranslation(command.getLanguage(), 446), target.getGame() == null ? devi.getTranslation(command.getLanguage(), 445) : target.getGame().getName(), true); // playing
         embed.addField(devi.getTranslation(command.getLanguage(), 447), target.getRoles().isEmpty() ? devi.getTranslation(command.getLanguage(), 445) : target.getRoles().stream().map(IMentionable::getAsMention).collect(Collectors.joining(", ")), true); // roles
-        embed.addField(devi.getTranslation(command.getLanguage(), 448), target.getUser().getEffectiveAvatarUrl(), true);
+        embed.addField(devi.getTranslation(command.getLanguage(), 448), "[" + devi.getTranslation(command.getLanguage(), 91) + "](" + target.getUser().getEffectiveAvatarUrl()+ ")", true);
 
-        MessageEmbed build = embed.build();
-
-        sender.reply(build);
+        sender.reply(embed.build());
 
     }
 

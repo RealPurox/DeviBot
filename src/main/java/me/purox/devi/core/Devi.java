@@ -115,6 +115,8 @@ public class Devi {
         loadTranslations();
         // load streams
         loadStreams();
+        // reboot everyday at 12am
+        initDailyReboot();
 
         try {
             // subscribe to redis channel async because it's blocking the current thread
@@ -189,6 +191,41 @@ public class Devi {
         }
     }
 
+    public void setGame(Game game) {
+        shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
+    }
+
+    public void reboot(int minutes, MessageChannel channel) {
+        AtomicInteger min = new AtomicInteger(minutes + 1);
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            int next = min.decrementAndGet();
+            setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
+            if (next == 0) {
+                if (channel != null) {
+                    channel.sendMessage("<:TrumpPepe:453988133021941763> cya later alligator").complete();
+                    System.exit(312);
+                } else {
+                    System.exit(312);
+                }
+            }
+        }, 0, 1, TimeUnit.MINUTES);
+    }
+
+    private void initDailyReboot() {
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 23);
+        today.set(Calendar.MINUTE, 25);
+        today.set(Calendar.SECOND, 0);
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                reboot(12, null);
+            }
+        }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
+    }
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
             Set<String> copy = new HashSet<>(streamIDs);
@@ -297,6 +334,7 @@ public class Devi {
         }
         return null;
     }
+
     public Stats getCurrentStats() {
         return new Stats();
     }
@@ -509,6 +547,7 @@ public class Devi {
             }
         }
     }
+
     public void sendFeedbackMessage(Object o) {
         AtomicReference<Guild> guild = new AtomicReference<>(null);
         shardManager.getShards().forEach(jda -> {

@@ -40,7 +40,8 @@ public class CommandHandler {
         commands.put("admindisable", new AdminDisableCommandExecutor(devi));
         commands.put("adminenable", new AdminEnableCommandExecutor(devi));
         commands.put("guilddata", new GuildDataCommandExecutor(devi));
-        commands.put("adminstats", new AdminStatsCommand(devi));
+        commands.put("adminstats", new AdminStatsCommandExecutor(devi));
+        commands.put("reboot", new RebootCommand(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));

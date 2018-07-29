@@ -81,15 +81,12 @@ public class WeatherCommandExecutor implements CommandExecutor {
                 switch (city.getItem().getCondition().getCode()) {
 
                     case 29: // partly cloudy night
-                        embed.setColor(Color.decode("#cccccc"));
-                        break;
                     case 30: // partly cloudy day
                         embed.setColor(Color.decode("#cccccc"));
                         break;
                     case 27: //mostly cloudy night
-                        embed.setColor(Color.decode("#bfbfbf"));
-                        break;
                     case 28: //mostly clody day
+                    case 24: //windy
                         embed.setColor(Color.decode("#bfbfbf"));
                         break;
                     case 26: // clody
@@ -101,9 +98,6 @@ public class WeatherCommandExecutor implements CommandExecutor {
                     case 32: // sunny
                         embed.setColor(Color.yellow);
                         break;
-                    case 24: //windy
-                        embed.setColor(Color.decode("#bfbfbf"));
-                        break;
                     case 36: // hot
                         embed.setColor(Color.orange);
                         break;
@@ -111,8 +105,6 @@ public class WeatherCommandExecutor implements CommandExecutor {
                         embed.setColor(Color.decode("#737373"));
                         break;
                     case 3:
-                        embed.setColor(Color.decode("#404040"));
-                        break;
                     case 4:
                         embed.setColor(Color.decode("#404040"));
                         break;
@@ -120,35 +112,21 @@ public class WeatherCommandExecutor implements CommandExecutor {
                         embed.setColor(Color.decode("#ccffff"));
                         break;
                     case 8:
+                    case 10:
                         embed.setColor(Color.decode("#00cccc"));
                         break;
                     case 9:
                         embed.setColor(Color.decode("#0080ff"));
                         break;
-                    case 10:
-                        embed.setColor(Color.decode("#00cccc"));
-                        break;
                     case 11:
-                        embed.setColor(Color.decode("#0066cc"));
-                        break;
                     case 12:
                         embed.setColor(Color.decode("#0066cc"));
                         break;
                     case 13:
-                        embed.setColor(Color.white);
-                        break;
                     case 14:
-                        embed.setColor(Color.white);
-                        break;
                     case 15:
-                        embed.setColor(Color.white);
-                        break;
                     case 41:
-                        embed.setColor(Color.white);
-                        break;
                     case 42:
-                        embed.setColor(Color.white);
-                        break;
                     case 43:
                         embed.setColor(Color.white);
                         break;

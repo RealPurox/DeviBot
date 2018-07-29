@@ -215,14 +215,14 @@ public class Devi {
     private void initDailyReboot() {
         Calendar today = Calendar.getInstance();
         today.set(Calendar.HOUR_OF_DAY, 23);
-        today.set(Calendar.MINUTE, 25);
+        today.set(Calendar.MINUTE, 45);
         today.set(Calendar.SECOND, 0);
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                reboot(12, null);
+                reboot(15, null);
             }
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
     }

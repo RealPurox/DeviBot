@@ -109,17 +109,14 @@ public class Devi {
             logger.log("Starting as public bot");
         } else logger.log("Starting as dev bot");
 
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            System.out.println("yep");
-            sendMessageToDevelopers("An exception occurred in thread " + thread.getName() + "\n\n" + throwable.getMessage());
-        });
-
         // connect to database
         databaseManager.connect();
         // load translations
         loadTranslations();
         // load streams
         loadStreams();
+        // reboot everyday at 12am
+        initDailyReboot();
 
         try {
             // subscribe to redis channel async because it's blocking the current thread
@@ -130,10 +127,11 @@ public class Devi {
 
                     Jedis receiverRedis = new Jedis("54.38.182.128");
                     receiverRedis.auth(settings.getDeviAPIAuthorization());
-                    receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
                     redisConnection = true;
+                    receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
                 } catch (JedisDataException e) {
                     redisConnection = false;
+                    e.printStackTrace();
                 }
             });
             redisThread.setName("Devi Redis Thread");
@@ -194,6 +192,41 @@ public class Devi {
         }
     }
 
+    public void setGame(Game game) {
+        shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
+    }
+
+    public void reboot(int minutes, MessageChannel channel) {
+        AtomicInteger min = new AtomicInteger(minutes + 1);
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            int next = min.decrementAndGet();
+            setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
+            if (next == 0) {
+                if (channel != null) {
+                    channel.sendMessage("<:TrumpPepe:453988133021941763> cya later alligator").complete();
+                    System.exit(312);
+                } else {
+                    System.exit(312);
+                }
+            }
+        }, 0, 1, TimeUnit.MINUTES);
+    }
+
+    private void initDailyReboot() {
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 23);
+        today.set(Calendar.MINUTE, 45);
+        today.set(Calendar.SECOND, 0);
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                reboot(15, null);
+            }
+        }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
+    }
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
             Set<String> copy = new HashSet<>(streamIDs);
@@ -302,6 +335,7 @@ public class Devi {
         }
         return null;
     }
+
     public Stats getCurrentStats() {
         return new Stats();
     }
@@ -509,6 +543,20 @@ public class Devi {
         });
         if (guild.get() != null) {
             TextChannel channel = guild.get().getTextChannelById("458740773614125076");
+            if (channel != null) {
+                MessageUtils.sendMessageAsync(channel, o);
+            }
+        }
+    }
+
+    public void sendFeedbackMessage(Object o) {
+        AtomicReference<Guild> guild = new AtomicReference<>(null);
+        shardManager.getShards().forEach(jda -> {
+            Guild g = jda.getGuildById("392264119102996480");
+            if (g != null) guild.set(g);
+        });
+        if (guild.get() != null) {
+            TextChannel channel = guild.get().getTextChannelById("472755048833613824");
             if (channel != null) {
                 MessageUtils.sendMessageAsync(channel, o);
             }

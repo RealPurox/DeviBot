@@ -33,8 +33,7 @@ public class WeatherCommandExecutor implements CommandExecutor {
             return;
         }
 
-        String title, wind;
-
+        String wind;
         //Wind
         String direction, speed;
 
@@ -56,49 +55,100 @@ public class WeatherCommandExecutor implements CommandExecutor {
 
             List<Channel> list = limit.first(1);
             Channel city = list.get(0);
+            if(city != null) {
+                //wind
+                direction = city.getWind().getDirection() + "°";
+                speed = city.getWind().getSpeed() + "km/h";
+                wind = devi.getTranslation(command.getLanguage(), 378) + ": " + direction + "\n" + devi.getTranslation(command.getLanguage(), 379) + ": " + speed;
 
-            //Global
-            title = city.getTitle();
-            title = title.substring(16);
+                //Atmosphere
+                humidity = city.getAtmosphere().getHumidity() + "%";
+                double pRound = city.getAtmosphere().getPressure();
+                pressure = String.format("%.0f", pRound) + " psi";
+                visibility = city.getAtmosphere().getVisibility() / 100 + " miles";
 
-            //wind
-            direction = city.getWind().getDirection() + "°";
-            speed = city.getWind().getSpeed() + "km/h";
-            wind = devi.getTranslation(command.getLanguage(), 378) + ": " + direction + "\n" + devi.getTranslation(command.getLanguage(), 379) + ": " + speed;
+                //Conditions
+                conditions = city.getItem().getCondition().getText();
+                temp = city.getItem().getCondition().getTemp() + "°C";
+                date = city.getItem().getCondition().getDate().toString();
 
-            //Atmosphere
-            humidity = city.getAtmosphere().getHumidity() + "%";
-            double pRound = city.getAtmosphere().getPressure();
-            pressure = String.format("%.0f", pRound) + " psi";
-            visibility = city.getAtmosphere().getVisibility() / 100 + " miles";
+                //Temp in fahrenheit
+                double temper = (double) Math.round((city.getItem().getCondition().getTemp() * 1.8 + 32) * 100) / 100;
+                tempF = temper + "°F";
 
-            //Conditions
-            conditions = city.getItem().getCondition().getText();
-            temp = city.getItem().getCondition().getTemp() + "°C";
-            date = city.getItem().getCondition().getDate().toString();
+                EmbedBuilder embed = new EmbedBuilder();
 
-            //Temp in fahrenheit
-            double temper = (double) Math.round((city.getItem().getCondition().getTemp() * 1.8 + 32) * 100) / 100;
-            tempF = temper + "°F";
+                switch (city.getItem().getCondition().getCode()) {
 
-            EmbedBuilder embedw = new EmbedBuilder();
+                    case 29: // partly cloudy night
+                    case 30: // partly cloudy day
+                        embed.setColor(Color.decode("#cccccc"));
+                        break;
+                    case 27: //mostly cloudy night
+                    case 28: //mostly clody day
+                    case 24: //windy
+                        embed.setColor(Color.decode("#bfbfbf"));
+                        break;
+                    case 26: // clody
+                        embed.setColor(Color.decode("#a6a6a6"));
+                        break;
+                    case 31: //clear night
+                        embed.setColor(Color.cyan);
+                        break;
+                    case 32: // sunny
+                        embed.setColor(Color.yellow);
+                        break;
+                    case 36: // hot
+                        embed.setColor(Color.orange);
+                        break;
+                    case 2: // rip i forgot all thses :_:
+                        embed.setColor(Color.decode("#737373"));
+                        break;
+                    case 3:
+                    case 4:
+                        embed.setColor(Color.decode("#404040"));
+                        break;
+                    case 5:
+                        embed.setColor(Color.decode("#ccffff"));
+                        break;
+                    case 8:
+                    case 10:
+                        embed.setColor(Color.decode("#00cccc"));
+                        break;
+                    case 9:
+                        embed.setColor(Color.decode("#0080ff"));
+                        break;
+                    case 11:
+                    case 12:
+                        embed.setColor(Color.decode("#0066cc"));
+                        break;
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 41:
+                    case 42:
+                    case 43:
+                        embed.setColor(Color.white);
+                        break;
+                }
 
-            embedw.setAuthor(devi.getTranslation(command.getLanguage(), 380, title));
-            embedw.setColor(Color.ORANGE);
-            embedw.setFooter(devi.getTranslation(command.getLanguage(), 380, title) + " | " + date, null);
 
-            embedw.addField(devi.getTranslation(command.getLanguage(), 381), temp + "/" + tempF, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 382), wind, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 383), humidity, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 384), pressure, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 385), visibility, true);
-            embedw.addField(devi.getTranslation(command.getLanguage(), 386), conditions, true);
+                embed.setAuthor(devi.getTranslation(command.getLanguage(), 380, city.getTitle().substring(17)));
+                embed.setFooter(devi.getTranslation(command.getLanguage(), 380, city.getTitle().substring(17)) + " | " + date, null);
 
-            sender.reply(embedw.build());
+                embed.addField(devi.getTranslation(command.getLanguage(), 381), temp + "/" + tempF, true);
+                embed.addField(devi.getTranslation(command.getLanguage(), 382), wind, true);
+                embed.addField(devi.getTranslation(command.getLanguage(), 383), humidity, true);
+                embed.addField(devi.getTranslation(command.getLanguage(), 384), pressure, true);
+                embed.addField(devi.getTranslation(command.getLanguage(), 385), visibility, true);
+                embed.addField(devi.getTranslation(command.getLanguage(), 386), conditions, true);
+
+                sender.reply(embed.build());
+            }
         } catch (IOException | JAXBException ex) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 217));
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 217) + ".");
         } catch (IndexOutOfBoundsException ioobe) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 387));
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 387) + ".");
         }
     }
 

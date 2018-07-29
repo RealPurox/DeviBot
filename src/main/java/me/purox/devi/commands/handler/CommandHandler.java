@@ -3,11 +3,8 @@ package me.purox.devi.commands.handler;
 import me.purox.devi.commands.dev.*;
 import me.purox.devi.commands.guild.*;
 import me.purox.devi.commands.guild.custom.*;
-import me.purox.devi.commands.info.FeedbackCommandExecutor;
-import me.purox.devi.commands.info.GuildStatsCommandExecutor;
+import me.purox.devi.commands.info.*;
 import me.purox.devi.commands.general.HelpCommandExecutor;
-import me.purox.devi.commands.info.SupportCommandExecutor;
-import me.purox.devi.commands.info.UserInfoCommandExecutor;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.general.*;
 import me.purox.devi.commands.music.*;
@@ -62,6 +59,7 @@ public class CommandHandler {
         registerCommand("userinfo", new UserInfoCommandExecutor(devi));
         registerCommand("feedback", new FeedbackCommandExecutor(devi));
         registerCommand("support", new SupportCommandExecutor(devi));
+        registerCommand("changelog", new ChangelogCommandExecutor(devi));
 
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));

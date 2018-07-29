@@ -53,13 +53,14 @@ public class EvalCommandExecutor implements CommandExecutor {
             if (evaluation.contains("sender.reply(")) {
                 engine.eval(evaluation);
             } else {
-                Object out = engine.eval(evaluation);
+                Object out = engine.eval(
+                        "(function() {" +
+                                "with (imports) {" +
+                                evaluation + "}" +
+                                "})();");
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setColor(Color.GREEN);
-                builder.appendDescription("Code was successfully executed with following response\n");
-                builder.appendDescription("```\n");
-                builder.appendDescription(out + "\n");
-                builder.appendDescription("```");
+                builder.appendDescription("Code was successfully executed without any errors\n");
                 sender.reply(builder.build());
             }
         } catch (Exception e) {

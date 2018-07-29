@@ -40,6 +40,8 @@ public class EvalCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
+        if (!devi.getAdmins().contains(sender.getId())) return;
+
         String evaluation = String.join(" ", args);
 
         engine.put("args", args);

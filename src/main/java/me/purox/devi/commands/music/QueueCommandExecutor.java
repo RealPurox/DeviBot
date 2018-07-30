@@ -53,7 +53,7 @@ public class QueueCommandExecutor implements CommandExecutor {
         } else if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
             builder.appendDescription(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 465) + "\n\n");
         } else {
-            displayNext = true;
+            if (guildPlayer.getQueue().size() > 1) displayNext = true;
             AudioInfo currentInfo = guildPlayer.getCurrent();
             AudioTrack current = currentInfo.getAudioTrack();
 

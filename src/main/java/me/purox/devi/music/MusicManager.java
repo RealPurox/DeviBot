@@ -67,7 +67,7 @@ public class MusicManager {
             devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " is totally alone in the channel in guild " + guild.getName() + " (" + guild.getId() + ")");
             return true;
     }
-        devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " has not authority to use that command in guild " + guild.getName() + " (" + guild.getId() + ")");
+        devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " has no authority to use that command in guild " + guild.getName() + " (" + guild.getId() + ")");
         return false;
     }
 

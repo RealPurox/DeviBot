@@ -23,6 +23,7 @@ import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GuildPlayer extends AudioEventAdapter {
@@ -30,15 +31,14 @@ public class GuildPlayer extends AudioEventAdapter {
     private Devi devi;
     private Guild guild;
     private AudioPlayer audioPlayer;
-    private List<AudioInfo> queue;
-    private int currentQueueIndex = -1;
+    private LinkedList<AudioInfo> queue;
     private long destroyTime;
 
     GuildPlayer(Devi devi, Guild guild) {
         this.devi = devi;
         this.guild = guild;
         this.audioPlayer = devi.getMusicManager().getAudioPlayerManager().createPlayer();
-        this.queue = new ArrayList<>();
+        this.queue = new LinkedList<>();
         this.destroyTime = System.currentTimeMillis() + 300000; //5 mins
 
         this.audioPlayer.addListener(this);
@@ -74,34 +74,24 @@ public class GuildPlayer extends AudioEventAdapter {
         AudioInfo audioInfo = new AudioInfo(audioTrack, requester);
         queue.add(audioInfo);
 
-        if (currentQueueIndex == -1) playNext();
+        if (queue.size() == 1) playNext();
     }
 
     public AudioInfo getAudioInfo(AudioTrack track) {
         return this.queue.stream().filter(audioInfo -> audioInfo.getAudioTrack().equals(track)).findFirst().orElse(null);
     }
 
-    public List<AudioInfo> getQueue() {
+    public LinkedList<AudioInfo> getQueue() {
         return queue;
-    }
-
-    public int getCurrentQueueIndex() {
-        return currentQueueIndex;
-    }
-
-    public void setCurrentQueueIndex(int currentQueueIndex) {
-        this.currentQueueIndex = currentQueueIndex;
     }
 
     public List<AudioInfo> getNextSongs(int amount) {
         List<AudioInfo> songs = new ArrayList<>();
-        int index = currentQueueIndex;
 
-        for (int i = 0; i < amount; i++) {
-            index += 1;
-            if (index == queue.size()) index = 0;
+        for (int i = 1; i < amount + 1; i++) {
+            if (i >= queue.size()) break;
 
-            AudioInfo audioInfo = queue.get(index);
+            AudioInfo audioInfo = queue.get(i);
 
             boolean isInSongsAlready = false;
             for (AudioInfo a : songs) if (a.isEqualTo(audioInfo)) isInSongsAlready = true;
@@ -114,24 +104,21 @@ public class GuildPlayer extends AudioEventAdapter {
 
     public AudioInfo getCurrent() {
         if (audioPlayer.isPaused() || audioPlayer.getPlayingTrack() == null) return null;
-        return queue.get(currentQueueIndex);
+        return queue.get(0);
     }
 
     public void shuffle() {
-        AudioInfo currentTrack = this.queue.get(this.currentQueueIndex);
-
-        this.currentQueueIndex = 0;
+        AudioInfo currentTrack = this.queue.get(0);
 
         queue.remove(0);
         Collections.shuffle(queue);
         queue.add(0, currentTrack);
     }
 
-    void destroy(boolean leave) {
+    public void destroy(boolean leave) {
         if (leave) leave(null, null, true);
         audioPlayer.destroy();
         queue.clear();
-        currentQueueIndex = -1;
         devi.getMusicManager().getGuildPlayers().remove(guild.getId());
     }
 
@@ -141,11 +128,7 @@ public class GuildPlayer extends AudioEventAdapter {
             return;
         }
 
-        currentQueueIndex += 1;
-        if (currentQueueIndex == -1) currentQueueIndex = 0;
-        if (currentQueueIndex == queue.size()) currentQueueIndex = 0;
-
-        AudioTrack audioTrack = queue.get(currentQueueIndex).getAudioTrack();
+        AudioTrack audioTrack = queue.get(0).getAudioTrack();
         audioPlayer.playTrack(audioTrack);
     }
 
@@ -156,7 +139,6 @@ public class GuildPlayer extends AudioEventAdapter {
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         devi.increaseSongsPlayed();
-        if (currentQueueIndex == -1) currentQueueIndex = getAudioInfoId(getAudioInfo(track));
         this.destroyTime = System.currentTimeMillis() + track.getInfo().length + 300000;
     }
 
@@ -167,11 +149,8 @@ public class GuildPlayer extends AudioEventAdapter {
                 leave(null, null, true);
                 return;
             }
-            //TODO: why did I do this?
-            audioPlayer.playTrack(queue.get(currentQueueIndex).getAudioTrack().makeClone());
-            return;
         }
-        queue.set(currentQueueIndex, queue.get(currentQueueIndex).createNew());
+        queue.remove();
         playNext();
     }
 

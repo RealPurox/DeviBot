@@ -48,21 +48,19 @@ public class SkipCommandExecutor implements CommandExecutor {
         }
         if (amount < 1) amount = 1;
 
-        int index = guildPlayer.getCurrentQueueIndex();
-        int size = guildPlayer.getQueue().size();
-
-        for (int i = 0; i != amount; i++) {
-            index += 1;
-            if (index == -1 || index == size) {
-                index = 0;
-            }
+        for (int i = 0; i < amount - 1; i++) {
+            guildPlayer.getQueue().remove();
         }
 
-        guildPlayer.setCurrentQueueIndex(index);
         guildPlayer.getAudioPlayer().stopTrack();
 
-        AudioInfo next = guildPlayer.getCurrent();
-        sender.reply(DeviEmote.MUSIC.get() + " | " + devi.getTranslation(command.getLanguage(), 137, "**" + next.getAudioTrack().getInfo().title + "**"));
+        if (guildPlayer.getQueue().isEmpty()) {
+            sender.reply(DeviEmote.INFO + " | " + devi.getTranslation(command.getLanguage(), 136));
+            guildPlayer.destroy(true);
+        } else {
+            AudioInfo next = guildPlayer.getCurrent();
+            sender.reply(DeviEmote.MUSIC.get() + " | " + devi.getTranslation(command.getLanguage(), 137, "**" + next.getAudioTrack().getInfo().title + "**"));
+        }
     }
 
     @Override

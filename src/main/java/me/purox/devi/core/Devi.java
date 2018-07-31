@@ -182,6 +182,7 @@ public class Devi {
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
             builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
+            builder.addEventListeners(getCommandHandler().getCommands().get("volume"));
 
             // build & login
             this.shardManager = builder.build();

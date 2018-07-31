@@ -12,6 +12,8 @@ import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.requests.restaction.MessageAction;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
+import java.util.function.Consumer;
+
 public class MessageUtils {
 
     private static Devi devi;
@@ -92,7 +94,8 @@ public class MessageUtils {
         }
     }
 
-    public static void sendMessageAsync(MessageChannel channel, Object object) {
+
+    public static void sendMessageAsync(MessageChannel channel, Object object, Consumer<Message> success) {
         if (channel.getType() == ChannelType.PRIVATE) {
             sendPrivateMessageAsync(((PrivateChannel)channel).getUser(), object);
             return;
@@ -105,13 +108,13 @@ public class MessageUtils {
                     if (!PermissionUtil.checkPermission((TextChannel) channel, ((TextChannel)channel).getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
                         DeviGuild deviGuild = devi.getDeviGuild(((TextChannel) channel).getGuild().getId());
                         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-                        channel.sendMessage(devi.getTranslation(language, 150)).queue();
+                        channel.sendMessage(devi.getTranslation(language, 150)).queue(success);
                     }
-                    else channel.sendMessage((MessageEmbed) object).queue();
+                    else channel.sendMessage((MessageEmbed) object).queue(success);
                 } else if (object instanceof String) {
-                    channel.sendMessage((String) object).queue();
+                    channel.sendMessage((String) object).queue(success);
                 } else if (object instanceof Message) {
-                    channel.sendMessage((Message) object).queue();
+                    channel.sendMessage((Message) object).queue(success);
                 } else {
                     throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
                 }
@@ -121,6 +124,10 @@ public class MessageUtils {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void sendMessageAsync(MessageChannel channel, Object object) {
+        sendMessageAsync(channel, object, null);
     }
 
     public static Message sendMessageSync(MessageChannel channel, Object object) {

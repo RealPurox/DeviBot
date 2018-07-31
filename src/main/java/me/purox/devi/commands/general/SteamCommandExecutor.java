@@ -13,72 +13,79 @@ import org.json.JSONObject;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SteamCommandExecutor implements CommandExecutor {
 
     private Devi devi;
+    private Pattern steamIdPattern;
     public SteamCommandExecutor(Devi devi) {
         this.devi = devi;
+        this.steamIdPattern = Pattern.compile("^[0-9]{17}$");
+
     }
-    @SuppressWarnings("Duplicates")
+
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-
         if (args.length == 0) {
             sender.reply("Please enter your profile ID or Steam ID!");
             return;
         }
 
         String search = args[0];
-        AtomicLong steamId = new AtomicLong();
+        Matcher matcher = steamIdPattern.matcher(search);
+        long steamId;
 
-        if (!isLong(search)) {
-            // Getting steam id from custom url
+        // -- name to id --
+        if (!matcher.matches()) {
             String getSteamIDFromURL = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=" + devi.getSettings().getSteamApiKey() + "&vanityurl=" + search;
+            System.out.println(getSteamIDFromURL);
+            JSONObject response = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(getSteamIDFromURL).build().asJSONSync().getBody();
+            JSONObject id = response.getJSONObject("response");
 
-            new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(getSteamIDFromURL).build().asJSON(response -> {
-                JSONObject id = response.getBody().getJSONObject("response");
+            if (id.getInt("success") != 1) {
+                sender.reply("I couldn't find that user name.");
+                System.out.println("DID NOT FIND THE STEAM name.");
+                return;
+            }
 
-                if (id.getInt("success") != 1) {
-                    sender.reply("I couldn't find that user ID.");
-                    System.out.println("DID NOT FIND THE STEAM ID.");
-                    return;
-                }else {
-                    System.out.println(id.getLong("steamid"));
-                    steamId.set(id.getLong("steamid"));
-                    System.out.println("FOUND THE STEAM ID. BUT ALSO CHECKING IF THE MESSAGE WAS AN ID!");
-                }
-            });
-        }else {
+            steamId = id.getLong("steamid");
+            System.out.println("FOUND THE STEAM ID. BUT ALSO CHECKING IF THE MESSAGE WAS AN ID!");
+        }
+        // -- check if id exists --
+        else {
             String getSteamIFromID = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + devi.getSettings().getSteamApiKey() + "&steamids=" + search;
+            JSONObject response2 = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(getSteamIFromID).build().asJSONSync().getBody();
+            JSONObject id = response2.getJSONObject("response");
 
-            new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(getSteamIFromID).build().asJSON(response2 -> {
-                JSONObject id2 = response2.getBody().getJSONObject("response");
+            System.out.println(response2);
 
-                if (id2.getInt("success") != 1) {
-                    sender.reply("I couldn't find that user ID.");
-                    System.out.println("DID NOT FIND THE STEAM ID.");
-                    return;
-                }else {
-                    steamId.set(id2.getLong("steamid"));
-                    System.out.println("FOUND THE STEAM ID. NOW GETTING THE PROFILE.");
-                }
-            });
+            if (id.getInt("success") != 1) {
+                sender.reply("I couldn't find that user ID.");
+                System.out.println("DID NOT FIND THE STEAM ID.");
+                return;
+            }
+            steamId = id.getLong("steamid");
+            System.out.println("FOUND THE STEAM ID. NOW GETTING THE PROFILE.");
         }
 
-        String findProfile = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + devi.getSettings().getSteamApiKey() + "&steamids=" + steamId.toString();
-        new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(findProfile).build().asJSON(profileResponse -> {
-            System.out.println(profileResponse.getBody().getJSONObject("response"));
-            JSONObject players = (JSONObject) profileResponse.getBody().getJSONObject("response").getJSONArray("players").get(0);
 
-            long steamID = players.getJSONArray("players").getJSONObject(0).getLong("steamid");
-            String countryCode = players.getJSONArray("players").getJSONObject(0).getString("loccountrycode");
+        // -- get profile --
+        String findProfile = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + devi.getSettings().getSteamApiKey() + "&steamids=" + steamId;
+        System.out.println(findProfile);
+        System.out.println("yo");
+        JSONObject profileResponse = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(findProfile).build().asJSONSync().getBody();
+        JSONObject players = (JSONObject) profileResponse.getJSONObject("response").getJSONArray("players").get(0);
 
-            sender.reply("Your SteamID: " + steamID + "\n" + "Country Code: " + countryCode);
-            System.out.println(steamID);
+        System.out.println(profileResponse.getJSONObject("response"));
 
-            EmbedBuilder embed = new EmbedBuilder();
-        });
+        long steamID = players.getLong("steamid");
+        String countryCode = players.getString("loccountrycode");
+
+        sender.reply("Your Profile: " + players + "\n\n<@161494492422078464> I'm sorry for being rude to you you but I helped you with this so know we're best friends again :kiss:");
+
+        EmbedBuilder embed = new EmbedBuilder();
     }
 
     boolean isLong(String s) {

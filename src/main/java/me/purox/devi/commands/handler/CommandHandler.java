@@ -53,6 +53,7 @@ public class CommandHandler {
         registerCommand("weather", new WeatherCommandExecutor(devi));
         registerCommand("flipcoin", new FlipCoinCommandExecutor(devi));
         registerCommand("randomcolor", new RandomColorCommandExecutor(devi));
+        registerCommand("steam", new SteamCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

@@ -113,8 +113,6 @@
 
     </dependencies>
 
-
-
     <repositories>
         <repository>
             <id>central</id>
@@ -122,6 +120,4 @@
             <url>http://jcenter.bintray.com</url>
         </repository>
     </repositories>
-
-
 </project>

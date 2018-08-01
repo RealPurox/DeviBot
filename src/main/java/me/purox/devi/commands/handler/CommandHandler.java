@@ -54,6 +54,7 @@ public class CommandHandler {
         registerCommand("flipcoin", new FlipCoinCommandExecutor(devi));
         registerCommand("randomcolor", new RandomColorCommandExecutor(devi));
         registerCommand("steam", new SteamCommandExecutor(devi));
+        registerCommand("osu", new OsuCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

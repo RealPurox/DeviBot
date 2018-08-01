@@ -1,9 +1,11 @@
 package me.purox.devi.commands.general;
 
+import com.mongodb.util.JSON;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
@@ -11,6 +13,11 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import org.json.JSONObject;
 
+import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -29,7 +36,7 @@ public class SteamCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
-            sender.reply("Please enter your profile ID or Steam ID!");
+            sender.reply(devi.getTranslation(command.getLanguage(), 493));
             return;
         }
 
@@ -40,61 +47,112 @@ public class SteamCommandExecutor implements CommandExecutor {
         // -- name to id --
         if (!matcher.matches()) {
             String getSteamIDFromURL = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=" + devi.getSettings().getSteamApiKey() + "&vanityurl=" + search;
-            System.out.println(getSteamIDFromURL);
             JSONObject response = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(getSteamIDFromURL).build().asJSONSync().getBody();
             JSONObject id = response.getJSONObject("response");
 
             if (id.getInt("success") != 1) {
-                sender.reply("I couldn't find that user name.");
-                System.out.println("DID NOT FIND THE STEAM name.");
+                sender.reply(devi.getTranslation(command.getLanguage(), 494));
                 return;
             }
 
             steamId = id.getLong("steamid");
-            System.out.println("FOUND THE STEAM ID. BUT ALSO CHECKING IF THE MESSAGE WAS AN ID!");
         }
         // -- check if id exists --
         else {
             String getSteamIFromID = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + devi.getSettings().getSteamApiKey() + "&steamids=" + search;
-            JSONObject response2 = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(getSteamIFromID).build().asJSONSync().getBody();
-            JSONObject id = response2.getJSONObject("response");
+            JSONObject response = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(getSteamIFromID).build().asJSONSync().getBody();
+            JSONObject id = (JSONObject) response.getJSONObject("response").getJSONArray("players").get(0);
 
-            System.out.println(response2);
+            System.out.println(response);
 
-            if (id.getInt("success") != 1) {
-                sender.reply("I couldn't find that user ID.");
-                System.out.println("DID NOT FIND THE STEAM ID.");
+            if (id.length() <= 0) {
+                sender.reply(devi.getTranslation(command.getLanguage(), 495));
                 return;
             }
             steamId = id.getLong("steamid");
-            System.out.println("FOUND THE STEAM ID. NOW GETTING THE PROFILE.");
         }
-
 
         // -- get profile --
         String findProfile = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + devi.getSettings().getSteamApiKey() + "&steamids=" + steamId;
-        System.out.println(findProfile);
-        System.out.println("yo");
         JSONObject profileResponse = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(findProfile).build().asJSONSync().getBody();
         JSONObject players = (JSONObject) profileResponse.getJSONObject("response").getJSONArray("players").get(0);
+        // -- get bans --
 
-        System.out.println(profileResponse.getJSONObject("response"));
+        String findBans = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=" + devi.getSettings().getSteamApiKey() + "&steamids=" + steamId;
+        JSONObject banResponse = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(findBans).build().asJSONSync().getBody();
+        JSONObject bans = (JSONObject) banResponse.getJSONArray("players").get(0);
+
+        String findUserLevel = "http://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=" + devi.getSettings().getSteamApiKey() + "&steamid=" + steamId;
+        JSONObject userLevelResponse = new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(findUserLevel).build().asJSONSync().getBody();
+        JSONObject userLevel = (JSONObject) userLevelResponse.getJSONObject("response");
 
         long steamID = players.getLong("steamid");
-        String countryCode = players.getString("loccountrycode");
-
-        sender.reply("Your Profile: " + players + "\n\n<@161494492422078464> I'm sorry for being rude to you you but I helped you with this so know we're best friends again :kiss:");
+        String countryCode = players.getString("loccountrycode").toLowerCase();
 
         EmbedBuilder embed = new EmbedBuilder();
-    }
+        embed.setThumbnail(players.getString("avatarfull"));
+        embed.setAuthor(players.getString("personaname"), null, "https://i.imgur.com/ukoAGX1.png");
+        embed.setColor(Color.decode("#1b2838"));
 
-    boolean isLong(String s) {
-        try{
-            Long.parseLong(s);
-            return true;
-        }catch (Exception e){
-            return false;
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 496) + "**", players.isNull("realname") ? devi.getTranslation(command.getLanguage(), 510) : players.getString("realname"), true);
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 497) + "**", players.isNull("loccountrycode") ? devi.getTranslation(command.getLanguage(), 510) : ":flag_" + countryCode + ": " + players.getString("loccountrycode"), true);
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 498) + "**", players.getString("profileurl"), false);
+
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        Date createdate = new Date(players.getLong("timecreated") * 1000L);
+        Date lastlogoff = new Date(players.getLong("lastlogoff") * 1000L);
+
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 499) + "**", format.format(createdate), true);
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 500) + "**", format.format(lastlogoff), true);
+
+        switch (players.getInt("personastate")) {
+            case 0:
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.OFFLINE + " Offline", true);
+                break;
+            case 1:
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.ONLINE + " Online", true);
+                break;
+            case 2:
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.DO_NOT_DISTURB + " Busy", true);
+                break;
+            case 3:
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.AWAY + " Away", true);
+                break;
+            case 4:
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.AWAY + " Snooze", true);
+                break;
+            case 5:
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.ONLINE + " Looking to Trade", true);
+                break;
+            case 6:
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.ONLINE + " Looking to Play", true);
+                break;
         }
+
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 502) + "**", String.valueOf(userLevel.getInt("player_level")), true);
+
+        if (bans.getBoolean("VACBanned")) {
+            embed.addField("**VAC Ban**", DeviEmote.SUCCESS + " " +
+                    bans.getInt("NumberOfVACBans") +
+                    " ban(s) found. \n" +
+                    "Issued " + bans.getInt("DaysSinceLastBan") + " days ago.", true);
+        } else
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 503) + "**", DeviEmote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
+
+        if (bans.getBoolean("CommunityBanned")) {
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 504) + "**", DeviEmote.SUCCESS + " " + devi.getTranslation(command.getLanguage(), 506), true);
+        } else
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 504) + "**", DeviEmote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
+
+        if (bans.getString("EconomyBan").contains("none")) {
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", DeviEmote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
+        } else if (bans.getString("EconomyBan").contains("probation")) {
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", DeviEmote.INFO + " " + devi.getTranslation(command.getLanguage(), 509), true);
+        } else if (bans.getString("EconomyBan").contains("banned")) {
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", DeviEmote.SUCCESS + " " + devi.getTranslation(command.getLanguage(), 508), true);
+        }
+
+        sender.reply(embed.build());
     }
 
 
@@ -105,7 +163,7 @@ public class SteamCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 0;
+        return 511;
     }
 
     @Override
@@ -120,6 +178,6 @@ public class SteamCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.GAME_COMMANDS;
     }
 }

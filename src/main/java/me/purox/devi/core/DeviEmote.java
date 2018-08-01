@@ -8,7 +8,11 @@ public enum DeviEmote {
     BAN("<:devi_ban:435786345445851136>"),
     TWITCH("<:twitch:448893462767599616>"),
     INFO("<:info:458663927568400397>"),
-    MUSIC("<:music:462383963739258890>");
+    MUSIC("<:music:462383963739258890>"),
+    ONLINE("<:online:473958665725149194>"),
+    AWAY("<:away:473958590844108801>"),
+    OFFLINE("<:offline:473958621080846346>"),
+    DO_NOT_DISTURB("<:dnd:473958535018053643>");
 
     private String get;
 

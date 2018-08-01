@@ -34,7 +34,11 @@ public class Settings {
     }
 
     public String getSteamApiKey() {
-        return "35FBFE310519EACD4734B54E15F23BF0";
+        return System.getenv("STEAM_KEY");
+    }
+
+    public String getOsuApiKey() {
+        return System.getenv("OSU_KEY");
     }
 
     String getDeviAPIAuthorization() {

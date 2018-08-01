@@ -19,11 +19,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RebootCommand implements CommandExecutor {
+public class RebootCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public RebootCommand(Devi devi) {
+    public RebootCommandExecutor(Devi devi) {
         this.devi = devi;
     }
 

@@ -110,9 +110,8 @@
             <artifactId>lavaplayer</artifactId>
             <version>1.3.6</version>
         </dependency>
+
     </dependencies>
-
-
 
     <repositories>
         <repository>
@@ -121,6 +120,4 @@
             <url>http://jcenter.bintray.com</url>
         </repository>
     </repositories>
-
-
 </project>

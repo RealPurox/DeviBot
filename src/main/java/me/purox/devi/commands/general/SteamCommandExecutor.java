@@ -36,7 +36,7 @@ public class SteamCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 493));
+            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 493));
             return;
         }
 
@@ -51,7 +51,7 @@ public class SteamCommandExecutor implements CommandExecutor {
             JSONObject id = response.getJSONObject("response");
 
             if (id.getInt("success") != 1) {
-                sender.reply(devi.getTranslation(command.getLanguage(), 494));
+                sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 494));
                 return;
             }
 
@@ -66,7 +66,7 @@ public class SteamCommandExecutor implements CommandExecutor {
             System.out.println(response);
 
             if (id.length() <= 0) {
-                sender.reply(devi.getTranslation(command.getLanguage(), 495));
+                sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 495));
                 return;
             }
             steamId = id.getLong("steamid");
@@ -87,15 +87,14 @@ public class SteamCommandExecutor implements CommandExecutor {
         JSONObject userLevel = (JSONObject) userLevelResponse.getJSONObject("response");
 
         long steamID = players.getLong("steamid");
-        String countryCode = players.getString("loccountrycode").toLowerCase();
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setThumbnail(players.getString("avatarfull"));
         embed.setAuthor(players.getString("personaname"), null, "https://i.imgur.com/ukoAGX1.png");
         embed.setColor(Color.decode("#1b2838"));
 
-        embed.addField("**" + devi.getTranslation(command.getLanguage(), 496) + "**", players.isNull("realname") ? devi.getTranslation(command.getLanguage(), 510) : players.getString("realname"), true);
-        embed.addField("**" + devi.getTranslation(command.getLanguage(), 497) + "**", players.isNull("loccountrycode") ? devi.getTranslation(command.getLanguage(), 510) : ":flag_" + countryCode + ": " + players.getString("loccountrycode"), true);
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 496) + "**", (!(players.has("realname"))) ? devi.getTranslation(command.getLanguage(), 510) : players.getString("realname"), true);
+        embed.addField("**" + devi.getTranslation(command.getLanguage(), 497) + "**", (!(players.has("loccountrycode"))) ? devi.getTranslation(command.getLanguage(), 510) : ":flag_" + players.getString("loccountrycode").toLowerCase() + ": " + players.getString("loccountrycode"), true);
         embed.addField("**" + devi.getTranslation(command.getLanguage(), 498) + "**", players.getString("profileurl"), false);
 
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");

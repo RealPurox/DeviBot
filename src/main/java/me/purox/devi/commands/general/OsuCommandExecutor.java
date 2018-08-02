@@ -31,7 +31,7 @@ public class OsuCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 513, command.getPrefix() + "osu <user> [mode]"));
+            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 513, command.getPrefix() + "osu <user> [standard/taiko/ctb/mania]"));
             return;
         }
 

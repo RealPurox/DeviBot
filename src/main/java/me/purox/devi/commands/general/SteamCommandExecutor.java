@@ -36,7 +36,7 @@ public class SteamCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 493));
+            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 493));
             return;
         }
 
@@ -51,7 +51,7 @@ public class SteamCommandExecutor implements CommandExecutor {
             JSONObject id = response.getJSONObject("response");
 
             if (id.getInt("success") != 1) {
-                sender.reply(devi.getTranslation(command.getLanguage(), 494));
+                sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 494));
                 return;
             }
 
@@ -66,7 +66,7 @@ public class SteamCommandExecutor implements CommandExecutor {
             System.out.println(response);
 
             if (id.length() <= 0) {
-                sender.reply(devi.getTranslation(command.getLanguage(), 495));
+                sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 495));
                 return;
             }
             steamId = id.getLong("steamid");

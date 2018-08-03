@@ -28,6 +28,7 @@ public class GuildSettings {
         MOD_LOG_CHANNEL           ( "-1",       ":microphone2:",               59,  "modlog channel"        , false, "Mod-Log Channel"),
         MOD_LOG_MUTES             ( true,       DeviEmote.MUTE.get(),          71,  "modlog mutes"          , false, "Mod-Log Mutes"),
         MOD_LOG_BANS              ( true,       DeviEmote.BAN.get(),           72,  "modlog bans"           , false, "Mod-Log Bans"),
+        MOD_LOG_KICKS             ( true,       DeviEmote.BAN.get(),           534, "modlog kicks"          , false,  "Mod-Log Kicks"),
         MOD_LOG_MESSAGE_EDITED    ( true,       ":pen_ballpoint:",             178, "modlog message-edit"   , false, "Mod-Log Edited Messages"),
         MOD_LOG_MESSAGE_DELETED   ( true,       ":no_entry_sign:",             179, "modlog message-delete" , false, "Mod-Log Deleted Messages"),
 

@@ -79,6 +79,7 @@ public class CommandHandler {
         //  - mod commands
         registerCommand("ban", new BanCommandExecutor(devi));
         registerCommand("unban", new UnbanCommandExecutor(devi));
+        registerCommand("kick", new KickCommandExecutor(devi));
         registerCommand("mute", new MuteCommandExecutor(devi));
         registerCommand("unmute", new UnmuteCommandExecutor(devi));
         registerCommand("banlist", new BanListCommandExecutor(devi));

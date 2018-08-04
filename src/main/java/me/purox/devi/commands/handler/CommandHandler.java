@@ -56,6 +56,10 @@ public class CommandHandler {
         registerCommand("randomcolor", new RandomColorCommandExecutor(devi));
         registerCommand("steam", new SteamCommandExecutor(devi));
         registerCommand("osu", new OsuCommandExecutor(devi));
+        registerCommand("catfact", new CatFactCommandExecutor(devi));
+        registerCommand("cat", new CatCommandExecutor(devi));
+        registerCommand("dog", new DogCommandExecutor(devi));
+        registerCommand("dogfact", new DogFactCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

@@ -52,7 +52,7 @@ public class KickCommandExecutor implements CommandExecutor {
             return;
         }
 
-        String reason = Arrays.stream(args).skip(1).collect(Collectors.joining("", "", ""));
+        String reason = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
 
         command.getEvent().getGuild().getController().kick(member).queue(
                 success -> {

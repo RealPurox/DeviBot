@@ -64,7 +64,7 @@ public class BanCommandExecutor implements CommandExecutor {
             return;
         }
 
-        String reason = Arrays.stream(args).skip(2).collect(Collectors.joining("", "", ""));
+        String reason = Arrays.stream(args).skip(2).collect(Collectors.joining(" "));
         int day = days;
         command.getEvent().getGuild().getController().ban(user, days).queue(
                 success -> {

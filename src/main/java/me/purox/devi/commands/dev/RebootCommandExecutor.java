@@ -27,13 +27,32 @@ public class RebootCommandExecutor implements CommandExecutor {
         this.devi = devi;
     }
 
+    private boolean isRebooting = false;
+
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        int min = args.length > 0 && args[0].equalsIgnoreCase("--urgent") ? 1 : 5;
-        devi.reboot(min, command.getEvent().getChannel());
-        sender.reply(DeviEmote.SUCCESS + " | Devi will be rebooting in " + min + " minute" + (min == 1 ? "" : "s"));
-    }
+        if (args.length == 0) {
+            sender.reply(DeviEmote.ERROR + " | Please enter the amount minutes until Devi will reboot or use `--urgent` for urgent reboot.");
+            return;
+        }
+        if(isRebooting){
+            sender.reply(DeviEmote.ERROR + " | Devi is already rebooting.");
+            return;
 
+        }
+        if (args[0].equalsIgnoreCase("--urgent")) {
+            devi.reboot(1, command.getEvent().getChannel());
+            sender.reply(DeviEmote.SUCCESS + " | **Urgent Reboot**: Devi will be rebooting in 1 minute.");
+            isRebooting = true;
+            return;
+        }
+
+        int minutes = Integer.parseInt(args[0]);
+
+        sender.reply(DeviEmote.SUCCESS + " | Devi will be rebooting in " + minutes + " minute" + (minutes == 1 ? "" : "s"));
+        devi.reboot(minutes, command.getEvent().getChannel());
+        isRebooting = true;
+    }
 
     @Override
     public boolean guildOnly() {

@@ -21,6 +21,7 @@ public class ModLogCommandExecutor implements CommandExecutor {
     private ModLogChannelHandler modLogChannelHandler;
     private ModLogMutesHandler modLogMutesHandler;
     private ModLogBansHandler modLogBansHandler;
+    private ModLogKicksHandler modLogKicksHandler;
     private ModLogMessageEditHandler modLogMessageEditHandler;
     private ModLogMessageDeleteHandler modLogMessageDeleteHandler;
 
@@ -30,6 +31,7 @@ public class ModLogCommandExecutor implements CommandExecutor {
         this.modLogChannelHandler = new ModLogChannelHandler(devi);
         this.modLogMutesHandler = new ModLogMutesHandler(devi);
         this.modLogBansHandler = new ModLogBansHandler(devi);
+        this.modLogKicksHandler = new ModLogKicksHandler(devi);
         this.modLogMessageEditHandler = new ModLogMessageEditHandler(devi);
         this.modLogMessageDeleteHandler = new ModLogMessageDeleteHandler(devi);
     }
@@ -48,6 +50,9 @@ public class ModLogCommandExecutor implements CommandExecutor {
                 return;
             } else if (args[0].equalsIgnoreCase("bans")) {
                 modLogBansHandler.handle(command, sender);
+                return;
+            } else if (args[0].equalsIgnoreCase("kicks")) {
+                modLogKicksHandler.handle(command, sender);
                 return;
             } else if (args[0].equalsIgnoreCase("message-edit") || args[0].equalsIgnoreCase("messageedit")) {
                 modLogMessageEditHandler.handle(command, sender);

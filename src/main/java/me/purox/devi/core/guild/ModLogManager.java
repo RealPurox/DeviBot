@@ -36,6 +36,25 @@ public class ModLogManager {
         }
     }
 
+    public void logKick(DeviGuild deviGuild, Member member, Member punisher, String reason) {
+        GuildSettings settings = deviGuild.getSettings();
+        if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_KICKS)) {
+            Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(new Color(255, 45, 40));
+            builder.setAuthor(devi.getTranslation(language, 69));
+            builder.setDescription(devi.getTranslation(language, 530, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ DeviEmote.BAN.get());
+            builder.addField(devi.getTranslation(language, 48), reason, true);
+            builder.addField(devi.getTranslation(language, 47), punisher.getUser().getName() + "#" + punisher.getUser().getDiscriminator(), true);
+            builder.setThumbnail(member.getUser().getAvatarUrl());
+            builder.setFooter(devi.getTranslation(language, 69), null);
+            builder.setTimestamp(OffsetDateTime.now());
+
+            deviGuild.log(builder.build());
+        }
+    }
+
     public void logMute(DeviGuild deviGuild, Member member, String punisher, String reason) {
         GuildSettings settings = deviGuild.getSettings();
         if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_MUTES)) {

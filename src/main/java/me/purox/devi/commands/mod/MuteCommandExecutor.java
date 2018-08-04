@@ -116,7 +116,7 @@ public class MuteCommandExecutor extends ListenerAdapter implements CommandExecu
                     deviGuild.getMuted().put(member.getUser().getId(), punishment);
                     deviGuild.saveSettings();
                     devi.getModLogManager().logMute(deviGuild, member, punisher, reason);
-                    MessageUtils.sendMessageAsync(channel, DeviEmote.MUTE.get() + " " + devi.getTranslation(language, 29, member.getUser().getName() + "#" + member.getUser().getDiscriminator()));
+                    MessageUtils.sendMessageAsync(channel, DeviEmote.MUTE.get() + " " + devi.getTranslation(language, 29, member.getUser().getName() + "#" + member.getUser().getDiscriminator(), "`" +reason+"`"));
                 },
                 failure -> MessageUtils.sendMessageAsync(channel, devi.getTranslation(language, 30, member.getUser().getName() + "#" + member.getUser().getDiscriminator())));
     }

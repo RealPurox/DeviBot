@@ -64,7 +64,7 @@ public class BanCommandExecutor implements CommandExecutor {
             return;
         }
 
-        String reason = Arrays.stream(args).skip(2).collect(Collectors.joining("", "", ""));
+        String reason = Arrays.stream(args).skip(2).collect(Collectors.joining(" "));
         int day = days;
         command.getEvent().getGuild().getController().ban(user, days).queue(
                 success -> {
@@ -78,9 +78,9 @@ public class BanCommandExecutor implements CommandExecutor {
                     devi.getModLogManager().logBan(command.getDeviGuild(), member, command.getEvent().getMember(), reason);
 
                     if (day > 0) {
-                        sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 18, "**"+user.getName()+"#"+user.getDiscriminator()+"**", day));
+                        sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 18, "**"+user.getName()+"#"+user.getDiscriminator()+"**", "`"+reason+"`", day));
                     } else {
-                        sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 67, "**"+user.getName()+"#"+user.getDiscriminator()+"**"));
+                        sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 67, "**"+user.getName()+"#"+user.getDiscriminator()+"**","`"+reason+"`"));
                     }
                     MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 17, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));
                 },

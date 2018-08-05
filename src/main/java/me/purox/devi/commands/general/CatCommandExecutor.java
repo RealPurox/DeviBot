@@ -46,6 +46,7 @@ public class CatCommandExecutor implements CommandExecutor {
                         command.getEvent().getChannel().sendFile(file, "cat.png", message.build()).queue();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        sender.reply(devi.getTranslation(command.getLanguage(), 544));
                     }
                 });
     }

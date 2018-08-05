@@ -43,6 +43,7 @@ public class CommandHandler {
         commands.put("adminstats", new AdminStatsCommandExecutor(devi));
         commands.put("reboot", new RebootCommandExecutor(devi));
         commands.put("eval", new EvalCommandExecutor(devi));
+        commands.put("translation", new TranslationsCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
@@ -60,6 +61,7 @@ public class CommandHandler {
         registerCommand("cat", new CatCommandExecutor(devi));
         registerCommand("dog", new DogCommandExecutor(devi));
         registerCommand("dogfact", new DogFactCommandExecutor(devi));
+        registerCommand("ping", new PingCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

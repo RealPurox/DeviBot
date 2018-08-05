@@ -4,25 +4,43 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.Language;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.core.waiter.WaitingResponseBuilder;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
 
-public class TestCommandExecutor implements CommandExecutor {
+public class TranslationsCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public TestCommandExecutor(Devi devi) {
+    public TranslationsCommandExecutor(Devi devi){
         this.devi = devi;
     }
+
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId())) return;
-        sender.reply("gtfo");
-    }
+
+        if (args.length == 0) {
+            sender.reply("Invalid usage. " + command.getPrefix() + "translation <view> <id>");
+            return;
+        }
+        if (args[0].equals("view")) {
+            if (args.length == 1) {
+                sender.reply("You have to enter an ID!");
+                return;
+            }
+            int id = Integer.parseInt(args[1]);
+            StringBuilder builder = new StringBuilder("**[ID] - Language - Text**");
+            for (Language lang : Language.values()) {
+                builder.append("\n" + "[`" + id + "`] " + "**" + lang.name() + ":** " + devi.getTranslation(lang, id));
+            }
+            sender.reply(builder.toString());
+            }
+
+        }
 
 
     @Override
@@ -50,4 +68,3 @@ public class TestCommandExecutor implements CommandExecutor {
         return ModuleType.DEV;
     }
 }
-

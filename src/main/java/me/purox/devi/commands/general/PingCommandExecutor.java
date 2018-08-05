@@ -1,29 +1,29 @@
-package me.purox.devi.commands.dev;
+package me.purox.devi.commands.general;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.core.waiter.WaitingResponseBuilder;
+import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class TestCommandExecutor implements CommandExecutor {
+public class PingCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public TestCommandExecutor(Devi devi) {
+    public PingCommandExecutor(Devi devi){
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (!devi.getAdmins().contains(sender.getId())) return;
-        sender.reply("gtfo");
-    }
+        command.getEvent().getChannel().sendMessage(devi.getTranslation(command.getLanguage(), 543)).complete().editMessage(devi.getTranslation(command.getLanguage(), 543)).queueAfter(1, TimeUnit.SECONDS);
 
+    }
 
     @Override
     public boolean guildOnly() {
@@ -32,7 +32,7 @@ public class TestCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 0;
+        return 543;
     }
 
     @Override
@@ -47,7 +47,6 @@ public class TestCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.DEV;
+        return ModuleType.INFO_COMMANDS;
     }
 }
-

@@ -31,6 +31,8 @@ public class RebootCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
+        if (!devi.getAdmins().contains(sender.getId())) return;
+
         if (args.length == 0) {
             sender.reply(DeviEmote.ERROR + " | Please enter the amount minutes until Devi will reboot or use `--urgent` for urgent reboot.");
             return;

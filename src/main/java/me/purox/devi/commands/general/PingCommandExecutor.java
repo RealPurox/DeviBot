@@ -5,26 +5,24 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.request.Request;
-import me.purox.devi.request.RequestBuilder;
+import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.Permission;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class NumberFactCommandExecutor implements CommandExecutor {
+public class PingCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-    public NumberFactCommandExecutor(Devi devi) {
+
+    public PingCommandExecutor(Devi devi){
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        String URL = "http://numbersapi.com/random/trivia";
-        new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(URL).build()
-                .asString(success -> sender.reply("**"+sender.getName()+"**" + ", " + success.getBody()),
-                        error -> sender.reply(devi.getTranslation(command.getLanguage(), 217)));
+        command.getEvent().getChannel().sendMessage(devi.getTranslation(command.getLanguage(), 543)).queue(message -> message.editMessage(devi.getTranslation(command.getLanguage(), 543) + " `" + command.getEvent().getJDA().getPing() + " ms`").queueAfter(1, TimeUnit.SECONDS));
+
     }
 
     @Override
@@ -34,12 +32,12 @@ public class NumberFactCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 216;
+        return 543;
     }
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("number");
+        return null;
     }
 
     @Override
@@ -49,7 +47,6 @@ public class NumberFactCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.FUN_COMMANDS;
+        return ModuleType.INFO_COMMANDS;
     }
 }
-

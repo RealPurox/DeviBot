@@ -326,8 +326,8 @@ public class Devi {
             return deviTranslations.get(Language.ENGLISH).get(id);
         }
         return translation;
-    }
 
+    }
     public DeviGuild getDeviGuild(String id) {
         try {
             return deviGuildLoadingCache.get(id);

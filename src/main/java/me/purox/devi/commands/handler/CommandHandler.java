@@ -62,6 +62,7 @@ public class CommandHandler {
         registerCommand("dog", new DogCommandExecutor(devi));
         registerCommand("dogfact", new DogFactCommandExecutor(devi));
         registerCommand("ping", new PingCommandExecutor(devi));
+        registerCommand("stats", new StatsCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

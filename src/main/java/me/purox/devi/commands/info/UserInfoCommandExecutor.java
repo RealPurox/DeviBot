@@ -47,7 +47,7 @@ public class UserInfoCommandExecutor implements CommandExecutor {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         EmbedBuilder embed = new EmbedBuilder();
 
-        embed.setTitle(devi.getTranslation(command.getLanguage(), 441) + " | " + target.getUser().getName());
+        embed.setAuthor(target.getUser().getName(), null, target.getUser().getEffectiveAvatarUrl());
         embed.setColor(Color.decode("#7289da"));
         embed.setThumbnail(target.getUser().getEffectiveAvatarUrl());
 
@@ -74,7 +74,7 @@ public class UserInfoCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return null;
+        return Arrays.asList("user", "userstats");
     }
 
     @Override

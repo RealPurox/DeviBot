@@ -21,7 +21,7 @@ public class PingCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        command.getEvent().getChannel().sendMessage(devi.getTranslation(command.getLanguage(), 543)).complete().editMessage(devi.getTranslation(command.getLanguage(), 543)).queueAfter(1, TimeUnit.SECONDS);
+        command.getEvent().getChannel().sendMessage(devi.getTranslation(command.getLanguage(), 543)).queue(message -> message.editMessage(devi.getTranslation(command.getLanguage(), 543)).queueAfter(1, TimeUnit.SECONDS));
 
     }
 

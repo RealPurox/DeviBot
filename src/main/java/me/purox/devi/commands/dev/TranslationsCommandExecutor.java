@@ -32,13 +32,17 @@ public class TranslationsCommandExecutor implements CommandExecutor {
                 sender.reply("You have to enter an ID!");
                 return;
             }
-            int id = Integer.parseInt(args[1]);
-            StringBuilder builder = new StringBuilder("**[ID] - Language - Text**");
-            for (Language lang : Language.values()) {
-                builder.append("\n" + "[`" + id + "`] " + "**" + lang.name() + ":** " + devi.getTranslation(lang, id));
+            try {
+                int id = Integer.parseInt(args[1]);
+                StringBuilder builder = new StringBuilder("**[ID] - Language - Text**");
+                for (Language lang : Language.values()) {
+                    builder.append("\n" + "[`" + id + "`] " + "**" + lang.name() + ":** " + devi.getTranslation(lang, id));
+                }
+                sender.reply(builder.toString());
+            } catch (NumberFormatException e) {
+                sender.reply("Invalid id.");
             }
-            sender.reply(builder.toString());
-            }
+        }
 
         }
 

@@ -1,5 +1,6 @@
 package me.purox.devi.commands.dev;
 
+import com.sun.management.OperatingSystemMXBean;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.core.Permission;
 
 import java.awt.*;
 import java.lang.management.ManagementFactory;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -39,21 +41,24 @@ public class PerformanceCommandExecutor implements CommandExecutor {
         }));
 
         Devi.Stats stats = devi.getCurrentStats();
+        OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+
+        double cpuLoad = osBean.getSystemCpuLoad() * 100;
+        DecimalFormat f = new DecimalFormat("#.00");
+
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
         builder.addField("Threads", String.valueOf(threads), true);
         builder.addField("Using Memory", getUsedRam() + " MB", true);
         builder.addField("Free Memory", getFreeRam() + " MB", true);
         builder.addField("Total Memory", getTotalRam() + " MB", true);
         builder.addField("Max Memory", getMaxRam() + " MB", true);
-        builder.addField("Registered Music Players" , String.valueOf(devi.getMusicManager().getGuildPlayers().size()), true);
+        builder.addField("Operating System", System.getProperty("os.name") + ", " + System.getProperty("os.version"), true);
+        builder.addField("CPU Usage",  f.format(cpuLoad) + "%", true);
         builder.addField("Audio Connections" , String.valueOf(audioConnections.get()), true);
         builder.addField("Commands Executed", String.valueOf(devi.getCommandsExecuted()), true);
         builder.addField("Songs Played", String.valueOf(devi.getSongsPlayed()), true);
         builder.addField("Server Status", getServerStatus(), true);
         builder.addField("Response time", devi.getShardManager().getAveragePing() + " ms", true);
-        builder.addField("Total Guilds", String.valueOf(stats.getGuilds()), true);
-        builder.addField("Total Users", String.valueOf(stats.getUsers()), true);
-        builder.addField("Total Channels", String.valueOf(stats.getChannels()), true);
         builder.addField("Uptime", uptime, false);
 
         sender.reply(builder.build());

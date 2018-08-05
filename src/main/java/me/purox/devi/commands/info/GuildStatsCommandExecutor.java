@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 public class GuildStatsCommandExecutor implements CommandExecutor {
@@ -59,7 +60,7 @@ public class GuildStatsCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return null;
+        return Arrays.asList("guild", "guildinfo");
     }
 
     @Override

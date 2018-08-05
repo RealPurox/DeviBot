@@ -72,6 +72,8 @@ public class Devi {
     private int commandsExecuted;
     private boolean redisConnection = false;
 
+    public static Date rebootTime;
+
     public Devi() {
         // init handlers / managers / settings / utils
         this.commandHandler = new CommandHandler(this);
@@ -219,7 +221,6 @@ public class Devi {
         today.set(Calendar.HOUR_OF_DAY, 23);
         today.set(Calendar.MINUTE, 45);
         today.set(Calendar.SECOND, 0);
-
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -227,6 +228,7 @@ public class Devi {
                 reboot(15, null);
             }
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
+        rebootTime = new Date(today.getTimeInMillis() + 900000);
     }
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {

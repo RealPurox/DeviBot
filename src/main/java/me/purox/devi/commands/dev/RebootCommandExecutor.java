@@ -6,23 +6,12 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.core.waiter.WaitingResponse;
-import me.purox.devi.core.waiter.WaitingResponseBuilder;
-import me.purox.devi.request.Request;
-import me.purox.devi.request.RequestBuilder;
-import me.purox.devi.utils.MessageUtils;
 import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Game;
 
-import java.sql.Time;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.purox.devi.core.Devi.rebootTime;
 
 public class RebootCommandExecutor implements CommandExecutor {
 
@@ -39,7 +28,7 @@ public class RebootCommandExecutor implements CommandExecutor {
         if (!devi.getAdmins().contains(sender.getId())) return;
 
         if (args.length == 0) {
-            String time = TimeUtils.toRelative(new Date(System.currentTimeMillis()), rebootTime);
+            String time = TimeUtils.toRelative(new Date(System.currentTimeMillis()), devi.getRebootTime());
             sender.reply(DeviEmote.ERROR + " | Please enter the amount minutes until Devi will reboot or use `--urgent` for urgent reboot. \n" +
                     "\uD83D\uDCC6 | Devi is scheduled to automatically reboot in `" + time.substring(0, time.length() -4) + "`.");
             return;

@@ -72,7 +72,7 @@ public class Devi {
     private int commandsExecuted;
     private boolean redisConnection = false;
 
-    public static Date rebootTime;
+    private Date rebootTime;
 
     public Devi() {
         // init handlers / managers / settings / utils
@@ -228,7 +228,7 @@ public class Devi {
                 reboot(15, null);
             }
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
-        rebootTime = new Date(today.getTimeInMillis() + 900000);
+        this.rebootTime = new Date(today.getTimeInMillis() + 900000);
     }
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
@@ -628,6 +628,10 @@ public class Devi {
 
     public OkHttpClient getOkHttpClient() {
         return okHttpClient;
+    }
+
+    public Date getRebootTime() {
+        return this.rebootTime;
     }
 
     public ResponseWaiter getResponseWaiter() {

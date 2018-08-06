@@ -1,7 +1,7 @@
 package me.purox.devi.core.waiter;
 
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -85,7 +85,7 @@ public class WaitingResponse {
     public void handle() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(DeviEmote.INFO.get()).append(" | ").append(infoText).append("\n\n");
+        builder.append(Emote.INFO.get()).append(" | ").append(infoText).append("\n\n");
         builder.append("```Markdown\n");
         if(!replyText.equals("")) builder.append("# ").append(replyText).append("\n\n");
 
@@ -110,7 +110,7 @@ public class WaitingResponse {
                 response -> {
                     //cancel waiter
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + cancelledText);
+                        MessageUtils.sendMessageAsync(channel, Emote.SUCCESS.get() + " | " + cancelledText);
                         return;
                     }
 
@@ -128,10 +128,10 @@ public class WaitingResponse {
                         //not a valid number
                         if (!waitingResponseHashMap.containsKey(entered) && !waitingVoidResponseHashMap.containsKey(entered)) {
                             if (nextAttempt >= 4) {
-                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + tooManyFailures);
+                                MessageUtils.sendMessageAsync(channel, Emote.ERROR.get() + " | " + tooManyFailures);
                                 return;
                             } else {
-                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + invalidInputText);
+                                MessageUtils.sendMessageAsync(channel, Emote.ERROR.get() + " | " + invalidInputText);
                                 startWaiter(nextAttempt);
                             }
                             return;
@@ -158,11 +158,11 @@ public class WaitingResponse {
                             if (check == null) {
                                 if (tryAgainAfterCustomCheckFail) {
                                     if (nextAttempt >= 4) {
-                                        MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + tooManyFailures);
+                                        MessageUtils.sendMessageAsync(channel, Emote.ERROR.get() + " | " + tooManyFailures);
                                         return;
                                     } else {
                                         if (customCheckFailureText != null)
-                                            MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + customCheckFailureText);
+                                            MessageUtils.sendMessageAsync(channel, Emote.ERROR.get() + " | " + customCheckFailureText);
                                         startWaiter(nextAttempt);
                                     }
                                 }
@@ -228,10 +228,10 @@ public class WaitingResponse {
 
                         if (object == null) {
                             if (nextAttempt >= 4) {
-                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + tooManyFailures);
+                                MessageUtils.sendMessageAsync(channel, Emote.ERROR.get() + " | " + tooManyFailures);
                                 return;
                             } else {
-                                MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + devi.getTranslation(language, 413));
+                                MessageUtils.sendMessageAsync(channel, Emote.ERROR.get() + " | " + devi.getTranslation(language, 413));
                                 startWaiter(nextAttempt);
                             }
                             return;
@@ -240,14 +240,14 @@ public class WaitingResponse {
                         if (setting.isBooleanValue() && object instanceof Boolean) {
                             deviGuild.getSettings().setBooleanValue(setting, (Boolean) object);
                             String message = (Boolean) object ? booleanActivatedText : booleanDeactivatedText;
-                            MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + message.replace("{0}", setting.getName()));
+                            MessageUtils.sendMessageAsync(channel, Emote.SUCCESS.get() + " | " + message.replace("{0}", setting.getName()));
                         }
                         else if (setting.isStringValue() && object instanceof String) {
                             deviGuild.getSettings().setStringValue(setting, (String) object);
-                            MessageUtils.sendMessageAsync(channel, DeviEmote.SUCCESS.get() + " | " + stringChangedText.replace("{0}", setting.getName()).replace("{1}", changedTo));
+                            MessageUtils.sendMessageAsync(channel, Emote.SUCCESS.get() + " | " + stringChangedText.replace("{0}", setting.getName()).replace("{1}", changedTo));
                         }
                     }
                 },
-                timeOutInSeconds, TimeUnit.SECONDS, () -> MessageUtils.sendMessageAsync(channel, DeviEmote.ERROR.get() + " | " + executor.getName() + ", " + timeOutText));
+                timeOutInSeconds, TimeUnit.SECONDS, () -> MessageUtils.sendMessageAsync(channel, Emote.ERROR.get() + " | " + executor.getName() + ", " + timeOutText));
     }
 }

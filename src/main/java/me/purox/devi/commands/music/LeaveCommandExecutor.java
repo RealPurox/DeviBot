@@ -4,7 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
@@ -28,7 +28,7 @@ public class LeaveCommandExecutor implements CommandExecutor {
         VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
 
         if (!devi.getMusicManager().isDJorAlone(command.getEvent().getMember(), channel, guild)) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 454));
             return;
         }
 

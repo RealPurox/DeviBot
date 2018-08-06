@@ -1,6 +1,6 @@
 package me.purox.devi.core.guild;
 
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import net.dv8tion.jda.core.entities.Guild;
 
 import java.util.HashMap;
@@ -26,9 +26,9 @@ public class GuildSettings {
 
         MOD_LOG_ENABLED           ( false,      ":newspaper:",                 69,  "modlog"                , true, "Mod-Log"),
         MOD_LOG_CHANNEL           ( "-1",       ":microphone2:",               59,  "modlog channel"        , false, "Mod-Log Channel"),
-        MOD_LOG_MUTES             ( true,       DeviEmote.MUTE.get(),          71,  "modlog mutes"          , false, "Mod-Log Mutes"),
-        MOD_LOG_BANS              ( true,       DeviEmote.BAN.get(),           72,  "modlog bans"           , false, "Mod-Log Bans"),
-        MOD_LOG_KICKS             ( true,       DeviEmote.BAN.get(),           534, "modlog kicks"          , false,  "Mod-Log Kicks"),
+        MOD_LOG_MUTES             ( true,       Emote.MUTE.get(),          71,  "modlog mutes"          , false, "Mod-Log Mutes"),
+        MOD_LOG_BANS              ( true,       Emote.BAN.get(),           72,  "modlog bans"           , false, "Mod-Log Bans"),
+        MOD_LOG_KICKS             ( true,       Emote.BAN.get(),           534, "modlog kicks"          , false,  "Mod-Log Kicks"),
         MOD_LOG_MESSAGE_EDITED    ( true,       ":pen_ballpoint:",             178, "modlog message-edit"   , false, "Mod-Log Edited Messages"),
         MOD_LOG_MESSAGE_DELETED   ( true,       ":no_entry_sign:",             179, "modlog message-delete" , false, "Mod-Log Deleted Messages"),
 
@@ -40,13 +40,13 @@ public class GuildSettings {
         MUSIC_LOG_ENABLED         ( true,       ":checkered_flag:",            84,  "musiclog"              , true, "Music-Log"),
         MUSIC_LOG_CHANNEL         ( "-1",       ":notes:",                     83,  "musiclog channel"      , false, "Music-Log"),
 
-        TWITCH_CHANNEL            ( "-1",       DeviEmote.TWITCH.get(),        198, "twitch"                , true, "Twitch Channel"),
+        TWITCH_CHANNEL            ( "-1",       Emote.TWITCH.get(),        198, "twitch"                , true, "Twitch Channel"),
 
         WELCOMER_ENABLED          ( true,       ":wave",                       373, "welcome"               , false, "Welcomer"),
         JOIN_MESSAGE              ( "Hey {user}, welcome to {server}. :wave:",
-                                                DeviEmote.SUCCESS.get(),       372, "welcome join"          , false, "Join Message"),
+                                                Emote.SUCCESS.get(),       372, "welcome join"          , false, "Join Message"),
         LEAVE_MESSAGE             ( "**{user}** left {server}.",
-                                                DeviEmote.ERROR.get(),         375, "welcome leave"         , false, "Leave Message"),
+                                                Emote.ERROR.get(),         375, "welcome leave"         , false, "Leave Message"),
         AUTO_ROLE_ENABLED         ( true,       ":question:",                  374, "welcome role"          , false, "Auto-Role"),
         AUTO_ROLE                 ( "-1",       ":robot:",                     374, "welcome role"          , false, "Auto-Role Role");
 

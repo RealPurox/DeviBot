@@ -4,7 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.DiscordUtils;
@@ -59,7 +59,7 @@ public class UnmuteCommandExecutor implements CommandExecutor {
         }
 
         command.getEvent().getGuild().getController().removeRolesFromMember(command.getEvent().getGuild().getMember(user), role).queue(success ->
-                sender.reply(DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 56, user.getName() + "#" + user.getDiscriminator())));
+                sender.reply(Emote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 56, user.getName() + "#" + user.getDiscriminator())));
     }
 
     @Override

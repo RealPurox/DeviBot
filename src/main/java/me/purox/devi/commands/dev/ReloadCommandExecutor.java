@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.AnimatedEmote;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 
@@ -20,7 +21,7 @@ public class ReloadCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId())) return;
         devi.loadTranslations();
-        sender.reply("Translations reloaded");
+        sender.reply("Translations reloaded " + devi.getAnimatedEmotes().PartyParrotEmote().getAsMention());
     }
 
     @Override

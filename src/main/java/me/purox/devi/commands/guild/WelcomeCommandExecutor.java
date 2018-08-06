@@ -3,7 +3,7 @@ package me.purox.devi.commands.guild;
 import me.purox.devi.commands.guild.handler.*;
 import me.purox.devi.commands.handler.*;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -34,7 +34,7 @@ public class    WelcomeCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        String builder = DeviEmote.INFO.get() + " | You're currently editing the Welcome module\n\n" +
+        String builder = Emote.INFO.get() + " | You're currently editing the Welcome module\n\n" +
                 "```python\n" +
                 "Reply with one of the options listed below to edit your Welcome module settings\n\n" +
                 " <== Welcome Module ==>\n\n" +
@@ -58,12 +58,12 @@ public class    WelcomeCommandExecutor implements CommandExecutor {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(DeviEmote.ERROR.get() + " | Welcome module settings selection has been cancelled");
+                        sender.reply(Emote.ERROR.get() + " | Welcome module settings selection has been cancelled");
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(DeviEmote.ERROR.get() + " | You've failed to enter a valid number 3 times in a row. Welcome module settings selection has been cancelled.");
+                        sender.reply(Emote.ERROR.get() + " | You've failed to enter a valid number 3 times in a row. Welcome module settings selection has been cancelled.");
                         return;
                     }
 
@@ -78,7 +78,7 @@ public class    WelcomeCommandExecutor implements CommandExecutor {
 
                     switch (entered) {
                         case 1:
-                            String builder = DeviEmote.INFO.get() + " | You're currently editing the Welcome module -> Enable or disable the Welcome module\n\n" +
+                            String builder = Emote.INFO.get() + " | You're currently editing the Welcome module -> Enable or disable the Welcome module\n\n" +
                                     "```python\n" +
                                     "Reply with one of the options listed below to edit your Welcome module settings\n\n" +
                                     " '1' => Enable welcome messages\n" +
@@ -103,12 +103,12 @@ public class    WelcomeCommandExecutor implements CommandExecutor {
                             welcomeAutoModRoleHandler.startWaiter(1, command, sender);
                             break;
                         default:
-                            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));
+                            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));
                             startWaiter(nextAttempt, command, sender);
                             break;
                     }
                 },
-                1, TimeUnit.MINUTES, () -> sender.reply(DeviEmote.ERROR.get() + " | You took to long to respond to my message. Welcome module settings selection has been cancelled."));
+                1, TimeUnit.MINUTES, () -> sender.reply(Emote.ERROR.get() + " | You took to long to respond to my message. Welcome module settings selection has been cancelled."));
     }
 
     @Override

@@ -4,7 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
@@ -12,7 +12,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.PermissionUtil;
-import org.bson.Document;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +57,7 @@ public class KickCommandExecutor implements CommandExecutor {
                 success -> {
                     devi.getModLogManager().logKick(command.getDeviGuild(), member, command.getEvent().getMember(), reason);
                     MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 532, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));
-                    sender.reply((DeviEmote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 535, "**"+user.getName()+"#"+user.getDiscriminator()+"**", "`"+reason+"`")));
+                    sender.reply((Emote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 535, "**"+user.getName()+"#"+user.getDiscriminator()+"**", "`"+reason+"`")));
                 },
                 error -> sender.reply(devi.getTranslation(command.getLanguage(), 531))
         );

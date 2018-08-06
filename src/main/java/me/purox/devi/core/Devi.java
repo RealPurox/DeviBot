@@ -55,6 +55,7 @@ public class Devi {
     private ModLogManager modLogManager;
     private ShardManager shardManager;
     private ResponseWaiter responseWaiter;
+    private AnimatedEmote animatedEmotes;
 
     private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
@@ -85,6 +86,7 @@ public class Devi {
         this.okHttpClient = new OkHttpClient();
         this.responseWaiter = new ResponseWaiter();
         new MessageUtils(this);
+        this.animatedEmotes = new AnimatedEmote(this);
 
         songsPlayed = 0;
         commandsExecuted = 0;
@@ -653,4 +655,8 @@ public class Devi {
     public List<String> getVoters() {
         return voters;
     }
+    public AnimatedEmote getAnimatedEmotes() {
+        return animatedEmotes;
+    }
+
 }

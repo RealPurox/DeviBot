@@ -5,7 +5,7 @@ import com.mongodb.client.result.UpdateResult;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.waiter.WaitingResponse;
 import me.purox.devi.core.waiter.WaitingResponseBuilder;
 import me.purox.devi.utils.DiscordUtils;
@@ -37,7 +37,7 @@ public class AutoModRolesHandler {
                     Role role = DiscordUtils.getRole(input, command.getEvent().getGuild());
 
                     if (role == null) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 413));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 413));
                         return null;
                     }
 
@@ -50,7 +50,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (isIgnoredAlready) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 297));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 297));
                         return null;
                     }
                     return role;
@@ -66,9 +66,9 @@ public class AutoModRolesHandler {
                     UpdateResult updateResult = devi.getDatabaseManager().saveToDatabase("ignored_roles", document);
                     if (updateResult.wasAcknowledged()) {
                         command.getDeviGuild().getIgnoredRoles().add(document);
-                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 298, role.getName()));
+                        sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 298, role.getName()));
                     } else {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
 
                     }
                 })
@@ -83,7 +83,7 @@ public class AutoModRolesHandler {
                     Role role = DiscordUtils.getRole(input, command.getEvent().getGuild());
 
                     if (role == null) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 413));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 413));
                         return null;
                     }
 
@@ -96,7 +96,7 @@ public class AutoModRolesHandler {
                     }
 
                     if (document == null) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 299));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 299));
                         return null;
                     }
 
@@ -111,9 +111,9 @@ public class AutoModRolesHandler {
                     DeleteResult deleteResult = devi.getDatabaseManager().removeFromDatabase("ignored_roles", document.getString("_id"));
                     if (deleteResult.wasAcknowledged()) {
                         command.getDeviGuild().getIgnoredRoles().remove(document);
-                        sender.reply(DeviEmote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 300, role.getName()));
+                        sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 300, role.getName()));
                     } else {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 264, "<https://www.devibot.net/support>"));
                     }
                 })
                 .build();

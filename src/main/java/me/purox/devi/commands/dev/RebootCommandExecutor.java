@@ -4,7 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.Permission;
@@ -29,25 +29,25 @@ public class RebootCommandExecutor implements CommandExecutor {
 
         if (args.length == 0) {
             String time = TimeUtils.toRelative(new Date(System.currentTimeMillis()), devi.getRebootTime());
-            sender.reply(DeviEmote.ERROR + " | Please enter the amount minutes until Devi will reboot or use `--urgent` for urgent reboot. \n" +
+            sender.reply(Emote.ERROR + " | Please enter the amount minutes until Devi will reboot or use `--urgent` for urgent reboot. \n" +
                     "\uD83D\uDCC6 | Devi is scheduled to automatically reboot in `" + time.substring(0, time.length() -4) + "`.");
             return;
         }
         if(isRebooting){
-            sender.reply(DeviEmote.ERROR + " | Devi is already rebooting.");
+            sender.reply(Emote.ERROR + " | Devi is already rebooting.");
             return;
 
         }
         if (args[0].equalsIgnoreCase("--urgent")) {
             devi.reboot(1, command.getEvent().getChannel());
-            sender.reply(DeviEmote.SUCCESS + " | **Urgent Reboot**: Devi will be rebooting in 1 minute.");
+            sender.reply(Emote.SUCCESS + " | **Urgent Reboot**: Devi will be rebooting in 1 minute.");
             isRebooting = true;
             return;
         }
 
         int minutes = Integer.parseInt(args[0]);
 
-        sender.reply(DeviEmote.SUCCESS + " | Devi will be rebooting in " + minutes + " minute" + (minutes == 1 ? "" : "s"));
+        sender.reply(Emote.SUCCESS + " | Devi will be rebooting in " + minutes + " minute" + (minutes == 1 ? "" : "s"));
         devi.reboot(minutes, command.getEvent().getChannel());
         isRebooting = true;
     }

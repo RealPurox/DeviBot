@@ -168,6 +168,7 @@ public class GuildPlayer extends AudioEventAdapter {
                 return;
             }
             //TODO: why did I do this?
+            //todo: how tf am I supposed to know?
             audioPlayer.playTrack(queue.get(currentQueueIndex).getAudioTrack().makeClone());
             return;
         }

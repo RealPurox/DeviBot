@@ -32,7 +32,7 @@ public class HelpCommandExecutor implements CommandExecutor {
             builder.setColor(Color.decode("#7289da"));
 
             builder.appendDescription("\n");
-            builder.appendDescription(devi.getTranslation(command.getLanguage(), 389, "`" + command.getPrefix() + "help <command>`"));
+            builder.appendDescription(devi.getTranslation(command.getLanguage(), 389, "`" + command.getPrefix() + "help <command>`") + " ");
             builder.appendDescription(devi.getTranslation(command.getLanguage(), 390) + " `" + command.getPrefix() + "help settings`\n\n");
             //builder.appendDescription("Use `" + command.getPrefix() + "modulehelp <module>` to get information about a specific module.\n");
             //builder.appendDescription("Example: `" + command.getPrefix() + "modulehelp music`");

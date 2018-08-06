@@ -209,7 +209,7 @@ public class Devi {
             setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
             if (next == 0) {
                 if (channel != null) {
-                    channel.sendMessage("<:TrumpPepe:453988133021941763> cya later alligator").complete();
+                    channel.sendMessage(getAnimatedEmotes().FixParrot().getAsMention() + " cya later alligator").complete();
                     System.exit(312);
                 } else {
                     System.exit(312);

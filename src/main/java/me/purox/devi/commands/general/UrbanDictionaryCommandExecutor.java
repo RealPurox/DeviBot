@@ -35,8 +35,8 @@ public class UrbanDictionaryCommandExecutor implements CommandExecutor {
             return;
         }
 
-        String search = String.join(" ", args);
-        String URL = "http://api.urbandictionary.com/v0/define?term='" + search + "'";
+        String search = String.join("%20", args);
+        String URL = "http://api.urbandictionary.com/v0/define?term=" + search;
         new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(URL).build()
                 .asJSON(response -> {
                     if (response.getStatus() == 404 || response.getBody().getJSONArray("list").length() == 0) {

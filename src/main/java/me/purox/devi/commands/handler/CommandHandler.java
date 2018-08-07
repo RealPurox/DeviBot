@@ -94,6 +94,8 @@ public class CommandHandler {
         registerCommand("banlist", new BanListCommandExecutor(devi));
         registerCommand("mutelist", new MuteListCommandExecutor(devi));
         registerCommand("purge", new PurgeCommandExecutor(devi));
+        registerCommand("voicekick", new VoiceKickCommandExecutor(devi));
+
         //  - custom commands
         registerCommand("addcommand", new AddCustomCommandExecutor(devi));
         registerCommand("commandlist", new ListCustomCommandExecutor(devi));

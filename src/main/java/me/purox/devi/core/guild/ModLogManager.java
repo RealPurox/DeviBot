@@ -1,7 +1,7 @@
 package me.purox.devi.core.guild;
 
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.Language;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -25,7 +25,7 @@ public class ModLogManager {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(new Color(255, 45, 40));
             builder.setAuthor(devi.getTranslation(language, 69));
-            builder.setDescription(devi.getTranslation(language, 180, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ DeviEmote.BAN.get());
+            builder.setDescription(devi.getTranslation(language, 180, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ Emote.BAN.get());
             builder.addField(devi.getTranslation(language, 48), reason, true);
             builder.addField(devi.getTranslation(language, 47), punisher.getUser().getName() + "#" + punisher.getUser().getDiscriminator(), true);
             builder.setThumbnail(member.getUser().getAvatarUrl());
@@ -44,7 +44,7 @@ public class ModLogManager {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(new Color(255, 45, 40));
             builder.setAuthor(devi.getTranslation(language, 69));
-            builder.setDescription(devi.getTranslation(language, 530, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ DeviEmote.BAN.get());
+            builder.setDescription(devi.getTranslation(language, 530, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ Emote.BAN.get());
             builder.addField(devi.getTranslation(language, 48), reason, true);
             builder.addField(devi.getTranslation(language, 47), punisher.getUser().getName() + "#" + punisher.getUser().getDiscriminator(), true);
             builder.setThumbnail(member.getUser().getAvatarUrl());
@@ -63,7 +63,7 @@ public class ModLogManager {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(new Color(49, 245, 255));
             builder.setAuthor(devi.getTranslation(language, 69));
-            builder.setDescription(devi.getTranslation(language, 181, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ DeviEmote.MUTE.get());
+            builder.setDescription(devi.getTranslation(language, 181, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ Emote.MUTE.get());
             builder.addField(devi.getTranslation(language, 48), reason, true);
             builder.addField(devi.getTranslation(language, 47), punisher, true);
             builder.setThumbnail(member.getUser().getAvatarUrl());

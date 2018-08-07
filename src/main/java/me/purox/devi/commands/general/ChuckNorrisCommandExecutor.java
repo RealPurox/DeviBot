@@ -24,7 +24,7 @@ public class ChuckNorrisCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         String URL = "https://api.chucknorris.io/jokes/random";
         new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(URL).build()
-                .asJSON(success -> sender.reply(sender.getAsMention() + ", " + success.getBody().getString("value")),
+                .asJSON(success -> sender.reply("**" + sender.getName() + "**, " + success.getBody().getString("value")),
                         error -> sender.reply(devi.getTranslation(command.getLanguage(), 217)));
     }
 

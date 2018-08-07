@@ -1,10 +1,10 @@
-package me.purox.devi.commands.general;
+package me.purox.devi.commands.info;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -32,7 +32,7 @@ public class HelpCommandExecutor implements CommandExecutor {
             builder.setColor(Color.decode("#7289da"));
 
             builder.appendDescription("\n");
-            builder.appendDescription(devi.getTranslation(command.getLanguage(), 389, "`" + command.getPrefix() + "help <command>`"));
+            builder.appendDescription(devi.getTranslation(command.getLanguage(), 389, "`" + command.getPrefix() + "help <command>`") + " ");
             builder.appendDescription(devi.getTranslation(command.getLanguage(), 390) + " `" + command.getPrefix() + "help settings`\n\n");
             //builder.appendDescription("Use `" + command.getPrefix() + "modulehelp <module>` to get information about a specific module.\n");
             //builder.appendDescription("Example: `" + command.getPrefix() + "modulehelp music`");
@@ -53,7 +53,7 @@ public class HelpCommandExecutor implements CommandExecutor {
         String invoke = args[0];
 
         if (!commands.containsKey(invoke)) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 392, "`" + invoke + "`"));
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 392, "`" + invoke + "`"));
             return;
         }
 
@@ -71,6 +71,9 @@ public class HelpCommandExecutor implements CommandExecutor {
 
         if (cmd.guildOnly()) {
             builder.append("`-` ").append(devi.getTranslation(command.getLanguage(), 395)).append("\n\n");
+        }
+        if(cmd.getModuleType() == ModuleType.NSFW_COMMANDS) {
+            builder.append("`-` ").append(devi.getTranslation(command.getLanguage(), 569)).append("\n\n");
         }
 
         builder.append("**").append(devi.getTranslation(command.getLanguage(), 396)).append(":** ").append(cmd.getModuleType().getName()).append("\n\n");

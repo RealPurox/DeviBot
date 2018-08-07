@@ -5,7 +5,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -39,8 +39,6 @@ public class PerformanceCommandExecutor implements CommandExecutor {
         devi.getShardManager().getShards().forEach(jda -> jda.getAudioManagers().forEach(audioManager -> { if (audioManager.isConnected())
             audioConnections.getAndIncrement();
         }));
-
-        Devi.Stats stats = devi.getCurrentStats();
         OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
         double cpuLoad = osBean.getSystemCpuLoad() * 100;
@@ -78,11 +76,11 @@ public class PerformanceCommandExecutor implements CommandExecutor {
                 }
             }
         }
-        String status = "Good " + DeviEmote.SUCCESS.get();
+        String status = "Good " + Emote.SUCCESS.get();
         if (points >= 30) {
             status = "Critical :warning:";
         } else if (points >= 20) {
-            status = "Low " + DeviEmote.ERROR.get();
+            status = "Low " + Emote.ERROR.get();
         }
         return status;
     }

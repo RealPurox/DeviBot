@@ -2,16 +2,14 @@ package me.purox.devi.core;
 
 public enum ModuleType {
 
+    MANAGEMENT_COMMANDS(true),
+    INFO_COMMANDS(false),
     MODERATION(true),
-    CUSTOM_COMMANDS(true),
-    AUTO_MOD(true),
-    MOD_LOG(true),
-    WELCOME(true),
     MUSIC(true),
     GAME_COMMANDS(true),
     FUN_COMMANDS(true),
     TWITCH(true),
-    INFO_COMMANDS(false),
+    NSFW_COMMANDS(true),
     DEV(false);
 
     private boolean canBeDisabled;

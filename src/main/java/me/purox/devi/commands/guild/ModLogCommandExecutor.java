@@ -119,6 +119,6 @@ public class ModLogCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.MOD_LOG;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

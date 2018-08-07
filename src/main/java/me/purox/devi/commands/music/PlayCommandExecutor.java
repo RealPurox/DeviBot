@@ -4,7 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
@@ -28,7 +28,7 @@ public class PlayCommandExecutor implements CommandExecutor {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
         if (args.length == 0) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 456));
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 456));
             return;
         }
 
@@ -36,12 +36,12 @@ public class PlayCommandExecutor implements CommandExecutor {
         GuildVoiceState userState = command.getEvent().getGuild().getMember(sender).getVoiceState();
 
         if (!userState.inVoiceChannel()) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 461));
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 461));
             return;
         }
 
         if (deviChannel != null && userState.getChannel().getIdLong() != deviChannel.getIdLong()) {
-            sender.reply(DeviEmote.ERROR.get() + " |  " + devi.getTranslation(command.getLanguage(), 462));
+            sender.reply(Emote.ERROR.get() + " |  " + devi.getTranslation(command.getLanguage(), 462));
             return;
         }
 

@@ -8,6 +8,7 @@ import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -46,7 +47,7 @@ public class FlipCoinCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return Arrays.asList("coinflip");
+        return Collections.singletonList("coinflip");
     }
 
     @Override

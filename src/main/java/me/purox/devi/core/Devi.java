@@ -55,6 +55,7 @@ public class Devi {
     private ModLogManager modLogManager;
     private ShardManager shardManager;
     private ResponseWaiter responseWaiter;
+    private AnimatedEmote animatedEmotes;
 
     private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
@@ -72,7 +73,7 @@ public class Devi {
     private int commandsExecuted;
     private boolean redisConnection = false;
 
-    public static Date rebootTime;
+    private Date rebootTime;
 
     public Devi() {
         // init handlers / managers / settings / utils
@@ -85,6 +86,7 @@ public class Devi {
         this.okHttpClient = new OkHttpClient();
         this.responseWaiter = new ResponseWaiter();
         new MessageUtils(this);
+        this.animatedEmotes = new AnimatedEmote(this);
 
         songsPlayed = 0;
         commandsExecuted = 0;
@@ -207,7 +209,7 @@ public class Devi {
             setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
             if (next == 0) {
                 if (channel != null) {
-                    channel.sendMessage("<:TrumpPepe:453988133021941763> cya later alligator").complete();
+                    channel.sendMessage(getAnimatedEmotes().FixParrot().getAsMention() + " cya later alligator").complete();
                     System.exit(312);
                 } else {
                     System.exit(312);
@@ -228,7 +230,7 @@ public class Devi {
                 reboot(15, null);
             }
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
-        rebootTime = new Date(today.getTimeInMillis() + 900000);
+        this.rebootTime = new Date(today.getTimeInMillis() + 900000);
     }
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
@@ -630,6 +632,10 @@ public class Devi {
         return okHttpClient;
     }
 
+    public Date getRebootTime() {
+        return this.rebootTime;
+    }
+
     public ResponseWaiter getResponseWaiter() {
         return responseWaiter;
     }
@@ -649,4 +655,8 @@ public class Devi {
     public List<String> getVoters() {
         return voters;
     }
+    public AnimatedEmote getAnimatedEmotes() {
+        return animatedEmotes;
+    }
+
 }

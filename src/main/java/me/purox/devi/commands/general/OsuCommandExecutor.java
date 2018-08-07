@@ -4,10 +4,8 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.core.waiter.WaitingResponse;
-import me.purox.devi.core.waiter.WaitingResponseBuilder;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -31,7 +29,7 @@ public class OsuCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
-            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 513, command.getPrefix() + "osu <user> [standard/taiko/ctb/mania]"));
+            sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 513, command.getPrefix() + "osu <user> [standard/taiko/ctb/mania]"));
             return;
         }
 
@@ -53,7 +51,7 @@ public class OsuCommandExecutor implements CommandExecutor {
                 JSONArray body = new JSONArray(res.getBody());
 
                 if (res.getStatus() == 429 || body.length() <= 0) {
-                    sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
+                    sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
                     return;
                 }
                 JSONObject user = new JSONArray(res.getBody()).getJSONObject(0);
@@ -94,7 +92,7 @@ public class OsuCommandExecutor implements CommandExecutor {
                         Request.StringResponse res = new RequestBuilder(devi.getOkHttpClient()).setURL(baseUrl + inputUser + modeTaiko).setRequestType(Request.RequestType.GET).build().asStringSync();
                         JSONArray body = new JSONArray(res.getBody());
                         if (res.getStatus() == 429 || body.length() <= 0) {
-                            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
+                            sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
                             return;
                         }
                         JSONObject user = new JSONArray(res.getBody()).getJSONObject(0);
@@ -126,7 +124,7 @@ public class OsuCommandExecutor implements CommandExecutor {
                         Request.StringResponse res = new RequestBuilder(devi.getOkHttpClient()).setURL(baseUrl + inputUser + modeCtb).setRequestType(Request.RequestType.GET).build().asStringSync();
                         JSONArray body = new JSONArray(res.getBody());
                         if (res.getStatus() == 429 || body.length() <= 0) {
-                            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
+                            sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
                             return;
                         }
                         JSONObject user = new JSONArray(res.getBody()).getJSONObject(0);
@@ -157,7 +155,7 @@ public class OsuCommandExecutor implements CommandExecutor {
                         Request.StringResponse res = new RequestBuilder(devi.getOkHttpClient()).setURL(baseUrl + inputUser + modeMania).setRequestType(Request.RequestType.GET).build().asStringSync();
                         JSONArray body = new JSONArray(res.getBody());
                         if (res.getStatus() == 429 || body.length() <= 0) {
-                            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
+                            sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
                             return;
                         }
                         JSONObject user = new JSONArray(res.getBody()).getJSONObject(0);
@@ -189,7 +187,7 @@ public class OsuCommandExecutor implements CommandExecutor {
                         Request.StringResponse res = new RequestBuilder(devi.getOkHttpClient()).setURL(baseUrl + inputUser + modeStandrad).setRequestType(Request.RequestType.GET).build().asStringSync();
                         JSONArray body = new JSONArray(res.getBody());
                         if (res.getStatus() == 429 || body.length() <= 0) {
-                            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
+                            sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 514, inputUser));
                             return;
                         }
                         JSONObject user = new JSONArray(res.getBody()).getJSONObject(0);

@@ -4,7 +4,7 @@ import me.purox.devi.commands.dev.*;
 import me.purox.devi.commands.guild.*;
 import me.purox.devi.commands.guild.custom.*;
 import me.purox.devi.commands.info.*;
-import me.purox.devi.commands.general.HelpCommandExecutor;
+import me.purox.devi.commands.info.HelpCommandExecutor;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.general.*;
 import me.purox.devi.commands.music.*;
@@ -63,6 +63,8 @@ public class CommandHandler {
         registerCommand("dogfact", new DogFactCommandExecutor(devi));
         registerCommand("ping", new PingCommandExecutor(devi));
         registerCommand("stats", new StatsCommandExecutor(devi));
+        registerCommand("urban", new UrbanDictionaryCommandExecutor(devi));
+
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

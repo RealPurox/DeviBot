@@ -68,7 +68,7 @@ public class FeedbackCommandExecutor implements CommandExecutor {
 
             EmbedBuilder message;
             message = new EmbedBuilder();
-            message.setTitle("New Feedback Message");
+            message.setTitle("New Feedback Received");
             message.setColor(Color.decode("#4775d1"));
             message.setThumbnail(sender.getEffectiveAvatarUrl());
             message.addField("User", sender.getName() + "#" + sender.getDiscriminator() + " (" + sender.getId() + ")", false);

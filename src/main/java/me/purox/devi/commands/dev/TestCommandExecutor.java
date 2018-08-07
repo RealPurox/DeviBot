@@ -21,7 +21,7 @@ public class TestCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId())) return;
-        sender.reply("gtfo");
+        sender.reply("gtfo " + devi.getAnimatedEmotes().HalloweenParrot().getAsMention());
     }
 
 

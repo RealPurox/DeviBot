@@ -4,17 +4,12 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.waiter.WaitingResponseBuilder;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.entities.Message;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class PrefixCommandExecutor implements CommandExecutor {
 
@@ -54,6 +49,6 @@ public class PrefixCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -49,7 +50,7 @@ public class RandomColorCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return Arrays.asList("rcolor");
+        return Collections.singletonList("rcolor");
     }
 
     @Override

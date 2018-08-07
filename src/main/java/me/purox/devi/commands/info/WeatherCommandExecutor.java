@@ -1,4 +1,4 @@
-package me.purox.devi.commands.general;
+package me.purox.devi.commands.info;
 
 import com.github.fedy2.weather.YahooWeatherService;
 import com.github.fedy2.weather.data.Channel;
@@ -7,11 +7,10 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import javax.xml.bind.JAXBException;
 import java.awt.*;
@@ -29,7 +28,7 @@ public class WeatherCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "weather <city>`"));
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "weather <city>`"));
             return;
         }
 
@@ -146,9 +145,9 @@ public class WeatherCommandExecutor implements CommandExecutor {
                 sender.reply(embed.build());
             }
         } catch (IOException | JAXBException ex) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 217) + ".");
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 217) + ".");
         } catch (IndexOutOfBoundsException ioobe) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 387) + ".");
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 387) + ".");
         }
     }
 

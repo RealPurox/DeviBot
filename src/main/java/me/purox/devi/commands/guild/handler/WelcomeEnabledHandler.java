@@ -3,7 +3,7 @@ package me.purox.devi.commands.guild.handler;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -24,12 +24,12 @@ public class WelcomeEnabledHandler {
                 evt -> devi.getResponseWaiter().checkUser(evt, event.getMessageId(), event.getAuthor().getId(), event.getChannel().getId()),
                 response -> {
                     if (response.getMessage().getContentRaw().toLowerCase().startsWith("cancel")) {
-                        sender.reply(DeviEmote.ERROR.get() + " | Welcome module settings selection has been cancelled");
+                        sender.reply(Emote.ERROR.get() + " | Welcome module settings selection has been cancelled");
                         return;
                     }
 
                     if (nextAttempt >= 4) {
-                        sender.reply(DeviEmote.ERROR.get() + " | You've failed to enter a valid number 3 times in a row. Welcome module settings selection has been cancelled.");
+                        sender.reply(Emote.ERROR.get() + " | You've failed to enter a valid number 3 times in a row. Welcome module settings selection has been cancelled.");
                         return;
                     }
 
@@ -43,7 +43,7 @@ public class WelcomeEnabledHandler {
                     }
 
                     if (entered > 2 || entered < 1) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 265));
                         startWaiter(nextAttempt, command, sender);
                         return;
                     }
@@ -52,8 +52,8 @@ public class WelcomeEnabledHandler {
                     command.getDeviGuild().saveSettings();
 
                     if (entered == 1)
-                        sender.reply(DeviEmote.SUCCESS.get() + " | Join and leave messages have been enabled");
-                    else sender.reply(DeviEmote.SUCCESS.get() + " | Join and leave messages have been disabled");
+                        sender.reply(Emote.SUCCESS.get() + " | Join and leave messages have been enabled");
+                    else sender.reply(Emote.SUCCESS.get() + " | Join and leave messages have been disabled");
                 },
-                15, TimeUnit.SECONDS, () -> sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 263)) );
+                15, TimeUnit.SECONDS, () -> sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 263)) );
     }}

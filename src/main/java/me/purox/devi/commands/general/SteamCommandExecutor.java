@@ -1,11 +1,10 @@
 package me.purox.devi.commands.general;
 
-import com.mongodb.util.JSON;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
@@ -15,11 +14,8 @@ import org.json.JSONObject;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +32,7 @@ public class SteamCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length == 0) {
-            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 493));
+            sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 493));
             return;
         }
 
@@ -51,7 +47,7 @@ public class SteamCommandExecutor implements CommandExecutor {
             JSONObject id = response.getJSONObject("response");
 
             if (id.getInt("success") != 1) {
-                sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 494));
+                sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 494));
                 return;
             }
 
@@ -66,7 +62,7 @@ public class SteamCommandExecutor implements CommandExecutor {
             System.out.println(response);
 
             if (id.length() <= 0) {
-                sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 495));
+                sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 495));
                 return;
             }
             steamId = id.getLong("steamid");
@@ -106,49 +102,49 @@ public class SteamCommandExecutor implements CommandExecutor {
 
         switch (players.getInt("personastate")) {
             case 0:
-                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.OFFLINE + " Offline", true);
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", Emote.OFFLINE + " Offline", true);
                 break;
             case 1:
-                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.ONLINE + " Online", true);
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", Emote.ONLINE + " Online", true);
                 break;
             case 2:
-                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.DO_NOT_DISTURB + " Busy", true);
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", Emote.DO_NOT_DISTURB + " Busy", true);
                 break;
             case 3:
-                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.AWAY + " Away", true);
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", Emote.AWAY + " Away", true);
                 break;
             case 4:
-                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.AWAY + " Snooze", true);
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", Emote.AWAY + " Snooze", true);
                 break;
             case 5:
-                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.ONLINE + " Looking to Trade", true);
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", Emote.ONLINE + " Looking to Trade", true);
                 break;
             case 6:
-                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", DeviEmote.ONLINE + " Looking to Play", true);
+                embed.addField("**" + devi.getTranslation(command.getLanguage(), 501) + "**", Emote.ONLINE + " Looking to Play", true);
                 break;
         }
 
         embed.addField("**" + devi.getTranslation(command.getLanguage(), 502) + "**", String.valueOf(userLevel.getInt("player_level")), true);
 
         if (bans.getBoolean("VACBanned")) {
-            embed.addField("**VAC Ban**", DeviEmote.SUCCESS + " " +
+            embed.addField("**VAC Ban**", Emote.SUCCESS + " " +
                     bans.getInt("NumberOfVACBans") +
                     " ban(s) found. \n" +
                     "Issued " + bans.getInt("DaysSinceLastBan") + " days ago.", true);
         } else
-            embed.addField("**" + devi.getTranslation(command.getLanguage(), 503) + "**", DeviEmote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 503) + "**", Emote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
 
         if (bans.getBoolean("CommunityBanned")) {
-            embed.addField("**" + devi.getTranslation(command.getLanguage(), 504) + "**", DeviEmote.SUCCESS + " " + devi.getTranslation(command.getLanguage(), 506), true);
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 504) + "**", Emote.SUCCESS + " " + devi.getTranslation(command.getLanguage(), 506), true);
         } else
-            embed.addField("**" + devi.getTranslation(command.getLanguage(), 504) + "**", DeviEmote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 504) + "**", Emote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
 
         if (bans.getString("EconomyBan").contains("none")) {
-            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", DeviEmote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", Emote.ERROR + " " + devi.getTranslation(command.getLanguage(), 505), true);
         } else if (bans.getString("EconomyBan").contains("probation")) {
-            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", DeviEmote.INFO + " " + devi.getTranslation(command.getLanguage(), 509), true);
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", Emote.INFO + " " + devi.getTranslation(command.getLanguage(), 509), true);
         } else if (bans.getString("EconomyBan").contains("banned")) {
-            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", DeviEmote.SUCCESS + " " + devi.getTranslation(command.getLanguage(), 508), true);
+            embed.addField("**" + devi.getTranslation(command.getLanguage(), 507) + "**", Emote.SUCCESS + " " + devi.getTranslation(command.getLanguage(), 508), true);
         }
 
         sender.reply(embed.build());

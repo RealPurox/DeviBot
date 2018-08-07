@@ -104,6 +104,6 @@ public class AutoModCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.AUTO_MOD;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

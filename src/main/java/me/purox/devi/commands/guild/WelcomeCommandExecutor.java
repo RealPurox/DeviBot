@@ -133,6 +133,6 @@ public class    WelcomeCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.WELCOME;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

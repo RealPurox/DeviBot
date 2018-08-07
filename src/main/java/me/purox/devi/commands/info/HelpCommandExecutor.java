@@ -1,4 +1,4 @@
-package me.purox.devi.commands.general;
+package me.purox.devi.commands.info;
 
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
@@ -71,6 +71,9 @@ public class HelpCommandExecutor implements CommandExecutor {
 
         if (cmd.guildOnly()) {
             builder.append("`-` ").append(devi.getTranslation(command.getLanguage(), 395)).append("\n\n");
+        }
+        if(cmd.getModuleType() == ModuleType.NSFW_COMMANDS) {
+            builder.append("`-` ").append(devi.getTranslation(command.getLanguage(), 569)).append("\n\n");
         }
 
         builder.append("**").append(devi.getTranslation(command.getLanguage(), 396)).append(":** ").append(cmd.getModuleType().getName()).append("\n\n");

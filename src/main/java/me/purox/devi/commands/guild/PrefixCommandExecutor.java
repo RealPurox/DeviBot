@@ -49,6 +49,6 @@ public class PrefixCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

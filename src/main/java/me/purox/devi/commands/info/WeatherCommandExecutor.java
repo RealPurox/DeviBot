@@ -1,4 +1,4 @@
-package me.purox.devi.commands.general;
+package me.purox.devi.commands.info;
 
 import com.github.fedy2.weather.YahooWeatherService;
 import com.github.fedy2.weather.data.Channel;

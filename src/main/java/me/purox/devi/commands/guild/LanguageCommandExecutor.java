@@ -69,6 +69,6 @@ public class LanguageCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

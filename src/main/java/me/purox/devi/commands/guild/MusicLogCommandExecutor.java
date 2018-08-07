@@ -66,6 +66,6 @@ public class MusicLogCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.MUSIC;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

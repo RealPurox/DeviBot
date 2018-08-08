@@ -6,6 +6,8 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.manager.punishments.Punishment;
+import me.purox.devi.manager.punishments.PunishmentBuilder;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;

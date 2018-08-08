@@ -7,8 +7,10 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 
+import org.bson.Document;
 import java.awt.*;
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 public class ModLogManager {
 

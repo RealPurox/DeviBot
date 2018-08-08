@@ -28,48 +28,62 @@ public class VoiceKickCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if(args.length < 2){
+        if (args.length < 2) {
             sender.reply(Emote.ERROR + " | Invalid arguments. !voicekick <user> [reason]");
             return;
         }
 
         User user = DiscordUtils.getUser(args[0], command.getEvent().getGuild());
-        if(user == null){
+        if (user == null) {
             sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 13, "**" + args[0] + "**"));
             return;
         }
 
         Member member = command.getEvent().getGuild().getMember(user);
         if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) || command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
-            sender.reply( devi.getTranslation(command.getLanguage(), 528));
+            sender.reply(devi.getTranslation(command.getLanguage(), 528));
             return;
         }
 
         if (sender.getId().equalsIgnoreCase(user.getId()) ||
                 !PermissionUtil.checkPermission(command.getEvent().getGuild().getSelfMember(), Permission.KICK_MEMBERS) ||
                 !PermissionUtil.canInteract(command.getEvent().getGuild().getSelfMember(), member)) {
-            sender.reply( devi.getTranslation(command.getLanguage(), 529));
+            sender.reply(devi.getTranslation(command.getLanguage(), 529));
             return;
         }
-        if(!member.getVoiceState().inVoiceChannel()){
+        if (!member.getVoiceState().inVoiceChannel()) {
             sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 574, "**" + user.getName() + "**"));
+            return;
+        }
+
+        if (!command.getEvent().getGuild().getSelfMember().hasPermission(Permission.VOICE_MOVE_OTHERS)) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 580, "`" + devi.getTranslation(command.getLanguage(), 581) + "`"));
+            return;
+        }
+
+        if (!command.getEvent().getGuild().getSelfMember().hasPermission(Permission.MANAGE_CHANNEL)) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 580, "`" + devi.getTranslation(command.getLanguage(), 582) + "`"));
+            return;
+        }
+
+        if (!command.getEvent().getGuild().getSelfMember().hasPermission(Permission.VOICE_CONNECT)) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 580, "`" + devi.getTranslation(command.getLanguage(), 583) + "`"));
+            return;
+        }
+
+        if (!member.hasPermission(Permission.VOICE_CONNECT)) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 585, "**" + member.getUser().getName() + "**", "`" + devi.getTranslation(command.getLanguage(), 583) + "`"));
             return;
         }
 
         String reason = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
         VoiceChannel connectedChannel = member.getVoiceState().getChannel();
-        String id = command.getEvent().getGuild().getController().createVoiceChannel("devitemp").complete().getId(); // currently only way to do this, hopefully discord fixes a way to kick ppl from voice channels
-        VoiceChannel temp = command.getEvent().getGuild().getVoiceChannelById(id);
-        command.getEvent().getGuild().getController().moveVoiceMember(member, temp).queue(
+        command.getEvent().getGuild().getController().createVoiceChannel("devitemp").queue(temp -> command.getEvent().getGuild().getController().moveVoiceMember(member, (VoiceChannel) temp).queue(
                 success -> {
-                devi.getModLogManager().logVoiceKick(command.getDeviGuild(), member, command.getEvent().getMember(), connectedChannel, reason);
-
-                sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 575, "**" + user.getName() + "**", "`" + connectedChannel.getName() + "`", "`" + reason + "`"));
-                temp.delete().queue();
-                },
-                error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 531))
-        );
-    }
+                    devi.getModLogManager().logVoiceKick(command.getDeviGuild(), member, command.getEvent().getMember(), connectedChannel, reason);
+                    temp.delete().queue(complete -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 575, "**" + user.getName() + "**", "`" + connectedChannel.getName() + "`", "`" + reason + "`")));
+                }));
+            }
 
     @Override
     public boolean guildOnly() {
@@ -83,7 +97,7 @@ public class VoiceKickCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("vckick");
+        return Collections.singletonList("vkick");
     }
 
     @Override

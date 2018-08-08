@@ -54,7 +54,7 @@ public class UrbanDictionaryCommandExecutor implements CommandExecutor {
                     String example = urban.getString("example").replace("[", "").replace("]", "");
                     String link = urban.getString("permalink");
 
-                    em.addField("**" + devi.getTranslation(command.getLanguage(), 563) + "**", definition.length() >= 1024 ? definition.substring(0, 900) + "... " + devi.getTranslation(command.getLanguage(), 565, link): definition, true);
+                    em.addField("**" + devi.getTranslation(command.getLanguage(), 563) + "**", definition.length() > 1024 ? definition.substring(0, 900) + "... " + devi.getTranslation(command.getLanguage(), 565, link): definition, true);
                     em.addField("**" + devi.getTranslation(command.getLanguage(), 564) + "**", example.length() > 1024 ? example.substring(0, 900) + "... " + devi.getTranslation(command.getLanguage(), 565, link) : example, true);
                     em.addField("**" + devi.getTranslation(command.getLanguage(), 566) + "**", Emote.SUCCESS + " " + urban.getInt("thumbs_up") + " | " + Emote.ERROR + " " + urban.getInt("thumbs_down"), true);
                     em.addField("**" + devi.getTranslation(command.getLanguage(), 567) + "**", link, true);

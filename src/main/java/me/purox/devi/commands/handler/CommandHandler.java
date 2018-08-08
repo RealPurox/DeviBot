@@ -64,7 +64,7 @@ public class CommandHandler {
         registerCommand("ping", new PingCommandExecutor(devi));
         registerCommand("stats", new StatsCommandExecutor(devi));
         registerCommand("urban", new UrbanDictionaryCommandExecutor(devi));
-
+        registerCommand("google", new GoogleCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

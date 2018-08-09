@@ -70,12 +70,14 @@ public class BanCommandExecutor implements CommandExecutor {
         int day = days;
         command.getEvent().getGuild().getController().ban(user, days).queue(
                 success -> {
-                    Document punishment = new Document();
-                    punishment.put("user", user.getName() + "#" + user.getDiscriminator());
-                    punishment.put("reason", reason);
-                    punishment.put("punisher", sender.getName() + "#" + sender.getDiscriminator());
+                    PunishmentBuilder pbuilder = new PunishmentBuilder();
+                    pbuilder.setType(Punishment.PunishmentType.BAN);
+                    pbuilder.setReason(reason);
+                    pbuilder.setPunished(member);
+                    pbuilder.setMod(sender.getMember());
+                    pbuilder.build().execute();
 
-                    command.getDeviGuild().getBanned().put(user.getId(), punishment);
+                    command.getDeviGuild().getBanned().put(user.getId(), pbuilder);
                     command.getDeviGuild().saveSettings();
                     devi.getModLogManager().logBan(command.getDeviGuild(), member, command.getEvent().getMember(), reason);
 

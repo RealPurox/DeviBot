@@ -10,7 +10,7 @@ import java.util.Date;
 public class Punishment {
 
     private Devi devi;
-    private PunishmentManager punishmentManager;
+    private PunishmentManager punish;
 
     private DeviGuild deviGuild = null;
     private int caseNr;
@@ -24,7 +24,7 @@ public class Punishment {
 
     public Punishment(Devi devi) {
         this.devi = devi;
-        this.punishmentManager = punishmentManager;
+        this.punish = new PunishmentManager(devi);
         this.deviGuild = deviGuild;
         this.caseNr = caseNr;
         this.type = type;
@@ -40,12 +40,31 @@ public class Punishment {
         BAN, SOFTBAN, MUTE, KICK, VOICEKICK
     }
 
-
     Punishment(String guildId, int caseNr, PunishmentType type, String punisherId, String punishedId, String reason, Date date, String messageId, String channelId) {
 
     }
 
     public Punishment execute() {
+        System.out.println("Executing a new punishment.");
+
+        switch (type) {
+
+            case BAN:
+                punish.insertPunishment(deviGuild, caseNr, PunishmentType.BAN, punisher, punished, reason, date, messageId, channelId);
+                break;
+            case SOFTBAN:
+                punish.insertPunishment(deviGuild, caseNr, PunishmentType.SOFTBAN, punisher, punished, reason, date, messageId, channelId);
+                break;
+            case MUTE:
+                punish.insertPunishment(deviGuild, caseNr, PunishmentType.MUTE, punisher, punished, reason, date, messageId, channelId);
+                break;
+            case KICK:
+                punish.insertPunishment(deviGuild, caseNr, PunishmentType.KICK, punisher, punished, reason, date, messageId, channelId);
+                break;
+            case VOICEKICK:
+                punish.insertPunishment(deviGuild, caseNr, PunishmentType.VOICEKICK, punisher, punished, reason, date, messageId, channelId);
+                break;
+        }
         return this;
     }
 

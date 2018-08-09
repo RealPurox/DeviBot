@@ -40,8 +40,9 @@ public class PunishmentBuilder {
         this.type = type;
         return type;
     }
-
+    
     public Punishment build() {
+        System.out.println("Building a new punishment: " + type.name());
         return new Punishment(deviGuild.getId(), caseNr, type, punisher.getUser().getId(), punished.getUser().getId(), reason, date, messageId, channelId);
     }
 

@@ -17,9 +17,10 @@ public class PunishmentManager {
     }
 
     public void insertPunishment(DeviGuild deviGuild, int caseNr, Punishment.PunishmentType type, Member punished, Member punisher, String reason, Date date, String msgId, String channelId) {
+        System.out.println("Attempting to add punishment to database.");
         Document doc = new Document();
         doc.put("guildid", deviGuild.getId());
-        doc.put("caseNr", caseNr);
+        doc.put("caseNr", caseNr + 1);
         doc.put("type", type);
         doc.put("punished", punished.getUser().getId());
         doc.put("punisher", punisher.getUser().getId());
@@ -27,6 +28,6 @@ public class PunishmentManager {
         doc.put("date", date);
         doc.put("messageid", msgId);
         doc.put("channelid", channelId);
-        devi.getDatabaseManager().saveToDatabase("punishments", doc);
+        devi.getDatabaseManager().getClient().getDatabase("devi_dev").getCollection("punishments").insertOne(doc);
     }
 }

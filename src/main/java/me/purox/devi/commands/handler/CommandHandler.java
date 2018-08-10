@@ -64,7 +64,7 @@ public class CommandHandler {
         registerCommand("ping", new PingCommandExecutor(devi));
         registerCommand("stats", new StatsCommandExecutor(devi));
         registerCommand("urban", new UrbanDictionaryCommandExecutor(devi));
-
+        registerCommand("google", new GoogleCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));
@@ -94,6 +94,8 @@ public class CommandHandler {
         registerCommand("banlist", new BanListCommandExecutor(devi));
         registerCommand("mutelist", new MuteListCommandExecutor(devi));
         registerCommand("purge", new PurgeCommandExecutor(devi));
+        registerCommand("voicekick", new VoiceKickCommandExecutor(devi));
+
         //  - custom commands
         registerCommand("addcommand", new AddCustomCommandExecutor(devi));
         registerCommand("commandlist", new ListCustomCommandExecutor(devi));

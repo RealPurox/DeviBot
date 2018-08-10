@@ -29,6 +29,7 @@ public class GuildSettings {
         MOD_LOG_MUTES             ( true,       Emote.MUTE.get(),          71,  "modlog mutes"          , false, "Mod-Log Mutes"),
         MOD_LOG_BANS              ( true,       Emote.BAN.get(),           72,  "modlog bans"           , false, "Mod-Log Bans"),
         MOD_LOG_KICKS             ( true,       Emote.BAN.get(),           534, "modlog kicks"          , false,  "Mod-Log Kicks"),
+        MOD_LOG_VOICEKICKS        ( true,       "\uD83D\uDCDE",           573, "modlog voicekicks"          , false,  "Mod-Log Voice Kicks"),
         MOD_LOG_MESSAGE_EDITED    ( true,       ":pen_ballpoint:",             178, "modlog message-edit"   , false, "Mod-Log Edited Messages"),
         MOD_LOG_MESSAGE_DELETED   ( true,       ":no_entry_sign:",             179, "modlog message-delete" , false, "Mod-Log Deleted Messages"),
 

@@ -34,6 +34,8 @@ public class GuildPlayer extends AudioEventAdapter {
     private LinkedList<AudioInfo> queue;
     private long destroyTime;
 
+    private AudioTrack loopedTrack;
+
     GuildPlayer(Devi devi, Guild guild) {
         this.devi = devi;
         this.guild = guild;
@@ -136,14 +138,29 @@ public class GuildPlayer extends AudioEventAdapter {
         return destroyTime;
     }
 
+    public void setLoopedTrack(AudioTrack loopedTrack) {
+        this.loopedTrack = loopedTrack;
+    }
+
+    public AudioTrack getLoopedTrack() {
+        return loopedTrack;
+    }
+
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         devi.increaseSongsPlayed();
-        this.destroyTime = System.currentTimeMillis() + track.getInfo().length + 300000;
+        if (this.guild.getSelfMember().getVoiceState().inVoiceChannel() && this.guild.getSelfMember().getVoiceState().getChannel().getMembers().size() > 1)
+            this.destroyTime = System.currentTimeMillis() + track.getInfo().length + 300000;
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        if (this.loopedTrack != null) {
+            AudioTrack clone = track.makeClone();
+            player.playTrack(clone);
+            queue.set(0, new AudioInfo(clone, queue.get(0).getRequester()));
+            return;
+        }
         if (endReason == AudioTrackEndReason.STOPPED) {
             if (queue.size() == 0) {
                 leave(null, null, true);

@@ -113,7 +113,7 @@ public class CommandHandler {
         registerCommand("skip", new SkipCommandExecutor(devi));
         registerCommand("shuffle", new ShuffleCommandExecutor(devi));
         registerCommand("volume", new VolumeCommandExecutor(devi));
-        //registerCommand("loop", new LoopCommandExecutor(devi));
+        registerCommand("loop", new LoopCommandExecutor(devi));
     }
 
     private void registerCommand(String commandName, CommandExecutor commandExecutor){

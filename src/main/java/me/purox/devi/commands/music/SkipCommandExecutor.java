@@ -55,7 +55,7 @@ public class SkipCommandExecutor implements CommandExecutor {
         guildPlayer.getAudioPlayer().stopTrack();
 
         if (guildPlayer.getQueue().isEmpty()) {
-            sender.reply(Emote.INFO + " | " + devi.getTranslation(command.getLanguage(), 136));
+            sender.reply(Emote.INFO + " | " + devi.getTranslation(command.getLanguage(), 586));
             guildPlayer.destroy(true);
         } else {
             AudioInfo next = guildPlayer.getCurrent();

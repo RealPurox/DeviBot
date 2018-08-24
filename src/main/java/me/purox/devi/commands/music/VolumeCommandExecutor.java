@@ -4,26 +4,15 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
+import me.purox.devi.core.Language;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.GuildPlayer;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.jodah.expiringmap.ExpirationPolicy;
-import net.jodah.expiringmap.ExpiringMap;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class VolumeCommandExecutor implements CommandExecutor {
 
@@ -37,12 +26,29 @@ public class VolumeCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
         if (args.length == 0) {
-            sender.reply(getVolumeEmbed(guildPlayer));
+            sender.reply(getVolumeEmbed(guildPlayer, command));
         }
+
+        int volume;
+
+        try {
+            volume = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 589));
+            return;
+        }
+
+        if (volume > 150 || volume < 1) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 589));
+            return;
+        }
+
+        guildPlayer.getAudioPlayer().setVolume(volume);
+        sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 190));
     }
 
-    private MessageEmbed getVolumeEmbed(GuildPlayer guildPlayer) {
-        EmbedBuilder builder = new EmbedBuilder().setTitle("Volume");
+    private MessageEmbed getVolumeEmbed(GuildPlayer guildPlayer, Command command) {
+        EmbedBuilder builder = new EmbedBuilder().setTitle(devi.getTranslation(command.getLanguage(), 587));
         int volume = guildPlayer.getAudioPlayer().getVolume() / 10;
 
         StringBuilder progressBar = new StringBuilder(" ~~**[");
@@ -56,7 +62,7 @@ public class VolumeCommandExecutor implements CommandExecutor {
         progressBar.append("**~~ ");
 
         builder.setDescription("`" + guildPlayer.getAudioPlayer().getVolume() + "` " + progressBar.toString() + " `150`");
-        builder.setFooter("Use !volume <1 - 150> to change the volume", null);
+        builder.setFooter(devi.getTranslation(command.getLanguage(), 588, command.getPrefix()+ "volume <1- 150>"), null);
         return builder.build();
     }
 
@@ -67,7 +73,7 @@ public class VolumeCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 0;
+        return 189;
     }
 
     @Override

@@ -6,15 +6,14 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.manager.punishments.Punishment;
-import me.purox.devi.manager.punishments.PunishmentBuilder;
+import me.purox.devi.punishments.Punishment;
+import me.purox.devi.punishments.PunishmentBuilder;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.PermissionUtil;
-import org.bson.Document;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,7 +69,7 @@ public class BanCommandExecutor implements CommandExecutor {
         int day = days;
         command.getEvent().getGuild().getController().ban(user, days).queue(
                 success -> {
-                    PunishmentBuilder pbuilder = new PunishmentBuilder();
+                    /*PunishmentBuilder pbuilder = new PunishmentBuilder();
                     pbuilder.setType(Punishment.PunishmentType.BAN);
                     pbuilder.setReason(reason);
                     pbuilder.setPunished(member);
@@ -86,7 +85,7 @@ public class BanCommandExecutor implements CommandExecutor {
                     } else {
                         sender.reply(Emote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 67, "**"+user.getName()+"#"+user.getDiscriminator()+"**","`"+reason+"`"));
                     }
-                    MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 17, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));
+                    MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 17, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));*/
                 },
                 error -> sender.reply(devi.getTranslation(command.getLanguage(), 25))
         );

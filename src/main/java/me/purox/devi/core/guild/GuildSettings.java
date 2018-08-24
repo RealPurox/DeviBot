@@ -18,36 +18,36 @@ public class GuildSettings {
     }
 
     public enum Settings {
-        PREFIX                    ( "!",        ":page_with_curl:",            5,   "prefix"                , true, "Prefix"),
+        PREFIX                    ( "!",        ":page_with_curl:",            5,   "prefix"                , true,  "Prefix"),
 
-        LANGUAGE                  ( "english",  ":earth_americas:",            6,   "language"              , true, "Language"),
+        LANGUAGE                  ( "english",  ":earth_americas:",            6,   "language"              , true,  "Language"),
 
         MUTE_ROLE                 ( "-1",       ":mute:",                      24,  "muterole"              , false, "Mute Role"),
 
-        MOD_LOG_ENABLED           ( false,      ":newspaper:",                 69,  "modlog"                , true, "Mod-Log"),
+        MOD_LOG_ENABLED           ( false,      ":newspaper:",                 69,  "modlog"                , true,  "Mod-Log"),
         MOD_LOG_CHANNEL           ( "-1",       ":microphone2:",               59,  "modlog channel"        , false, "Mod-Log Channel"),
-        MOD_LOG_MUTES             ( true,       Emote.MUTE.get(),          71,  "modlog mutes"          , false, "Mod-Log Mutes"),
-        MOD_LOG_BANS              ( true,       Emote.BAN.get(),           72,  "modlog bans"           , false, "Mod-Log Bans"),
-        MOD_LOG_KICKS             ( true,       Emote.BAN.get(),           534, "modlog kicks"          , false,  "Mod-Log Kicks"),
-        MOD_LOG_VOICEKICKS        ( true,       "\uD83D\uDCDE",           573, "modlog voicekicks"          , false,  "Mod-Log Voice Kicks"),
+        MOD_LOG_MUTES             ( true,       Emote.MUTE.get(),              71,  "modlog mutes"          , false, "Mod-Log Mutes"),
+        MOD_LOG_BANS              ( true,       Emote.BAN.get(),               72,  "modlog bans"           , false, "Mod-Log Bans"),
+        MOD_LOG_KICKS             ( true,       Emote.BAN.get(),               534, "modlog kicks"          , false, "Mod-Log Kicks"),
+        MOD_LOG_VOICEKICKS        ( true,       "\uD83D\uDCDE",                573, "modlog voicekicks"     , false, "Mod-Log Voice Kicks"),
         MOD_LOG_MESSAGE_EDITED    ( true,       ":pen_ballpoint:",             178, "modlog message-edit"   , false, "Mod-Log Edited Messages"),
         MOD_LOG_MESSAGE_DELETED   ( true,       ":no_entry_sign:",             179, "modlog message-delete" , false, "Mod-Log Deleted Messages"),
 
-        AUTO_MOD_ENABLED          ( true,       ":hammer_pick:",               301, "automod"               , true, "Auto-Mod"),
+        AUTO_MOD_ENABLED          ( true,       ":hammer_pick:",               301, "automod"               , true,  "Auto-Mod"),
         AUTO_MOD_ANTI_ADS         ( true,       ":tv:",                        77,  "automod ads"           , false, "Auto-Mod Anti Advertisement"),
         AUTO_MOD_ANTI_CAPS        ( true,       ":ab:",                        81,  "automod caps"          , false, "Auto-Mod Anti Caps"),
         AUTO_MOD_ANTI_EMOJI       ( true,       ":stuck_out_tongue:",          161, "automod emoji"         , false, "Auto-Mod Anti Emoji Spam"),
 
-        MUSIC_LOG_ENABLED         ( true,       ":checkered_flag:",            84,  "musiclog"              , true, "Music-Log"),
+        MUSIC_LOG_ENABLED         ( true,       ":checkered_flag:",            84,  "musiclog"              , true,  "Music-Log"),
         MUSIC_LOG_CHANNEL         ( "-1",       ":notes:",                     83,  "musiclog channel"      , false, "Music-Log"),
 
-        TWITCH_CHANNEL            ( "-1",       Emote.TWITCH.get(),        198, "twitch"                , true, "Twitch Channel"),
+        TWITCH_CHANNEL            ( "-1",       Emote.TWITCH.get(),            198, "twitch"                , true,  "Twitch Channel"),
 
         WELCOMER_ENABLED          ( true,       ":wave",                       373, "welcome"               , false, "Welcomer"),
         JOIN_MESSAGE              ( "Hey {user}, welcome to {server}. :wave:",
-                                                Emote.SUCCESS.get(),       372, "welcome join"          , false, "Join Message"),
+                                                Emote.SUCCESS.get(),           372, "welcome join"          , false, "Join Message"),
         LEAVE_MESSAGE             ( "**{user}** left {server}.",
-                                                Emote.ERROR.get(),         375, "welcome leave"         , false, "Leave Message"),
+                                                Emote.ERROR.get(),             375, "welcome leave"         , false, "Leave Message"),
         AUTO_ROLE_ENABLED         ( true,       ":question:",                  374, "welcome role"          , false, "Auto-Role"),
         AUTO_ROLE                 ( "-1",       ":robot:",                     374, "welcome role"          , false, "Auto-Role Role");
 

@@ -28,12 +28,12 @@ public class ReadyListener extends ListenerAdapter {
 
         String builder = "Howdy " + owner.getAsMention() + ", thank you very much for adding me to " + "**" + event.getGuild().getName() + "**" + " :wave:" + "\n\n" +
                 "As you've probably seen already, I'm a Discord bot. " +
-                "My main purpose is to help you and your moderator colleagues to moderate your server.\n\n" +
+                "My main purpose is to help you and your moderator colleagues to moderate your server. I'm also a utility bot with a huge variation of features and commands!\n\n" +
                 "`-` " + "English is not your main language? Don't worry buddy, I gotcha! We currently support the following languages: " + Language.getAllLanguagesBeautiful() + ".\n\n" +
                 "`-` " + "My default prefix is " + "`" + devi.getSettings().getDefaultPrefix() + "`" + ", but you can change it anytime with `!settings prefix <prefix>`\n\n" +
                 "`-` " + "I would strongly recommend you to checkout my auto-mod and mod-log features using `!automod` and `!modlog`\n\n" +
-                "Okay, we've talked enough. If you want to get a list of all commands simple type `!help`. " +
-                "OH and before I forget it, you should definitely checkout our awesome website <https://www.devibot.net/>";
+                "Okay, we've talked enough. If you want to get a list of all commands simply type `!help`. " +
+                "And before I forget to say it, you should definitely check out our awesome website <https://www.devibot.net/>";
         MessageUtils.sendPrivateMessageAsync(event.getGuild().getOwner().getUser(), builder);
         devi.getLogger().log("Joined Guild " + event.getGuild().getName() + " ( " + event.getGuild().getId() + " ) " + event.getGuild().getOwner().getUser().getName() + "#" + event.getGuild().getOwner().getUser().getDiscriminator());
     }

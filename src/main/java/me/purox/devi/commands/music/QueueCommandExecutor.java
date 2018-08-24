@@ -5,7 +5,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
@@ -45,13 +45,13 @@ public class QueueCommandExecutor implements CommandExecutor {
 
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
 
-        builder.appendDescription(DeviEmote.MUSIC.get() + " __**" + devi.getTranslation(command.getLanguage(), 463) + "**__ " + DeviEmote.MUSIC.get() + "\n\n");
+        builder.appendDescription(Emote.MUSIC.get() + " __**" + devi.getTranslation(command.getLanguage(), 463) + "**__ " + Emote.MUSIC.get() + "\n\n");
         //devi.getTranslation(command.getLanguage(), 463)
         boolean displayNext = false;
         if (guildPlayer.getAudioPlayer().isPaused()) {
-            builder.appendDescription(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 464) + "\n\n");
+            builder.appendDescription(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 464) + "\n\n");
         } else if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
-            builder.appendDescription(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 465) + "\n\n");
+            builder.appendDescription(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 465) + "\n\n");
         } else {
             displayNext = true;
             AudioInfo currentInfo = guildPlayer.getCurrent();

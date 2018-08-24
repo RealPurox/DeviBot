@@ -4,14 +4,12 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ShuffleCommandExecutor implements CommandExecutor {
@@ -27,7 +25,7 @@ public class ShuffleCommandExecutor implements CommandExecutor {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
 
         if (guildPlayer.getQueue().isEmpty()) {
-            sender.reply(DeviEmote.ERROR + devi.getTranslation(command.getLanguage(), 139));
+            sender.reply(Emote.ERROR + devi.getTranslation(command.getLanguage(), 139));
             return;
         }
 
@@ -38,7 +36,7 @@ public class ShuffleCommandExecutor implements CommandExecutor {
         }
 
         guildPlayer.shuffle();
-        sender.reply(DeviEmote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 140));
+        sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 140));
     }
 
     @Override

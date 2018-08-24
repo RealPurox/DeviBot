@@ -4,17 +4,14 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.request.Request;
-import me.purox.devi.request.RequestBuilder;
+import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Game;
 
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class RebootCommandExecutor implements CommandExecutor {
 
@@ -24,11 +21,35 @@ public class RebootCommandExecutor implements CommandExecutor {
         this.devi = devi;
     }
 
+    private boolean isRebooting = false;
+
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        int min = args.length > 0 && args[0].equalsIgnoreCase("--urgent") ? 1 : 5;
-        devi.reboot(min, command.getEvent().getChannel());
-        sender.reply(DeviEmote.SUCCESS + " | Devi will be rebooting in " + min + " minute" + (min == 1 ? "" : "s"));
+        if (!devi.getAdmins().contains(sender.getId())) return;
+
+        if (args.length == 0) {
+            String time = TimeUtils.toRelative(new Date(System.currentTimeMillis()), devi.getRebootTime());
+            sender.reply(Emote.ERROR + " | Please enter the amount minutes until Devi will reboot or use `--urgent` for urgent reboot. \n" +
+                    "\uD83D\uDCC6 | Devi is scheduled to automatically reboot in `" + time.substring(0, time.length() -4) + "`.");
+            return;
+        }
+        if(isRebooting){
+            sender.reply(Emote.ERROR + " | Devi is already rebooting.");
+            return;
+
+        }
+        if (args[0].equalsIgnoreCase("--urgent")) {
+            devi.reboot(1, command.getEvent().getChannel());
+            sender.reply(Emote.SUCCESS + " | **Urgent Reboot**: Devi will be rebooting in 1 minute.");
+            isRebooting = true;
+            return;
+        }
+
+        int minutes = Integer.parseInt(args[0]);
+
+        sender.reply(Emote.SUCCESS + " | Devi will be rebooting in " + minutes + " minute" + (minutes == 1 ? "" : "s"));
+        devi.reboot(minutes, command.getEvent().getChannel());
+        isRebooting = true;
     }
 
     @Override

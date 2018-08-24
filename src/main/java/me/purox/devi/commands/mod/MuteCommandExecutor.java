@@ -4,7 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -116,7 +116,7 @@ public class MuteCommandExecutor extends ListenerAdapter implements CommandExecu
                     deviGuild.getMuted().put(member.getUser().getId(), punishment);
                     deviGuild.saveSettings();
                     devi.getModLogManager().logMute(deviGuild, member, punisher, reason);
-                    MessageUtils.sendMessageAsync(channel, DeviEmote.MUTE.get() + " " + devi.getTranslation(language, 29, member.getUser().getName() + "#" + member.getUser().getDiscriminator()));
+                    MessageUtils.sendMessageAsync(channel, Emote.MUTE.get() + " " + devi.getTranslation(language, 29, member.getUser().getName() + "#" + member.getUser().getDiscriminator(), "`" +reason+"`"));
                 },
                 failure -> MessageUtils.sendMessageAsync(channel, devi.getTranslation(language, 30, member.getUser().getName() + "#" + member.getUser().getDiscriminator())));
     }

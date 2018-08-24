@@ -27,6 +27,7 @@ public class EvalCommandExecutor implements CommandExecutor {
                     "java.io," +
                     "java.lang," +
                     "java.util," +
+                    "Packages.me.purox.devi," +
                     "Packages.net.dv8tion.jda.core," +
                     "Packages.net.dv8tion.jda.core.entities," +
                     "Packages.net.dv8tion.jda.core.entities.impl," +

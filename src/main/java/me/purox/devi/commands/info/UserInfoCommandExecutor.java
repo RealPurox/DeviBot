@@ -4,6 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.TimeUtils;
@@ -33,13 +34,27 @@ public class UserInfoCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if(args.length == 0){
-            sender.reply(devi.getTranslation(command.getLanguage(), 439));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            EmbedBuilder embed = new EmbedBuilder();
+
+            embed.setAuthor(sender.getName(), null, sender.getEffectiveAvatarUrl());
+            embed.setColor(Color.decode("#7289da"));
+            embed.setThumbnail(sender.getEffectiveAvatarUrl());
+
+            Member target = command.getEvent().getGuild().getMember(sender);
+            embed.addField(devi.getTranslation(command.getLanguage(), 442), target.getJoinDate().format(formatter), true); // joined guild
+            embed.addField(devi.getTranslation(command.getLanguage(), 443), target.getOnlineStatus().toString().replaceAll("_", " "), true); // online status
+            embed.addField(devi.getTranslation(command.getLanguage(), 444), target.getNickname() == null ? devi.getTranslation(command.getLanguage(), 445) : target.getNickname(), true); // nickname
+            embed.addField(devi.getTranslation(command.getLanguage(), 446), target.getGame() == null ? devi.getTranslation(command.getLanguage(), 445) : target.getGame().getName(), true); // playing
+            embed.addField(devi.getTranslation(command.getLanguage(), 447), target.getRoles().isEmpty() ? devi.getTranslation(command.getLanguage(), 445) : target.getRoles().stream().map(IMentionable::getAsMention).collect(Collectors.joining(", ")), true); // roles
+            embed.addField(devi.getTranslation(command.getLanguage(), 448), "[" + devi.getTranslation(command.getLanguage(), 91) + "](" + target.getUser().getEffectiveAvatarUrl()+ ")", true);
+            sender.reply(embed.build());
             return;
         }
 
         User user = DiscordUtils.getUser(args[0], command.getEvent().getGuild());
         if (user == null) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 440));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 440));
             return;
         }
 
@@ -47,7 +62,7 @@ public class UserInfoCommandExecutor implements CommandExecutor {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         EmbedBuilder embed = new EmbedBuilder();
 
-        embed.setTitle(devi.getTranslation(command.getLanguage(), 441) + " | " + target.getUser().getName());
+        embed.setAuthor(target.getUser().getName(), null, target.getUser().getEffectiveAvatarUrl());
         embed.setColor(Color.decode("#7289da"));
         embed.setThumbnail(target.getUser().getEffectiveAvatarUrl());
 
@@ -74,7 +89,7 @@ public class UserInfoCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return null;
+        return Arrays.asList("user", "userstats");
     }
 
     @Override

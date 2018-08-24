@@ -76,6 +76,6 @@ public class ListCustomCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.CUSTOM_COMMANDS;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

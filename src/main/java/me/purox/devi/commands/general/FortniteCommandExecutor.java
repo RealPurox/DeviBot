@@ -83,7 +83,7 @@ public class FortniteCommandExecutor implements CommandExecutor {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setColor(new java.awt.Color(100, 65, 164));
                     builder.setAuthor(devi.getTranslation(command.getLanguage(), 237, data.getString("epicUserHandle")),
-                            null, "https://images.gutefrage.net/media/fragen/bilder/welche-dpi-fuer-fortnite/0_big.jpg");
+                            null, "https://i.imgur.com/LjGVSYX.jpg");
 
                     String soloBuilder = "**" + devi.getTranslation(command.getLanguage(), 238) + "**: " + solo.getJSONObject("top1").getString("value") + "\n" +
                             "**" + devi.getTranslation(command.getLanguage(), 239) + "**: " + solo.getJSONObject("winRatio").getString("value") + "\n" +

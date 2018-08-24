@@ -1,11 +1,10 @@
 package me.purox.devi.commands.music;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
@@ -30,7 +29,7 @@ public class CurrentCommandExecutor implements CommandExecutor {
         AudioInfo current = guildPlayer.getCurrent();
 
         if (current == null) {
-            sender.reply(DeviEmote.ERROR.get() + " | I'm not playing music at the moment!");
+            sender.reply(Emote.ERROR.get() + " | I'm not playing music at the moment!");
             return;
         }
 

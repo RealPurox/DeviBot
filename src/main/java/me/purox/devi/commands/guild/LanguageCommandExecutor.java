@@ -4,17 +4,14 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.waiter.WaitingResponseBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class LanguageCommandExecutor implements CommandExecutor {
 
@@ -37,12 +34,12 @@ public class LanguageCommandExecutor implements CommandExecutor {
                 .setWaiterType(WaitingResponseBuilder.WaiterType.LANGUAGE)
                 .setSetting(GuildSettings.Settings.LANGUAGE);
 
-        StringBuilder inputBuilder = new StringBuilder(devi.getTranslation(command.getLanguage(), 260) + "\n\n");
+        StringBuilder inputBuilder = new StringBuilder(devi.getTranslation(command.getLanguage(), 260) + "\n" + devi.getTranslation(command.getLanguage(), 557, "www.devibot.net/translations") + " \n\n");
 
         int totalTrans = devi.getDeviTranslations().get(Language.ENGLISH).keySet().size();
         for (Language language : Language.values()) {
             int translated = devi.getDeviTranslations().get(language).keySet().size();
-            inputBuilder.append(" > ").append(language.getName()).append(" (").append(Math.round(((double) translated / (double) totalTrans) * 100)).append("%)\n");
+            inputBuilder.append(" > ").append(language.getName()).append(" (").append(Math.round(((double) translated / (double) totalTrans) * 100)).append("% ").append(devi.getTranslation(command.getLanguage(), 558)).append(")\n");
         }
 
         builder.setExpectedInputText(inputBuilder.toString());
@@ -72,6 +69,6 @@ public class LanguageCommandExecutor implements CommandExecutor {
 
     @Override
     public ModuleType getModuleType() {
-        return null;
+        return ModuleType.MANAGEMENT_COMMANDS;
     }
 }

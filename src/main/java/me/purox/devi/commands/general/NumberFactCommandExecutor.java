@@ -23,7 +23,7 @@ public class NumberFactCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         String URL = "http://numbersapi.com/random/trivia";
         new RequestBuilder(devi.getOkHttpClient()).setRequestType(Request.RequestType.GET).setURL(URL).build()
-                .asString(success -> sender.reply(sender.getAsMention() + ", " + success.getBody()),
+                .asString(success -> sender.reply("**"+sender.getName()+"**" + ", " + success.getBody()),
                         error -> sender.reply(devi.getTranslation(command.getLanguage(), 217)));
     }
 

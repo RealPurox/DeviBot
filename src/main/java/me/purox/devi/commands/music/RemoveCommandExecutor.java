@@ -49,13 +49,13 @@ public class RemoveCommandExecutor implements CommandExecutor {
         }
 
         if (remove < 1 || remove > guildPlayer.getQueue().size()) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), remove));
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 473, remove));
             return;
         }
 
         AudioInfo audioInfo = guildPlayer.getAudioInfoById(remove);
         if (audioInfo == null) {
-            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), remove));
+            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 473, remove));
             return;
         }
 

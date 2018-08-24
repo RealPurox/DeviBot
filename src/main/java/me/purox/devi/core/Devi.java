@@ -322,6 +322,11 @@ public class Devi {
     public String getTranslation(Language language, int id) {
         String translation = deviTranslations.get(language).get(id);
         if (translation == null) {
+            if (language == Language.ENGLISH) {
+                System.out.println("yo");
+                sendMessageToDevelopers("Translation for id `" + id + "` not found. Please fix this immediately @everyone");
+                return "Failed to lookup the the translation for id `" + id + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
+            }
             return deviTranslations.get(Language.ENGLISH).get(id);
         }
         return translation;
@@ -541,8 +546,10 @@ public class Devi {
             Guild g = jda.getGuildById("392264119102996480");
             if (g != null) guild.set(g);
         });
+        System.out.println(guild);
         if (guild.get() != null) {
             TextChannel channel = guild.get().getTextChannelById("458740773614125076");
+            System.out.println(channel);
             if (channel != null) {
                 MessageUtils.sendMessageAsync(channel, o);
             }

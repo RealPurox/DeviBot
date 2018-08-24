@@ -5,7 +5,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.waiter.WaitingResponse;
@@ -55,7 +55,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                         JSONObject body = res.getBody();
 
                         if (res.getStatus() == 429 || body.isNull("data") || body.getJSONArray("data").length() == 0) {
-                            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 366, search));
+                            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 366, search));
                             return null;
                         }
 
@@ -70,12 +70,12 @@ public class TwitchCommandExecutor implements CommandExecutor {
                         });
 
                         if (doesStreamerExist.get()) {
-                            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 204, user.getString("display_name")));
+                            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 204, user.getString("display_name")));
                             return null;
                         }
                         return new AbstractMap.SimpleEntry<>(id, user);
                     } catch (IllegalArgumentException e) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 203, "`" + search + "`"));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 203, "`" + search + "`"));
                         return null;
                     }
                 })
@@ -114,7 +114,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                         devi.getRedisSender().hset("streams#1", id, user.toString());
                         devi.getLogger().log("Added twitch streamer " + user.getString("display_name") + " (" + id + ") to guild " + command.getEvent().getGuild().getName() + " (" + command.getEvent().getGuild().getId() + ")");
                     } else {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
                     }
                 })
                 .build();
@@ -137,7 +137,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                         JSONObject body = res.getBody();
 
                         if (res.getStatus() == 429 || body.isNull("data") || body.getJSONArray("data").length() == 0) {
-                            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 366, search));
+                            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 366, search));
                             return null;
                         }
 
@@ -152,13 +152,13 @@ public class TwitchCommandExecutor implements CommandExecutor {
                         });
 
                         if (!doesStreamerExist.get()) {
-                            sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 214, user.getString("display_name")));
+                            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 214, user.getString("display_name")));
                             return null;
                         }
 
                         return new AbstractMap.SimpleEntry<>(id, user);
                     } catch (IllegalArgumentException e) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 203, "`" + search + "`"));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 203, "`" + search + "`"));
                         return null;
                     }
                 })
@@ -170,7 +170,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                     Document document = command.getDeviGuild().getStreams().stream().filter(doc -> doc.getString("stream").equals(id)).findAny().orElse(null);
 
                     if (document == null) {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
                         return;
                     }
 
@@ -200,7 +200,7 @@ public class TwitchCommandExecutor implements CommandExecutor {
                         devi.getRedisSender().hset("streams#1", id, user.toString());
                         devi.getLogger().log("Removed twitch streamer " + user.getString("display_name") + " (" + id + ") from guild " + command.getEvent().getGuild().getName() + " (" + command.getEvent().getGuild().getId() + ")");
                     } else {
-                        sender.reply(DeviEmote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
                     }
                 })
                 .build();

@@ -24,6 +24,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.managers.GuildController;
 import net.jodah.expiringmap.ExpiringMap;
 import okhttp3.OkHttpClient;
 import org.bson.Document;
@@ -54,6 +55,7 @@ public class Devi {
     private ModLogManager modLogManager;
     private ShardManager shardManager;
     private ResponseWaiter responseWaiter;
+    private AnimatedEmote animatedEmotes;
 
     private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
@@ -71,6 +73,8 @@ public class Devi {
     private int commandsExecuted;
     private boolean redisConnection = false;
 
+    private Date rebootTime;
+
     public Devi() {
         // init handlers / managers / settings / utils
         this.commandHandler = new CommandHandler(this);
@@ -82,6 +86,7 @@ public class Devi {
         this.okHttpClient = new OkHttpClient();
         this.responseWaiter = new ResponseWaiter();
         new MessageUtils(this);
+        this.animatedEmotes = new AnimatedEmote(this);
 
         songsPlayed = 0;
         commandsExecuted = 0;
@@ -205,7 +210,7 @@ public class Devi {
             setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
             if (next == 0) {
                 if (channel != null) {
-                    channel.sendMessage("<:TrumpPepe:453988133021941763> cya later alligator").complete();
+                    channel.sendMessage(getAnimatedEmotes().FixParrot().getAsMention() + " cya later alligator").complete();
                     System.exit(312);
                 } else {
                     System.exit(312);
@@ -219,7 +224,6 @@ public class Devi {
         today.set(Calendar.HOUR_OF_DAY, 23);
         today.set(Calendar.MINUTE, 45);
         today.set(Calendar.SECOND, 0);
-
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -227,6 +231,7 @@ public class Devi {
                 reboot(15, null);
             }
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
+        this.rebootTime = new Date(today.getTimeInMillis() + 900000);
     }
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
@@ -323,11 +328,16 @@ public class Devi {
     public String getTranslation(Language language, int id) {
         String translation = deviTranslations.get(language).get(id);
         if (translation == null) {
+            if (language == Language.ENGLISH) {
+                System.out.println("yo");
+                sendMessageToDevelopers("Translation for id `" + id + "` not found. Please fix this immediately @everyone");
+                return "Failed to lookup the the translation for id `" + id + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
+            }
             return deviTranslations.get(Language.ENGLISH).get(id);
         }
         return translation;
-    }
 
+    }
     public DeviGuild getDeviGuild(String id) {
         try {
             return deviGuildLoadingCache.get(id);
@@ -542,8 +552,10 @@ public class Devi {
             Guild g = jda.getGuildById("392264119102996480");
             if (g != null) guild.set(g);
         });
+        System.out.println(guild);
         if (guild.get() != null) {
             TextChannel channel = guild.get().getTextChannelById("458740773614125076");
+            System.out.println(channel);
             if (channel != null) {
                 MessageUtils.sendMessageAsync(channel, o);
             }
@@ -628,6 +640,10 @@ public class Devi {
         return okHttpClient;
     }
 
+    public Date getRebootTime() {
+        return this.rebootTime;
+    }
+
     public ResponseWaiter getResponseWaiter() {
         return responseWaiter;
     }
@@ -647,4 +663,8 @@ public class Devi {
     public List<String> getVoters() {
         return voters;
     }
+    public AnimatedEmote getAnimatedEmotes() {
+        return animatedEmotes;
+    }
+
 }

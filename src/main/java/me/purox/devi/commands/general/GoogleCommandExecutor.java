@@ -4,38 +4,40 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.stream.Collectors;
 
-public class RandomColorCommandExecutor implements CommandExecutor {
-
+public class GoogleCommandExecutor implements CommandExecutor {
 
     private Devi devi;
-    public RandomColorCommandExecutor(Devi devi) {
+
+    public GoogleCommandExecutor(Devi devi){
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        Random random = new Random();
-        Color randomColor = new Color(random.nextFloat(), random.nextFloat(), random.nextFloat());
-        String hexValue = "#" + Integer.toHexString(randomColor.getRGB()).substring(2);
+        if(args.length < 1) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 577) + " " + command.getPrefix() + "google <searchterm>");
+            return;
+        }
+        String searchterm = Arrays.stream(args).skip(0).collect(Collectors.joining("+"));
+        String URL = "http://lmgtfy.com/?q=" + searchterm;
 
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(devi.getTranslation(command.getLanguage(), 405));
-        embed.addField("HEX", hexValue, false);
-        embed.addField("RGB", "R: " + randomColor.getRed() + " G: " + randomColor.getGreen() + " B: " + randomColor.getBlue(), false);
-        embed.setColor(randomColor);
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setAuthor(devi.getTranslation(command.getLanguage(), 578), null, "https://i.imgur.com/BWlbFx3.png");
+        builder.setColor(Color.decode("#008744"));
+        builder.setDescription(URL);
+        sender.reply(builder.build());
 
-        sender.reply(embed.build());
     }
 
     @Override
@@ -45,12 +47,12 @@ public class RandomColorCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 404;
+        return 579;
     }
 
     @Override
     public List<String> getAliases() {
-        return Collections.singletonList("rcolor");
+        return Collections.singletonList("lmgtfy");
     }
 
     @Override

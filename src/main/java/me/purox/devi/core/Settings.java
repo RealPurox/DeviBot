@@ -33,6 +33,14 @@ public class Settings {
         return System.getenv("FTN");
     }
 
+    public String getSteamApiKey() {
+        return System.getenv("STEAM_KEY");
+    }
+
+    public String getOsuApiKey() {
+        return System.getenv("OSU_KEY");
+    }
+
     String getDeviAPIAuthorization() {
         return System.getenv("DEVI_AUTH");
     }

@@ -4,7 +4,7 @@ import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.DeviEmote;
+import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
@@ -32,12 +32,12 @@ public class SkipCommandExecutor implements CommandExecutor {
         }
 
         if (guildPlayer.getAudioPlayer().isPaused()) {
-            sender.reply(DeviEmote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 464));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 464));
             return;
         }
 
         if (guildPlayer.getAudioPlayer().getPlayingTrack() == null) {
-            sender.reply(DeviEmote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 465));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 465));
             return;
         }
         int amount;
@@ -55,11 +55,11 @@ public class SkipCommandExecutor implements CommandExecutor {
         guildPlayer.getAudioPlayer().stopTrack();
 
         if (guildPlayer.getQueue().isEmpty()) {
-            sender.reply(DeviEmote.INFO + " | " + devi.getTranslation(command.getLanguage(), 136));
+            sender.reply(Emote.INFO + " | " + devi.getTranslation(command.getLanguage(), 136));
             guildPlayer.destroy(true);
         } else {
             AudioInfo next = guildPlayer.getCurrent();
-            sender.reply(DeviEmote.MUSIC.get() + " | " + devi.getTranslation(command.getLanguage(), 137, "**" + next.getAudioTrack().getInfo().title + "**"));
+            sender.reply(Emote.MUSIC.get() + " | " + devi.getTranslation(command.getLanguage(), 137, "**" + next.getAudioTrack().getInfo().title + "**"));
         }
     }
 

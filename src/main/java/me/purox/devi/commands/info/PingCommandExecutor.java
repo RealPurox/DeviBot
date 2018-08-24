@@ -5,29 +5,23 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
-import net.dv8tion.jda.core.EmbedBuilder;
+import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.Permission;
 
-import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-
-public class ChangelogCommandExecutor implements CommandExecutor {
+public class PingCommandExecutor implements CommandExecutor {
 
     private Devi devi;
 
-    public ChangelogCommandExecutor(Devi devi){
+    public PingCommandExecutor(Devi devi){
         this.devi = devi;
     }
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(Color.decode("#4775d1"));
-        embed.setTitle(" ");
-        embed.setDescription(devi.getTranslation(command.getLanguage(), 492));
-        sender.reply(embed.build());
+        command.getEvent().getChannel().sendMessage(devi.getTranslation(command.getLanguage(), 543)).queue(message -> message.editMessage(devi.getTranslation(command.getLanguage(), 543) + " `" + command.getEvent().getJDA().getPing() + " ms`").queueAfter(1, TimeUnit.SECONDS));
 
     }
 
@@ -38,12 +32,12 @@ public class ChangelogCommandExecutor implements CommandExecutor {
 
     @Override
     public int getDescriptionTranslationID() {
-        return 491;
+        return 543;
     }
 
     @Override
     public List<String> getAliases() {
-        return Arrays.asList("changes", "updates", "changelogs");
+        return null;
     }
 
     @Override

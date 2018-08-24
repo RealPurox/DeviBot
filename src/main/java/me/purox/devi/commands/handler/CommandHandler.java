@@ -4,7 +4,7 @@ import me.purox.devi.commands.dev.*;
 import me.purox.devi.commands.guild.*;
 import me.purox.devi.commands.guild.custom.*;
 import me.purox.devi.commands.info.*;
-import me.purox.devi.commands.general.HelpCommandExecutor;
+import me.purox.devi.commands.info.HelpCommandExecutor;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.general.*;
 import me.purox.devi.commands.music.*;
@@ -43,6 +43,7 @@ public class CommandHandler {
         commands.put("adminstats", new AdminStatsCommandExecutor(devi));
         commands.put("reboot", new RebootCommandExecutor(devi));
         commands.put("eval", new EvalCommandExecutor(devi));
+        commands.put("translation", new TranslationsCommandExecutor(devi));
 
         //general commands
         registerCommand("help", new HelpCommandExecutor(devi));
@@ -54,6 +55,16 @@ public class CommandHandler {
         registerCommand("weather", new WeatherCommandExecutor(devi));
         registerCommand("flipcoin", new FlipCoinCommandExecutor(devi));
         registerCommand("randomcolor", new RandomColorCommandExecutor(devi));
+        registerCommand("steam", new SteamCommandExecutor(devi));
+        registerCommand("osu", new OsuCommandExecutor(devi));
+        registerCommand("catfact", new CatFactCommandExecutor(devi));
+        registerCommand("cat", new CatCommandExecutor(devi));
+        registerCommand("dog", new DogCommandExecutor(devi));
+        registerCommand("dogfact", new DogFactCommandExecutor(devi));
+        registerCommand("ping", new PingCommandExecutor(devi));
+        registerCommand("stats", new StatsCommandExecutor(devi));
+        registerCommand("urban", new UrbanDictionaryCommandExecutor(devi));
+        registerCommand("google", new GoogleCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));
@@ -77,11 +88,14 @@ public class CommandHandler {
         //  - mod commands
         registerCommand("ban", new BanCommandExecutor(devi));
         registerCommand("unban", new UnbanCommandExecutor(devi));
+        registerCommand("kick", new KickCommandExecutor(devi));
         registerCommand("mute", new MuteCommandExecutor(devi));
         registerCommand("unmute", new UnmuteCommandExecutor(devi));
         registerCommand("banlist", new BanListCommandExecutor(devi));
         registerCommand("mutelist", new MuteListCommandExecutor(devi));
         registerCommand("purge", new PurgeCommandExecutor(devi));
+        registerCommand("voicekick", new VoiceKickCommandExecutor(devi));
+
         //  - custom commands
         registerCommand("addcommand", new AddCustomCommandExecutor(devi));
         registerCommand("commandlist", new ListCustomCommandExecutor(devi));

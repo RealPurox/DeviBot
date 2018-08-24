@@ -27,6 +27,7 @@ public class VolumeCommandExecutor implements CommandExecutor {
         GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
         if (args.length == 0) {
             sender.reply(getVolumeEmbed(guildPlayer, command));
+            return;
         }
 
         int volume;

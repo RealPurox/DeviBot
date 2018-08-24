@@ -42,6 +42,7 @@ public class GuildPlayer extends AudioEventAdapter {
         this.audioPlayer = devi.getMusicManager().getAudioPlayerManager().createPlayer();
         this.queue = new LinkedList<>();
         this.destroyTime = System.currentTimeMillis() + 300000; //5 mins
+        this.loopedTrack = null;
 
         this.audioPlayer.addListener(this);
         guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
@@ -119,6 +120,7 @@ public class GuildPlayer extends AudioEventAdapter {
 
     public void destroy(boolean leave) {
         if (leave) leave(null, null, true);
+        audioPlayer.removeListener(this);
         audioPlayer.destroy();
         queue.clear();
         devi.getMusicManager().getGuildPlayers().remove(guild.getId());
@@ -159,16 +161,15 @@ public class GuildPlayer extends AudioEventAdapter {
             AudioTrack clone = track.makeClone();
             player.playTrack(clone);
             queue.set(0, new AudioInfo(clone, queue.get(0).getRequester()));
-            return;
         }
-        if (endReason == AudioTrackEndReason.STOPPED) {
+        else if (endReason == AudioTrackEndReason.STOPPED) {
             if (queue.size() == 0) {
                 leave(null, null, true);
-                return;
             }
+        } else {
+            queue.remove();
+            playNext();
         }
-        queue.remove();
-        playNext();
     }
 
     public void loadSong(String query, Command command, CommandSender sender) {
@@ -212,107 +213,117 @@ public class GuildPlayer extends AudioEventAdapter {
     }
 
     public void join(Command command, CommandSender sender, boolean silent) {
-        AudioManager audioManager = guild.getAudioManager();
+        devi.getMusicManager().getThreadPool().submit(() -> {
+            AudioManager audioManager = guild.getAudioManager();
 
-        VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
-        GuildVoiceState deviVoiceState = guild.getSelfMember().getVoiceState();
+            VoiceChannel channel = command.getEvent().getMember().getVoiceState().getChannel();
+            GuildVoiceState deviVoiceState = guild.getSelfMember().getVoiceState();
 
-        if (command.getEvent().getGuild().getSelfMember().getVoiceState().inVoiceChannel()){
-            if (channel.getIdLong() == deviVoiceState.getChannel().getIdLong()) {
-                if(!silent) sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 452));
-                return;
-            }
-            if (audioPlayer.getPlayingTrack() != null) {
-                if(!silent) sender.reply(Emote.ERROR.get() + " | " + 453);
-                return;
-            }
-            audioManager.closeAudioConnection();
-        }
-
-        ConnectionListener listener = new ConnectionListener() {
-            @Override
-            public void onPing(long l) { }
-
-            @Override
-            public void onStatusChange(ConnectionStatus connectionStatus) {
-                //joined voice channel
-                if (connectionStatus == ConnectionStatus.CONNECTED) {
-                    devi.getLogger().log("Joined voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
-                    if(!silent) sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 451));
-                    //don't need the listener anymore
-                    audioManager.setConnectionListener(null);
-                    //lost perms while trying to connect
-                } else if (connectionStatus == ConnectionStatus.DISCONNECTED_LOST_PERMISSION) {
-                    devi.getLogger().log("Lost permissions while joining voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
-                    if(!silent) sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 102));
-                    destroy(false);
-                    //an error occurred
-                } else if ((connectionStatus.name().startsWith("ERROR") || connectionStatus.name().startsWith("DISCONNECTED")) && !connectionStatus.name().equals("DISCONNECTED_LOST_PERMISSION")) {
-                    devi.getLogger().log("An error occurred while joining voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
-                    if(!silent) sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 111));
-                    destroy(false);
+            if (command.getEvent().getGuild().getSelfMember().getVoiceState().inVoiceChannel()) {
+                if (channel.getIdLong() == deviVoiceState.getChannel().getIdLong()) {
+                    if (!silent)
+                        sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 452));
+                    return;
                 }
+                if (audioPlayer.getPlayingTrack() != null) {
+                    if (!silent) sender.reply(Emote.ERROR.get() + " | " + 453);
+                    return;
+                }
+                audioManager.closeAudioConnection();
             }
 
-            @Override
-            public void onUserSpeaking(User user, boolean b) { }
-        };
+            ConnectionListener listener = new ConnectionListener() {
+                @Override
+                public void onPing(long l) {
+                }
 
-        audioManager.setAutoReconnect(true);
-        audioManager.setConnectionListener(listener);
+                @Override
+                public void onStatusChange(ConnectionStatus connectionStatus) {
+                    //joined voice channel
+                    if (connectionStatus == ConnectionStatus.CONNECTED) {
+                        devi.getLogger().log("Joined voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
+                        if (!silent)
+                            sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 451));
+                        //don't need the listener anymore
+                        audioManager.setConnectionListener(null);
+                        //lost perms while trying to connect
+                    } else if (connectionStatus == ConnectionStatus.DISCONNECTED_LOST_PERMISSION) {
+                        devi.getLogger().log("Lost permissions while joining voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
+                        if (!silent)
+                            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 102));
+                        destroy(false);
+                        //an error occurred
+                    } else if ((connectionStatus.name().startsWith("ERROR") || connectionStatus.name().startsWith("DISCONNECTED")) && !connectionStatus.name().equals("DISCONNECTED_LOST_PERMISSION")) {
+                        devi.getLogger().log("An error occurred while joining voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
+                        if (!silent)
+                            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 111));
+                        destroy(false);
+                    }
+                }
 
-        try {
-            //start connecting
-            audioManager.openAudioConnection(channel);
-        } catch (IllegalArgumentException e) {
-            //member not in a voice channel
-            devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
-            if(!silent) sender.reply(devi.getTranslation(command.getLanguage(), 100));
-        } catch (UnsupportedOperationException e) {
-            //Audio disabled due to internal error
-            devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ") (UnsupportedOperationException)");
-            if(!silent) sender.reply(devi.getTranslation(command.getLanguage(), 103));
-            destroy(true);
-        } catch (GuildUnavailableException e) {
-            //Guild not available
-            devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ") (GuildUnavailableException)");
-            if(!silent) sender.reply(devi.getTranslation(command.getLanguage(), 104));
-            destroy(true);
-        } catch (InsufficientPermissionException e) {
-            //Insufficient permission to join that channel
-            if(!silent) sender.reply(devi.getTranslation(command.getLanguage(), 102));
-            destroy(true);
-        }
+                @Override
+                public void onUserSpeaking(User user, boolean b) {
+                }
+            };
+
+            audioManager.setAutoReconnect(true);
+            audioManager.setConnectionListener(listener);
+
+            try {
+                //start connecting
+                audioManager.openAudioConnection(channel);
+            } catch (IllegalArgumentException e) {
+                //member not in a voice channel
+                devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
+                if (!silent) sender.reply(devi.getTranslation(command.getLanguage(), 100));
+            } catch (UnsupportedOperationException e) {
+                //Audio disabled due to internal error
+                devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ") (UnsupportedOperationException)");
+                if (!silent) sender.reply(devi.getTranslation(command.getLanguage(), 103));
+                destroy(true);
+            } catch (GuildUnavailableException e) {
+                //Guild not available
+                devi.getLogger().log("Failed to join voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ") (GuildUnavailableException)");
+                if (!silent) sender.reply(devi.getTranslation(command.getLanguage(), 104));
+                destroy(true);
+            } catch (InsufficientPermissionException e) {
+                //Insufficient permission to join that channel
+                if (!silent) sender.reply(devi.getTranslation(command.getLanguage(), 102));
+                destroy(true);
+            }
+        });
     }
 
     public void leave(Command command, CommandSender sender, boolean silent) {
-        GuildVoiceState deviVoiceState = guild.getSelfMember().getVoiceState();
-        AudioManager audioManager = guild.getAudioManager();
-        VoiceChannel channel = deviVoiceState.getChannel();
+        devi.getMusicManager().getThreadPool().submit(() -> {
+            GuildVoiceState deviVoiceState = guild.getSelfMember().getVoiceState();
+            AudioManager audioManager = guild.getAudioManager();
+            VoiceChannel channel = deviVoiceState.getChannel();
 
-        if (!deviVoiceState.inVoiceChannel()) {
-            if(!silent) sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 113));
-            return;
-        }
-
-        ConnectionListener listener = new ConnectionListener() {
-            @Override
-            public void onPing(long l) { }
-
-            @Override
-            public void onStatusChange(ConnectionStatus connectionStatus) {
-                destroy(false);
-                audioManager.setConnectionListener(null);
-                if(!silent) sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 455));
-                devi.getLogger().log("Left voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
+            if (!deviVoiceState.inVoiceChannel()) {
+                if(!silent) sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 113));
+                return;
             }
 
-            @Override
-            public void onUserSpeaking(User user, boolean b) { }
-        };
+            ConnectionListener listener = new ConnectionListener() {
+                @Override
+                public void onPing(long l) { }
 
-        audioManager.setAutoReconnect(false);
-        audioManager.setConnectionListener(listener);
-        audioManager.closeAudioConnection();
+                @Override
+                public void onStatusChange(ConnectionStatus connectionStatus) {
+                    destroy(true);
+                    audioManager.setConnectionListener(null);
+                    if(!silent) sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 455));
+                    devi.getLogger().log("Left voice channel " + channel.getName() + " (" + channel.getId() + ") in guild " + guild.getName() + " (" + guild.getId() + ")");
+                }
+
+                @Override
+                public void onUserSpeaking(User user, boolean b) { }
+            };
+
+            audioManager.setAutoReconnect(false);
+            audioManager.setConnectionListener(listener);
+            audioManager.closeAudioConnection();
+        });
     }
 }

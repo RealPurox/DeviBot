@@ -8,8 +8,8 @@ import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.punishments.Punishment;
 import me.purox.devi.punishments.PunishmentBuilder;
+import me.purox.devi.punishments.options.BanOptions;
 import me.purox.devi.utils.DiscordUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
@@ -29,66 +29,53 @@ public class BanCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (args.length < 3) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "ban <user> <days> <reason>`"));
+        if (args.length < 1) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "ban <user> [days] [reason]`\n\n" +
+                    devi.getTranslation(command.getLanguage(), 594, "`[days]`", "`[reason]`")));
             return;
         }
 
         User user = DiscordUtils.getUser(args[0], command.getEvent().getGuild());
         if (user == null) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
             return;
         }
         Member member = command.getEvent().getGuild().getMember(user);
 
-        int days;
-        try {
-            days = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            days = -1;
-        }
+        boolean skipDays = false;
+        String reason = devi.getTranslation(command.getLanguage(), 595);
 
-        if (days > 7 || days < 0) {
-            sender.reply( devi.getTranslation(command.getLanguage(), 14));
-            return;
+        int days = -1;
+        try {
+            if (args.length > 1)
+                days = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            skipDays = true;
         }
+        if (days > 7 || days < 0) skipDays = true;
 
         if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) || command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
-            sender.reply( devi.getTranslation(command.getLanguage(), 15));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 15));
             return;
         }
 
         if (sender.getId().equalsIgnoreCase(user.getId()) ||
                 !PermissionUtil.checkPermission(command.getEvent().getGuild().getSelfMember(), Permission.BAN_MEMBERS) ||
                 !PermissionUtil.canInteract(command.getEvent().getGuild().getSelfMember(), member)) {
-            sender.reply( devi.getTranslation(command.getLanguage(), 16));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 16));
             return;
         }
 
-        String reason = Arrays.stream(args).skip(2).collect(Collectors.joining(" "));
-        int day = days;
-        command.getEvent().getGuild().getController().ban(user, days).queue(
-                success -> {
-                    /*PunishmentBuilder pbuilder = new PunishmentBuilder();
-                    pbuilder.setType(Punishment.PunishmentType.BAN);
-                    pbuilder.setReason(reason);
-                    pbuilder.setPunished(member);
-                    pbuilder.setMod(sender.getMember());
-                    pbuilder.build().execute();
+        if (args.length > 1)
+            reason = Arrays.stream(args).skip(skipDays ? 1 : 2).collect(Collectors.joining(" "));
 
-                    command.getDeviGuild().getBanned().put(user.getId(), pbuilder);
-                    command.getDeviGuild().saveSettings();
-                    devi.getModLogManager().logBan(command.getDeviGuild(), member, command.getEvent().getMember(), reason);
-
-                    if (day > 0) {
-                        sender.reply(Emote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 18, "**"+user.getName()+"#"+user.getDiscriminator()+"**", "`"+reason+"`", day));
-                    } else {
-                        sender.reply(Emote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 67, "**"+user.getName()+"#"+user.getDiscriminator()+"**","`"+reason+"`"));
-                    }
-                    MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 17, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));*/
-                },
-                error -> sender.reply(devi.getTranslation(command.getLanguage(), 25))
-        );
+        new PunishmentBuilder(command.getDeviGuild())
+                .setReason(reason)
+                .setOptions(new BanOptions().setDays(skipDays ? 0 : days))
+                .setPunished(member)
+                .setPunisher(sender.getMember())
+                .setType(Punishment.Type.BAN)
+                .build().execute();
     }
 
     @Override

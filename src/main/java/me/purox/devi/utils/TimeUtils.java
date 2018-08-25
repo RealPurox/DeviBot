@@ -46,6 +46,17 @@ public class TimeUtils {
         }
     }
 
+    public static String toDays(long current, long date) {
+        StringBuilder res = new StringBuilder();
+            long timeDelta = current / date;
+            if (timeDelta > 0) {
+                res.append(timeDelta)
+                        .append(" ")
+                        .append(timeDelta > 1 ? "s" : "");
+            }
+            return res.toString();
+    }
+
     public static String toRelative(long duration) {
         return toRelative(duration, times.size());
     }

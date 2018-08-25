@@ -10,6 +10,7 @@ import me.purox.devi.punishments.Punishment;
 import me.purox.devi.punishments.PunishmentBuilder;
 import me.purox.devi.punishments.options.BanOptions;
 import me.purox.devi.utils.DiscordUtils;
+import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
@@ -69,13 +70,18 @@ public class BanCommandExecutor implements CommandExecutor {
         if (args.length > 1)
             reason = Arrays.stream(args).skip(skipDays ? 1 : 2).collect(Collectors.joining(" "));
 
+        String finalReason = reason;
         new PunishmentBuilder(command.getDeviGuild())
                 .setReason(reason)
                 .setOptions(new BanOptions().setDays(skipDays ? 0 : days))
                 .setPunished(member)
                 .setPunisher(sender.getMember())
                 .setType(Punishment.Type.BAN)
-                .build().execute();
+                .build()
+                .execute(success -> {
+                    sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 596, "`" + user.getName() + "#" + user.getDiscriminator() + "`"));
+                    MessageUtils.sendPrivateMessageAsync(user, Emote.INFO + devi.getTranslation(command.getLanguage(), 17, "`" + command.getEvent().getGuild().getName() + "`", "\"" + finalReason + "\""));
+                }, error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 25)));
     }
 
     @Override

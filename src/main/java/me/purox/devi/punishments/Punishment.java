@@ -2,11 +2,14 @@ package me.purox.devi.punishments;
 
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
+import me.purox.devi.punishments.options.BanOptions;
 import me.purox.devi.punishments.options.Options;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
+
+import java.util.function.Consumer;
 
 public class Punishment {
 
@@ -49,7 +52,7 @@ public class Punishment {
                 "channelId: " + channelId + "\n";
     }
 
-    public void execute() {
+    public void execute(Consumer<? super Void> success, Consumer<? super Throwable> error) {
         System.out.println("Executing Punishment Type : " + type);
         System.out.println("Options: " + options);
 
@@ -73,6 +76,7 @@ public class Punishment {
             switch (type) {
                 case BAN:
                     System.out.println("yo banning that dude");
+                    guild.getController().ban(punished, ((BanOptions)options).getDays(), reason).queue(success, error);
                     break;
                 case SOFTBAN:
                     break;

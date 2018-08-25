@@ -22,12 +22,6 @@ public class TestCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId())) return;
-        new PunishmentBuilder(command.getDeviGuild())
-                .setType(Punishment.Type.BAN)
-                .setPunished(sender.getMember())
-                .setPunisher(sender.getMember())
-                .setReason("test")
-                .build().execute();
     }
 
 

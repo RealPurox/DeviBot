@@ -7,7 +7,6 @@ import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -28,10 +27,10 @@ public class FlipCoinCommandExecutor implements CommandExecutor {
         int result = random.nextInt(2);
         if(result == 0){
             sender.reply(devi.getTranslation(command.getLanguage(), 402));
-            }else{
+        } else {
             sender.reply(devi.getTranslation(command.getLanguage(), 403));
         }
-        }
+    }
 
 
 

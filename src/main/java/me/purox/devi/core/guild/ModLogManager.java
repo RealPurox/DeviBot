@@ -6,6 +6,7 @@ import me.purox.devi.core.Language;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 import org.bson.Document;
 import java.awt.*;
@@ -49,6 +50,26 @@ public class ModLogManager {
             builder.setDescription(devi.getTranslation(language, 530, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ Emote.BAN.get());
             builder.addField(devi.getTranslation(language, 48), reason, true);
             builder.addField(devi.getTranslation(language, 47), punisher.getUser().getName() + "#" + punisher.getUser().getDiscriminator(), true);
+            builder.setThumbnail(member.getUser().getAvatarUrl());
+            builder.setFooter(devi.getTranslation(language, 69), null);
+            builder.setTimestamp(OffsetDateTime.now());
+
+            deviGuild.log(builder.build());
+        }
+    }
+
+    public void logVoiceKick(DeviGuild deviGuild, Member member, Member punisher, VoiceChannel channel, String reason) {
+        GuildSettings settings = deviGuild.getSettings();
+        if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_VOICEKICKS)) {
+            Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(new Color(255, 45, 40));
+            builder.setAuthor(devi.getTranslation(language, 69));
+            builder.setDescription(devi.getTranslation(language, 570, member.getUser().getName() + "#" + member.getUser().getDiscriminator())+ "\uD83D\uDCDE");
+            builder.addField(devi.getTranslation(language, 48), reason, true);
+            builder.addField(devi.getTranslation(language, 47), punisher.getUser().getName() + "#" + punisher.getUser().getDiscriminator(), true);
+            builder.addField(devi.getTranslation(language, 59), "`" + channel.getName() + "`", true);
             builder.setThumbnail(member.getUser().getAvatarUrl());
             builder.setFooter(devi.getTranslation(language, 69), null);
             builder.setTimestamp(OffsetDateTime.now());

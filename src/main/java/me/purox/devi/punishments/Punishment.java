@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
 import java.awt.*;
 import java.time.OffsetDateTime;
@@ -19,21 +20,21 @@ import java.util.function.Consumer;
 public class Punishment {
 
     public enum Type {
-        BAN, SOFTBAN, MUTE, KICK, VOICEKICK
+        BAN, SOFTBAN, MUTE, KICK, VOICEKICK, UNBAN
     }
 
     private DeviGuild deviGuild; //-
     private int caseId; //-
     private long time; //-
     private Punishment.Type type; //*
-    private Member punisher; //*
-    private Member punished; //*
+    private User punisher; //*
+    private User punished; //*
     private String reason; //*
     private String messageId; //TODO
     private String channelId; //TODO
     private Options options;
 
-    Punishment(DeviGuild deviGuild, int caseId, long time, Type type, Member punisher, Member punished, String reason, Options options) {
+    Punishment(DeviGuild deviGuild, int caseId, long time, Type type, User punisher, User punished, String reason, Options options) {
         this.deviGuild = deviGuild;
         this.caseId = caseId;
         this.time = time;
@@ -76,24 +77,53 @@ public class Punishment {
         this.channelId = logChannel.getId();
 
         GuildSettings settings = deviGuild.getSettings();
-        if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED) && settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_BANS)) {
-            Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(new Color(255, 68, 82));
-            builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
-            builder.setDescription(deviGuild.getDevi().getTranslation(language, 180, punished.getUser().getName() + "#" + punished.getUser().getDiscriminator() + " (" + punished.getAsMention() + ")"));
-            builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
-            builder.addField(deviGuild.getDevi().getTranslation(language, 47), punisher.getUser().getName() + "#" + punisher.getUser().getDiscriminator() + " (" + punisher.getAsMention() + ")", true);
-            builder.setThumbnail(punished.getUser().getAvatarUrl());
-            builder.setTimestamp(OffsetDateTime.now());
-
-            MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
-                execute(guild, success, error);
-                this.messageId = msg.getId();
-            });
-        } else {
+        if (!settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED)) {
             execute(guild, success, error);
+            return;
+        }
+
+        switch (type) {
+            case BAN:
+                if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_BANS)) {
+                    Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setColor(new Color(255, 68, 82));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setDescription(deviGuild.getDevi().getTranslation(language, 596, punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 47), punisher.getName() + "#" + punisher.getDiscriminator() + " (" + punisher.getAsMention() + ")", true);
+                    builder.setThumbnail(punished.getAvatarUrl());
+                    builder.setTimestamp(OffsetDateTime.now());
+
+                    MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
+                        execute(guild, success, error);
+                        this.messageId = msg.getId();
+                    });
+                } else execute(guild, success, error);
+                break;
+            case UNBAN:
+                if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_BANS)) {
+                    Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setColor(new Color(255, 68, 82));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setDescription(deviGuild.getDevi().getTranslation(language, 596, punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 47), punisher.getName() + "#" + punisher.getDiscriminator() + " (" + punisher.getAsMention() + ")", true);
+                    builder.setThumbnail(punished.getAvatarUrl());
+                    builder.setTimestamp(OffsetDateTime.now());
+
+                    MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
+                        execute(guild, success, error);
+                        this.messageId = msg.getId();
+                    });
+                } else execute(guild, success, error);
+                break;
+            default:
+                break;
         }
     }
 
@@ -102,8 +132,12 @@ public class Punishment {
             case BAN:
                 System.out.println("yo banning that dude");
                 //note this might fail
-                MessageUtils.sendPrivateMessageAsync(punished.getUser(), Emote.INFO + " | " + deviGuild.getDevi().getTranslation(Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE)), 17, "`" + guild.getName() + "`", "\"" + reason + "\""));
+                MessageUtils.sendPrivateMessageAsync(punished, Emote.INFO + " | " + deviGuild.getDevi().getTranslation(Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE)), 17, "`" + guild.getName() + "`", "\"" + reason + "\""));
                 guild.getController().ban(punished, ((BanOptions)options).getDays(), reason).queue(success, error);
+                break;
+            case UNBAN:
+                System.out.println("yo unbann that dude");
+                guild.getController().unban(punished).queue(success, error);
                 break;
             case SOFTBAN:
                 break;

@@ -7,6 +7,7 @@ import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.punishments.options.*;
 import me.purox.devi.utils.JavaUtils;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.Checks;
 import org.bson.Document;
 
@@ -16,8 +17,8 @@ public class PunishmentBuilder {
     private int caseId; //auto
     private long time; //auto
     private Punishment.Type type; //required
-    private Member punisher; //required
-    private Member punished; //required
+    private User punisher; //required
+    private User punished; //required
     private String reason; //required
     private Options options; //optional
 
@@ -36,12 +37,12 @@ public class PunishmentBuilder {
         return this;
     }
 
-    public PunishmentBuilder setPunisher(Member punisher) {
+    public PunishmentBuilder setPunisher(User punisher) {
         this.punisher = punisher;
         return this;
     }
 
-    public PunishmentBuilder setPunished(Member punished) {
+    public PunishmentBuilder setPunished(User punished) {
         this.punished = punished;
         return this;
     }

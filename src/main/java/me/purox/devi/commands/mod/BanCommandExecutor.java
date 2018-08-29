@@ -74,13 +74,12 @@ public class BanCommandExecutor implements CommandExecutor {
         new PunishmentBuilder(command.getDeviGuild())
                 .setReason(reason)
                 .setOptions(new BanOptions().setDays(skipDays ? 0 : days))
-                .setPunished(member)
-                .setPunisher(sender.getMember())
+                .setPunished(member.getUser())
+                .setPunisher(sender)
                 .setType(Punishment.Type.BAN)
                 .build()
-                .execute(success -> {
-                    sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 596, "`" + user.getName() + "#" + user.getDiscriminator() + "`"));
-                }, error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 25)));
+                .execute(success -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 596, "`" + user.getName() + "#" + user.getDiscriminator() + "`")),
+                        error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 25)));
     }
 
     @Override

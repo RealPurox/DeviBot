@@ -34,6 +34,10 @@ public class MessageUtils {
         return false;
     }
 
+    /**
+     *
+     * @return true if the bot has permission to add all reactions **NOTE: it doesn't return if all reactions were added successfully as that happens async**
+     */
     public static boolean addReactions(Message message, String... emote) {
         MessageChannel channel = message.getChannel();
         if(channel instanceof TextChannel){

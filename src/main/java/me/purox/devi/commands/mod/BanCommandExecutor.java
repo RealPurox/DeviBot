@@ -10,7 +10,6 @@ import me.purox.devi.punishments.Punishment;
 import me.purox.devi.punishments.PunishmentBuilder;
 import me.purox.devi.punishments.options.BanOptions;
 import me.purox.devi.utils.DiscordUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
@@ -32,7 +31,9 @@ public class BanCommandExecutor implements CommandExecutor {
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length < 1) {
             sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "ban <user> [days] [reason]`\n\n" +
-                    devi.getTranslation(command.getLanguage(), 594, "`[days]`", "`[reason]`")));
+                            devi.getTranslation(command.getLanguage(), 597, "`[days]`") + "\n" +
+                            devi.getTranslation(command.getLanguage(), 598, "`[reason]`") + "\n\n" +
+                            devi.getTranslation(command.getLanguage(), 594, "`[days]`", "`[reason]`")));
             return;
         }
 
@@ -70,7 +71,6 @@ public class BanCommandExecutor implements CommandExecutor {
         if (args.length > 1)
             reason = Arrays.stream(args).skip(skipDays ? 1 : 2).collect(Collectors.joining(" "));
 
-        String finalReason = reason;
         new PunishmentBuilder(command.getDeviGuild())
                 .setReason(reason)
                 .setOptions(new BanOptions().setDays(skipDays ? 0 : days))
@@ -80,7 +80,6 @@ public class BanCommandExecutor implements CommandExecutor {
                 .build()
                 .execute(success -> {
                     sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 596, "`" + user.getName() + "#" + user.getDiscriminator() + "`"));
-                    MessageUtils.sendPrivateMessageAsync(user, Emote.INFO + devi.getTranslation(command.getLanguage(), 17, "`" + command.getEvent().getGuild().getName() + "`", "\"" + finalReason + "\""));
                 }, error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 25)));
     }
 

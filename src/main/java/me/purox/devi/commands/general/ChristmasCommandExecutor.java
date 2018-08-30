@@ -3,6 +3,7 @@ package me.purox.devi.commands.general;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
+import me.purox.devi.core.AnimatedEmote;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -35,7 +36,7 @@ public class ChristmasCommandExecutor implements CommandExecutor {
             long time = TimeUnit.MILLISECONDS.toDays(c.getTimeInMillis() - System.currentTimeMillis());
 
             embedBuilder.setColor(Color.decode("#d42426"));
-            embedBuilder.setTitle(devi.getTranslation(command.getLanguage(), 590));
+            embedBuilder.setTitle(devi.getTranslation(command.getLanguage(), 590) + " " + new AnimatedEmote(devi).CristmasParrotEmote().getAsMention());
             embedBuilder.setDescription(devi.getTranslation(command.getLanguage(), 591, "**" + time + "**") + "\n" +
                     devi.getTranslation(command.getLanguage(), 592) + ": " + dateTimeFormatter.format(c.getTime()));
             sender.reply(embedBuilder.build());

@@ -41,7 +41,7 @@ public class TranslationsCommandExecutor implements CommandExecutor {
                 }
                 sender.reply(builder.toString());
             } catch (NumberFormatException e) {
-                sender.reply("Invalid id." + new AnimatedEmote(devi).EvilParrot());
+                sender.reply("Invalid id. " + new AnimatedEmote(devi).EvilParrot().getAsMention());
             }
         }
 

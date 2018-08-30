@@ -24,7 +24,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.managers.GuildController;
 import net.jodah.expiringmap.ExpiringMap;
 import okhttp3.OkHttpClient;
 import org.bson.Document;
@@ -64,6 +63,7 @@ public class Devi {
     private HashMap<String, List<String>> streams = new HashMap<>();
     private List<ModuleType> disabledModules = new ArrayList<>();
     private List<String> voters = new ArrayList<>();
+    private List<Game> gameStatuses = new ArrayList<>();
 
     private OkHttpClient okHttpClient;
     private Jedis redisSender;
@@ -87,6 +87,7 @@ public class Devi {
         this.responseWaiter = new ResponseWaiter();
         new MessageUtils(this);
         this.animatedEmotes = new AnimatedEmote(this);
+
 
         songsPlayed = 0;
         commandsExecuted = 0;
@@ -178,8 +179,8 @@ public class Devi {
             builder.setShardsTotal(shards);
 
             // make the dev bot listen to code | display website on main bot
-            builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.watching("devibot.net"));
-
+            //builder.setGame(settings.isDevBot() ? Game.listening("code") : setDefaultPlaying());
+            builder.setGame(Game.playing("devibot.net"));
             // add event listeners
             builder.addEventListeners(new ReadyListener(this));
             builder.addEventListeners(new CommandListener(this));
@@ -190,6 +191,8 @@ public class Devi {
 
             // build & login
             this.shardManager = builder.build();
+            defaultGameLoop();
+
         } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
             e.printStackTrace();
             logger.wtf("BOOTING FAILED - SHUTTING DOWN");
@@ -201,12 +204,37 @@ public class Devi {
         shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
     }
 
+    public void defaultGameLoop() throws InterruptedException {
+        if (settings.isDevBot()) {
+            setGame(Game.listening("to code"));
+        } else {
+            // block current thread for 3 seconds to complete shard loader
+            Thread.sleep(3000);
+
+            gameStatuses.add(Game.listening(new Stats().getUsers() + " users"));
+            gameStatuses.add(Game.playing("type !help"));
+            gameStatuses.add(Game.listening(new Stats().getGuilds() + " guilds"));
+            gameStatuses.add(Game.watching("devibot.net"));
+
+            AtomicInteger i = new AtomicInteger(gameStatuses.size() - 1);
+            Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+                Game game = gameStatuses.get(i.get());
+                i.getAndDecrement();
+                if (i.get() < 0) {
+                    i.set(gameStatuses.size() - 1);
+                }
+                setGame(game);
+
+            }, 0, 2, TimeUnit.MINUTES);
+        }
+    }
+
     public void reboot(int minutes, MessageChannel channel) {
         AtomicInteger min = new AtomicInteger(minutes + 1);
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             int next = min.decrementAndGet();
-            setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
+            setGame(Game.playing("rebooting in " + next + " min" + (next == 1 ? "" : "s")));
             if (next == 0) {
                 if (channel != null) {
                     channel.sendMessage(getAnimatedEmotes().FixParrot().getAsMention() + " cya later alligator").complete();

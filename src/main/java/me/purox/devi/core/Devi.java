@@ -180,7 +180,7 @@ public class Devi {
 
             // make the dev bot listen to code | display website on main bot
             //builder.setGame(settings.isDevBot() ? Game.listening("code") : setDefaultPlaying());
-            builder.setGame(Game.playing("devibot.net"));
+            builder.setGame(Game.listening("startup code."));
             // add event listeners
             builder.addEventListeners(new ReadyListener(this));
             builder.addEventListeners(new CommandListener(this));

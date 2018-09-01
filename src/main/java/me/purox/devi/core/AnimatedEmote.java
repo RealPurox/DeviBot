@@ -1,6 +1,5 @@
 package me.purox.devi.core;
 
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Guild;
 

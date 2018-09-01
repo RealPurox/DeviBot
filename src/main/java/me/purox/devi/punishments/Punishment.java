@@ -122,6 +122,25 @@ public class Punishment {
                     });
                 } else execute(guild, success, error);
                 break;
+            case KICK:
+                if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_KICKS)) {
+                    Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setColor(new Color(255, 249, 58));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setDescription(deviGuild.getDevi().getTranslation(language, 606, punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 47), punisher.getName() + "#" + punisher.getDiscriminator() + " (" + punisher.getAsMention() + ")", true);
+                    builder.setThumbnail(punished.getAvatarUrl());
+                    builder.setTimestamp(OffsetDateTime.now());
+
+                    MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
+                        execute(guild, success, error);
+                        this.messageId = msg.getId();
+                    });
+                } else execute(guild, success, error);
+                break;
             default:
                 break;
         }
@@ -136,14 +155,18 @@ public class Punishment {
                 guild.getController().ban(punished, ((BanOptions)options).getDays(), reason).queue(success, error);
                 break;
             case UNBAN:
-                System.out.println("yo unbann that dude");
+                System.out.println("yo unbanning that dude");
                 guild.getController().unban(punished).queue(success, error);
                 break;
-            case SOFTBAN:
+            case KICK:
+                System.out.println("yo kicking that dude");
+                //note this might fail
+                MessageUtils.sendPrivateMessageAsync(punished, Emote.INFO + " | " + deviGuild.getDevi().getTranslation(Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE)), 532, "`" + guild.getName() + "`", "\"" + reason + "\""));
+                guild.getController().kick(punished.getId(), reason).queue(success, error);
                 break;
             case MUTE:
                 break;
-            case KICK:
+            case SOFTBAN:
                 break;
             case VOICEKICK:
                 break;

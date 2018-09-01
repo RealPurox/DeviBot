@@ -6,6 +6,8 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.punishments.Punishment;
+import me.purox.devi.punishments.PunishmentBuilder;
 import me.purox.devi.utils.DiscordUtils;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
@@ -27,40 +29,39 @@ public class KickCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if(args.length < 2){
-            sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "kick <user> <reason>`"));
+        if(args.length < 1){
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "kick <user> [reason]`\n\n" +
+                    devi.getTranslation(command.getLanguage(), 605, "`[reason]`")));
             return;
         }
 
         User user = DiscordUtils.getUser(args[0], command.getEvent().getGuild());
         if (user == null) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
             return;
         }
 
         Member member = command.getEvent().getGuild().getMember(user);
         if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) || command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
-            sender.reply( devi.getTranslation(command.getLanguage(), 528));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 528));
             return;
         }
 
         if (sender.getId().equalsIgnoreCase(user.getId()) ||
                 !PermissionUtil.checkPermission(command.getEvent().getGuild().getSelfMember(), Permission.KICK_MEMBERS) ||
                 !PermissionUtil.canInteract(command.getEvent().getGuild().getSelfMember(), member)) {
-            sender.reply( devi.getTranslation(command.getLanguage(), 529));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 529));
             return;
         }
 
-        String reason = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
-
-        command.getEvent().getGuild().getController().kick(member).queue(
-                success -> {
-                    devi.getModLogManager().logKick(command.getDeviGuild(), member, command.getEvent().getMember(), reason);
-                    MessageUtils.sendPrivateMessageAsync(user, devi.getTranslation(command.getLanguage(), 532, "**" + command.getEvent().getGuild().getName() + "**", "\"" + reason + "\""));
-                    sender.reply((Emote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 535, "**"+user.getName()+"#"+user.getDiscriminator()+"**", "`"+reason+"`")));
-                },
-                error -> sender.reply(devi.getTranslation(command.getLanguage(), 531))
-        );
+        String reason = args.length == 1 ? "Unknown reason" : Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
+        new PunishmentBuilder(command.getDeviGuild())
+                .setReason(reason)
+                .setType(Punishment.Type.KICK)
+                .setPunished(user)
+                .setPunisher(sender)
+                .build().execute(success -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 606, "`" + user.getName() + "#" + user.getDiscriminator() + "`")),
+                error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 531)));
     }
 
     @Override

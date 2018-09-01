@@ -232,6 +232,7 @@ public class Devi {
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
         this.rebootTime = new Date(today.getTimeInMillis() + 900000);
     }
+
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
             Set<String> copy = new HashSet<>(streamIDs);
@@ -328,7 +329,6 @@ public class Devi {
         String translation = deviTranslations.get(language).get(id);
         if (translation == null) {
             if (language == Language.ENGLISH) {
-                System.out.println("yo");
                 sendMessageToDevelopers("Translation for id `" + id + "` not found. Please fix this immediately @everyone");
                 return "Failed to lookup the the translation for id `" + id + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
             }
@@ -662,6 +662,7 @@ public class Devi {
     public List<String> getVoters() {
         return voters;
     }
+
     public AnimatedEmote getAnimatedEmotes() {
         return animatedEmotes;
     }

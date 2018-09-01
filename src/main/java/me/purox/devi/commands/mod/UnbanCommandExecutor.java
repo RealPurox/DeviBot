@@ -15,6 +15,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,35 +40,37 @@ public class UnbanCommandExecutor implements CommandExecutor {
             return;
         }
 
-        //todo retrieve ban history async
-        //todo perms check
-        User bannedUser = getUser(args[0], command.getEvent().getGuild().getBanList().complete());
-        if (bannedUser == null) {
-            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
+        if (!command.getEvent().getGuild().getSelfMember().hasPermission(Permission.BAN_MEMBERS)) {
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 603));
             return;
         }
 
-        if (!PermissionUtil.checkPermission(command.getEvent().getGuild().getSelfMember(), Permission.BAN_MEMBERS)) {
-            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 21));
-            return;
-        }
+        command.getEvent().getGuild().getBanList().queue(bans -> {
+            Guild.Ban ban = getBan(args[0], bans);
 
-        String reason = args.length == 1 ? "Unknown reason" : Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
-        new PunishmentBuilder(command.getDeviGuild())
-                .setReason(reason)
-                .setType(Punishment.Type.UNBAN)
-                .setPunished(bannedUser)
-                .setPunisher(sender)
-                .build().execute(success -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 600, "`" + bannedUser.getName() + "#" + bannedUser.getDiscriminator() + "`")),
-                        error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 601)));
+            if (ban == null) {
+                sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
+                return;
+            }
+
+            String reason = args.length == 1 ? "Unknown reason" : Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
+            new PunishmentBuilder(command.getDeviGuild())
+                    .setReason(reason)
+                    .setType(Punishment.Type.UNBAN)
+                    .setPunished(ban.getUser())
+                    .setPunisher(sender)
+                    .build().execute(success -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 600, "`" + ban.getUser().getName() + "#" + ban.getUser().getDiscriminator() + "`")),
+                    error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 601)));
+        }, failure -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 604)));
     }
 
-    //TODO return ban entry
-    private User getUser(String input, List<Guild.Ban> banList) {
+    private Guild.Ban getBan(String input, List<Guild.Ban> banList) {
         for (Guild.Ban ban : banList) {
-            if (ban.getUser().getAsMention().equals(input)) return ban.getUser();
-            if (ban.getUser().getId().equals(input)) return ban.getUser();
-            if (ban.getUser().getName().equals(input)) return ban.getUser();
+            if (ban.getUser().getAsMention().equals(input)) return ban;
+            if (ban.getUser().getId().equals(input)) return ban;
+            //try to not ignore case sensitivity first
+            if (ban.getUser().getName().equals(input)) return ban;
+            if (ban.getUser().getName().equalsIgnoreCase(input)) return ban;
         }
         return null;
     }
@@ -83,7 +86,7 @@ public class UnbanCommandExecutor implements CommandExecutor {
 
     @Override
     public List<String> getAliases() {
-        return null;
+        return Collections.singletonList("pardon");
     }
 
     @Override

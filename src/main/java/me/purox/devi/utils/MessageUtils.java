@@ -98,6 +98,7 @@ public class MessageUtils {
         }
     }
 
+    //todo failure consumer
     public static void sendMessageAsync(MessageChannel channel, Object object, Consumer<? super Message> consumer) {
         if (channel.getType() == ChannelType.PRIVATE) {
             sendPrivateMessageAsync(((PrivateChannel)channel).getUser(), object);

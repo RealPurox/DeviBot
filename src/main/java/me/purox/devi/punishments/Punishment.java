@@ -108,11 +108,11 @@ public class Punishment {
                     Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
 
                     EmbedBuilder builder = new EmbedBuilder();
-                    builder.setColor(new Color(255, 68, 82));
+                    builder.setColor(new Color(71, 255, 38));
                     builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
-                    builder.setDescription(deviGuild.getDevi().getTranslation(language, 596, punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
+                    builder.setDescription(deviGuild.getDevi().getTranslation(language, 600, punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
                     builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
-                    builder.addField(deviGuild.getDevi().getTranslation(language, 47), punisher.getName() + "#" + punisher.getDiscriminator() + " (" + punisher.getAsMention() + ")", true);
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 602), punisher.getName() + "#" + punisher.getDiscriminator() + " (" + punisher.getAsMention() + ")", true);
                     builder.setThumbnail(punished.getAvatarUrl());
                     builder.setTimestamp(OffsetDateTime.now());
 

@@ -30,7 +30,7 @@ public class MuteListCommandExecutor implements CommandExecutor {
         List<List<String>> mutes = JavaUtils.chopList(docs, 10);
 
         if (mutes.size() == 0) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 64));
+            sender.reply(devi.getTranslation(command.getLanguage(), 608));
             return;
         }
 

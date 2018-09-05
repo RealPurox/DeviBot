@@ -8,19 +8,20 @@ import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
-import me.purox.devi.core.Language;
+import me.purox.devi.punishments.Punishment;
+import me.purox.devi.punishments.PunishmentBuilder;
 import me.purox.devi.utils.DiscordUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleRemoveEvent;
-import net.dv8tion.jda.core.events.role.RoleDeleteEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
+import net.dv8tion.jda.core.requests.restaction.RoleAction;
 import net.dv8tion.jda.core.utils.PermissionUtil;
-import org.bson.Document;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class MuteCommandExecutor extends ListenerAdapter implements CommandExecutor {
@@ -32,37 +33,16 @@ public class MuteCommandExecutor extends ListenerAdapter implements CommandExecu
     }
 
     @Override
-    public void onRoleDelete(RoleDeleteEvent event) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        if (event.getRole().getId().equals(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MUTE_ROLE))) {
-            deviGuild.getMuted().clear();
-            deviGuild.saveSettings();
-        }
-    }
-
-    @Override
-    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
-        DeviGuild deviGuild = devi.getDeviGuild(event.getGuild().getId());
-        event.getRoles().forEach(role -> {
-            if (role.getId().equals(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MUTE_ROLE))) {
-                if(deviGuild.getMuted().containsKey(event.getUser().getId())) {
-                    deviGuild.getMuted().remove(event.getUser().getId());
-                    deviGuild.saveSettings();
-                }
-            }
-        });
-    }
-
-    @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (args.length < 2) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "mute <user> <reason>`"));
+        if(args.length < 1){
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "mute <user> [reason]`\n\n" +
+                    devi.getTranslation(command.getLanguage(), 607, "`[reason]`")));
             return;
         }
 
         User user = DiscordUtils.getUser(args[0], command.getEvent().getGuild());
         if (user == null) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 13, "`" + args[0] + "`"));
             return;
         }
         Member member = command.getEvent().getGuild().getMember(user);
@@ -83,43 +63,34 @@ public class MuteCommandExecutor extends ListenerAdapter implements CommandExecu
         }
 
         Role role = command.getEvent().getGuild().getRoleById(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.MUTE_ROLE));
-        if (role == null) {
-            role = createMuteRole(command.getEvent().getGuild());
-        }
+        //todo
+        if (role == null) {}
 
-        muteMember(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")),
-                sender.getName() + "#" + sender.getDiscriminator(),
-                devi, command.getEvent().getGuild(), member, role, command.getEvent().getTextChannel());
+        String reason = args.length == 1 ? "Unknown reason" : Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
+        new PunishmentBuilder(command.getDeviGuild())
+                .setType(Punishment.Type.MUTE)
+                .setReason(reason);
+
+
+        //muteMember(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")),
+          //      sender.getName() + "#" + sender.getDiscriminator(),
+            //    devi, command.getEvent().getGuild(), member, role, command.getEvent().getTextChannel());
     }
 
-    private Role createMuteRole(Guild guild) {
+    private RoleAction createMuteRole(Guild guild) {
         DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
-        Role role = guild.getController().createRole().setName("Muted").complete();
+        return guild.getController().createRole().setName("Muted").setColor(Color.decode("#7289DA")).setMentionable(false).setHoisted(true);
+    }
+
+    private void updateRole(Role role, Guild guild) {
         guild.getTextChannels().forEach(channel -> {
             if (PermissionUtil.checkPermission(channel, guild.getSelfMember(), Permission.MANAGE_PERMISSIONS)) {
                 channel.createPermissionOverride(role).setDeny(Permission.MESSAGE_WRITE).queue();
             }
         });
-        deviGuild.getSettings().setStringValue(GuildSettings.Settings.MUTE_ROLE, role.getId());
-        return role;
+        devi.getDeviGuild(guild.getId()).getSettings().setStringValue(GuildSettings.Settings.MUTE_ROLE, role.getId());
     }
 
-    private void muteMember(String reason, String punisher, Devi devi, Guild guild, Member member, Role muteRole, TextChannel channel) {
-        DeviGuild deviGuild = devi.getDeviGuild(guild.getId());
-        Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-        guild.getController().addRolesToMember(member, muteRole).queue(
-                success-> {
-                    Document punishment = new Document();
-                    punishment.put("reason", reason);
-                    punishment.put("punisher", punisher);
-
-                    deviGuild.getMuted().put(member.getUser().getId(), punishment);
-                    deviGuild.saveSettings();
-                    devi.getModLogManager().logMute(deviGuild, member, punisher, reason);
-                    MessageUtils.sendMessageAsync(channel, Emote.MUTE.get() + " " + devi.getTranslation(language, 29, member.getUser().getName() + "#" + member.getUser().getDiscriminator(), "`" +reason+"`"));
-                },
-                failure -> MessageUtils.sendMessageAsync(channel, devi.getTranslation(language, 30, member.getUser().getName() + "#" + member.getUser().getDiscriminator())));
-    }
 
     @Override
     public boolean guildOnly() {

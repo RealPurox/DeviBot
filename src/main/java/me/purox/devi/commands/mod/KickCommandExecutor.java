@@ -9,7 +9,6 @@ import me.purox.devi.core.ModuleType;
 import me.purox.devi.punishments.Punishment;
 import me.purox.devi.punishments.PunishmentBuilder;
 import me.purox.devi.utils.DiscordUtils;
-import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;

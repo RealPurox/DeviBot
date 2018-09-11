@@ -83,7 +83,7 @@ public class VoiceKickCommandExecutor implements CommandExecutor {
                     devi.getModLogManager().logVoiceKick(command.getDeviGuild(), member, command.getEvent().getMember(), connectedChannel, reason);
                     temp.delete().queue(complete -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 575, "**" + user.getName() + "**", "`" + connectedChannel.getName() + "`", "`" + reason + "`")));
                 }));
-            }
+    }
 
     @Override
     public boolean guildOnly() {

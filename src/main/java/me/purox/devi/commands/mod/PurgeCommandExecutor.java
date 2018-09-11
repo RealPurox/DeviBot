@@ -7,12 +7,12 @@ import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
-import net.jodah.expiringmap.ExpirationPolicy;
+import net.dv8tion.jda.core.entities.TextChannel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class PurgeCommandExecutor implements CommandExecutor {
 
@@ -24,7 +24,7 @@ public class PurgeCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (args.length < 1) {
-          sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix()+ "purge <messages>`"));
+           sender.reply(devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix()+ "purge <messages>`"));
            return;
         }
 
@@ -35,20 +35,66 @@ public class PurgeCommandExecutor implements CommandExecutor {
             amount = -1;
         }
 
-        int finalAmount = amount;
-        List<Message> messages;
-        try {
-            messages = command.getEvent().getChannel().getHistoryBefore(command.getEvent().getMessageId(), amount).complete().getRetrievedHistory();
-            messages.forEach(message -> devi.getPrunedMessages().put(message.getId(), "", ExpirationPolicy.CREATED, 5, TimeUnit.MINUTES));
-
-            command.getEvent().getTextChannel().deleteMessages(messages).queue(
-                    success -> sender.reply(devi.getTranslation(command.getLanguage(), 153, finalAmount))
-            );
-        } catch (InsufficientPermissionException e) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 155));
-        } catch (IllegalArgumentException e) {
-            sender.reply(devi.getTranslation(command.getLanguage(), 152));
+        //limit to 500
+        if (amount > 500 || amount < 1) {
+            sender.reply("//TODO EDIT LATER => Limit extended");
+            return;
         }
+
+        retrieveHistory(command.getEvent().getTextChannel(), command.getEvent().getMessageId(), amount, messages -> {
+                sender.reply("SUCCESS");
+        }, failure -> sender.reply("FAILURE: " + failure.getMessage()));
+    }
+
+    //TODO CLEAN THIS FUCKING MESS
+    private void retrieveHistory(TextChannel channel, String firstId, int amount, Consumer<? super Void> completed, Consumer<? super Throwable> failure) {
+        List<Message> retrieved = new ArrayList<>();
+        //100
+        channel.getHistoryBefore(firstId, 100)
+                .queue(messageHistory1 -> {
+                    retrieved.addAll(messageHistory1.getRetrievedHistory());
+
+                    if (amount <= 100) {
+                        channel.deleteMessages(retrieved).queue(completed, failure);
+                    }
+                    //200
+                    else
+                        channel.getHistoryBefore(retrieved.get(retrieved.size() - 1).getId(), 100)
+                                .queue(messageHistory2 -> {
+                                    retrieved.addAll(messageHistory2.getRetrievedHistory());
+
+                                    if (amount <= 200) {
+                                        channel.deleteMessages(retrieved).queue(completed, failure);
+                                    }
+                                    //300
+                                    else
+                                        channel.getHistoryBefore(retrieved.get(retrieved.size() - 1), 100)
+                                                .queue(messageHistory3 -> {
+                                                    retrieved.addAll(messageHistory3.getRetrievedHistory());
+
+                                                    if (amount <= 300) {
+                                                        channel.deleteMessages(retrieved).queue(completed, failure);
+                                                    }
+                                                    //400
+                                                    else
+                                                        channel.getHistoryBefore(retrieved.get(retrieved.size() - 1), 100)
+                                                            .queue(messageHistory4 -> {
+                                                                retrieved.addAll(messageHistory4.getRetrievedHistory());
+
+                                                                if (amount <= 400) {
+                                                                    channel.deleteMessages(retrieved).queue(completed, failure);
+                                                                }
+                                                                //500
+                                                                else
+                                                                    channel.getHistoryBefore(retrieved.get(retrieved.size() -1 ), 100)
+                                                                        .queue(messageHistory5 -> {
+                                                                            retrieved.addAll(messageHistory5.getRetrievedHistory());
+                                                                            channel.deleteMessages(retrieved).queue(completed, failure);
+                                                                        });
+                                                            });
+                                                });
+                                });
+                }, failure);
     }
 
     @Override

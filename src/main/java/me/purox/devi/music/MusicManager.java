@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -22,15 +23,17 @@ public class MusicManager {
     private Devi devi;
     private AudioPlayerManager audioPlayerManager;
     private HashMap<String, GuildPlayer> guildPlayers;
+    private ScheduledExecutorService threadPool;
 
     public MusicManager (Devi devi) {
         this.devi = devi;
+        this.threadPool = Executors.newSingleThreadScheduledExecutor();
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.guildPlayers = new HashMap<>();
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
 
         //check every 2 min if we can destroy GuildPlayers
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+        threadPool.scheduleAtFixedRate(() -> {
             guildPlayers.values().forEach(guildPlayer -> {
                 if (guildPlayer.getDestroyTime() <= System.currentTimeMillis()) {
                     guildPlayer.destroy(true);
@@ -81,5 +84,9 @@ public class MusicManager {
 
     public HashMap<String, GuildPlayer> getGuildPlayers() {
         return guildPlayers;
+    }
+
+    public ScheduledExecutorService getThreadPool() {
+        return threadPool;
     }
 }

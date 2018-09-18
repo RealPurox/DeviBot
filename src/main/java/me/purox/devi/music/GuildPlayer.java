@@ -119,7 +119,6 @@ public class GuildPlayer extends AudioEventAdapter {
     }
 
     public void destroy(boolean leave) {
-        System.out.println("destroyed guild player " + this.guild.getId());
         if (leave) leave(null, null, true);
         audioPlayer.removeListener(this);
         audioPlayer.destroy();

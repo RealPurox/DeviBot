@@ -106,7 +106,6 @@ public class GuildPlayer extends AudioEventAdapter {
     }
 
     public AudioInfo getCurrent() {
-        if (audioPlayer.isPaused() || audioPlayer.getPlayingTrack() == null) return null;
         return queue.get(0);
     }
 
@@ -160,15 +159,17 @@ public class GuildPlayer extends AudioEventAdapter {
             AudioTrack clone = track.makeClone();
             player.playTrack(clone);
             queue.set(0, new AudioInfo(clone, queue.get(0).getRequester()));
+            return;
         }
         else if (endReason == AudioTrackEndReason.STOPPED) {
             if (queue.size() == 0) {
                 leave(null, null, true);
+                return;
             }
-        } else {
-            queue.remove();
-            playNext();
         }
+        queue.remove();
+        playNext();
+
     }
 
     public void loadSong(String query, Command command, CommandSender sender) {

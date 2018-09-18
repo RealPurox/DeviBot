@@ -91,8 +91,6 @@ public class CommandHandler {
         registerCommand("kick", new KickCommandExecutor(devi));
         registerCommand("mute", new MuteCommandExecutor(devi));
         registerCommand("unmute", new UnmuteCommandExecutor(devi));
-        registerCommand("banlist", new BanListCommandExecutor(devi));
-        registerCommand("mutelist", new MuteListCommandExecutor(devi));
         registerCommand("purge", new PurgeCommandExecutor(devi));
         registerCommand("voicekick", new VoiceKickCommandExecutor(devi));
 

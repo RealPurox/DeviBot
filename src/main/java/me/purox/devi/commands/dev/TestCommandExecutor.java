@@ -5,7 +5,8 @@ import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
-import me.purox.devi.core.waiter.WaitingResponseBuilder;
+import me.purox.devi.punishments.Punishment;
+import me.purox.devi.punishments.PunishmentBuilder;
 import net.dv8tion.jda.core.Permission;
 
 import java.util.List;
@@ -21,7 +22,6 @@ public class TestCommandExecutor implements CommandExecutor {
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
         if (!devi.getAdmins().contains(sender.getId())) return;
-        sender.reply("gtfo " + devi.getAnimatedEmotes().HalloweenParrot().getAsMention());
     }
 
 

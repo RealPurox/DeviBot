@@ -34,6 +34,10 @@ public class MessageUtils {
         return false;
     }
 
+    /**
+     *
+     * @return true if the bot has permission to add all reactions **NOTE: it doesn't return if all reactions were added successfully as that happens async**
+     */
     public static boolean addReactions(Message message, String... emote) {
         MessageChannel channel = message.getChannel();
         if(channel instanceof TextChannel){
@@ -94,8 +98,8 @@ public class MessageUtils {
         }
     }
 
-
-    public static void sendMessageAsync(MessageChannel channel, Object object, Consumer<Message> success) {
+    //todo failure consumer
+    public static void sendMessageAsync(MessageChannel channel, Object object, Consumer<? super Message> consumer) {
         if (channel.getType() == ChannelType.PRIVATE) {
             sendPrivateMessageAsync(((PrivateChannel)channel).getUser(), object);
             return;
@@ -108,13 +112,13 @@ public class MessageUtils {
                     if (!PermissionUtil.checkPermission((TextChannel) channel, ((TextChannel)channel).getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
                         DeviGuild deviGuild = devi.getDeviGuild(((TextChannel) channel).getGuild().getId());
                         Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-                        channel.sendMessage(devi.getTranslation(language, 150)).queue(success);
+                        channel.sendMessage(devi.getTranslation(language, 150)).queue(consumer);
                     }
-                    else channel.sendMessage((MessageEmbed) object).queue(success);
+                    else channel.sendMessage((MessageEmbed) object).queue(consumer);
                 } else if (object instanceof String) {
-                    channel.sendMessage((String) object).queue(success);
+                    channel.sendMessage((String) object).queue(consumer);
                 } else if (object instanceof Message) {
-                    channel.sendMessage((Message) object).queue(success);
+                    channel.sendMessage((Message) object).queue(consumer);
                 } else {
                     throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
                 }

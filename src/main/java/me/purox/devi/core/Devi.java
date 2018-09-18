@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import me.purox.devi.Logger;
 import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.listener.*;
-import me.purox.devi.core.guild.ModLogManager;
 import me.purox.devi.commands.handler.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -51,7 +50,6 @@ public class Devi {
     private MusicManager musicManager;
     private DatabaseManager databaseManager;
     private CommandHandler commandHandler;
-    private ModLogManager modLogManager;
     private ShardManager shardManager;
     private ResponseWaiter responseWaiter;
     private AnimatedEmote animatedEmotes;
@@ -80,7 +78,6 @@ public class Devi {
         this.settings = new Settings();
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
-        this.modLogManager = new ModLogManager(this);
         this.logger = new Logger(this);
         this.okHttpClient = new OkHttpClient();
         this.responseWaiter = new ResponseWaiter();
@@ -185,7 +182,6 @@ public class Devi {
             builder.addEventListeners(new MessageListener(this));
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
-            builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
 
             // build & login
             this.shardManager = builder.build();
@@ -196,7 +192,7 @@ public class Devi {
         }
     }
 
-    public void setGame(Game game) {
+    private void setGame(Game game) {
         shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
     }
 
@@ -231,6 +227,7 @@ public class Devi {
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
         this.rebootTime = new Date(today.getTimeInMillis() + 900000);
     }
+
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
             Set<String> copy = new HashSet<>(streamIDs);
@@ -327,7 +324,6 @@ public class Devi {
         String translation = deviTranslations.get(language).get(id);
         if (translation == null) {
             if (language == Language.ENGLISH) {
-                System.out.println("yo");
                 sendMessageToDevelopers("Translation for id `" + id + "` not found. Please fix this immediately @everyone");
                 return "Failed to lookup the the translation for id `" + id + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
             }
@@ -422,7 +418,8 @@ public class Devi {
 
                             builder.setThumbnail(userData.getString("profile_image_url"));
 
-                            logger.log("Sending stream announcement for twitch streamer " + userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
+                            logger.log("Sending stream announcement for twitch streamer " +
+                                    userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
                             MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
                                     .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
                                     .setEmbed(builder.build()).build());
@@ -453,7 +450,7 @@ public class Devi {
         private long channels;
         private long ping;
 
-        public Stats() {
+        Stats() {
             this.shards = shardManager.getShards().size();
             this.guilds = 0;
             this.users = 0;
@@ -473,7 +470,7 @@ public class Devi {
             this.ping = this.ping / this.shards;
         }
 
-        public long getShards() {
+        long getShards() {
             return shards;
         }
 
@@ -485,7 +482,7 @@ public class Devi {
             return guilds;
         }
 
-        public long getPing() {
+        long getPing() {
             return ping;
         }
 
@@ -594,10 +591,6 @@ public class Devi {
         return shardManager;
     }
 
-    public ModLogManager getModLogManager() {
-        return modLogManager;
-    }
-
     public List<String> getAdmins() {
         return admins;
     }
@@ -661,6 +654,7 @@ public class Devi {
     public List<String> getVoters() {
         return voters;
     }
+
     public AnimatedEmote getAnimatedEmotes() {
         return animatedEmotes;
     }

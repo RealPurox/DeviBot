@@ -23,4 +23,10 @@ public class JavaUtils {
     public static String makeBooleanBeautiful(boolean bool) {
         return bool ? "on" : "off";
     }
+
+    public static void notNull(Object argument, String name) {
+        if (argument == null) {
+            throw new IllegalArgumentException(name + " may not be null");
+        }
+    }
 }

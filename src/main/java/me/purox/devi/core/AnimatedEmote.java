@@ -12,9 +12,7 @@ public class AnimatedEmote {
         this.devi = devi;
         this.guildId = "392264119102996480";
     }
-    /*
-    ANIMATED PARROT EMOTES
-     */
+
     public Emote PartyParrotEmote() {
         Guild g = devi.getShardManager().getGuildById(guildId);
         if (g == null) return null;

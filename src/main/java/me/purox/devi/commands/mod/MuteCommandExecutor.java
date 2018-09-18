@@ -50,12 +50,8 @@ public class MuteCommandExecutor extends ListenerAdapter implements CommandExecu
         }
         Member member = command.getEvent().getGuild().getMember(user);
 
-        if (command.getDeviGuild().getMuted().containsKey(user.getId())) {
-            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 26));
-            return;
-        }
-
-        if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) || command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
+        if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) ||
+                command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
             sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 27));
             return;
         }

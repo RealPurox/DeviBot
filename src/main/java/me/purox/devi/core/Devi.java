@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import me.purox.devi.Logger;
 import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.listener.*;
-import me.purox.devi.core.guild.ModLogManager;
 import me.purox.devi.commands.handler.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -24,7 +23,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.managers.GuildController;
 import net.jodah.expiringmap.ExpiringMap;
 import okhttp3.OkHttpClient;
 import org.bson.Document;
@@ -52,7 +50,6 @@ public class Devi {
     private MusicManager musicManager;
     private DatabaseManager databaseManager;
     private CommandHandler commandHandler;
-    private ModLogManager modLogManager;
     private ShardManager shardManager;
     private ResponseWaiter responseWaiter;
     private AnimatedEmote animatedEmotes;
@@ -81,7 +78,6 @@ public class Devi {
         this.settings = new Settings();
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
-        this.modLogManager = new ModLogManager(this);
         this.logger = new Logger(this);
         this.okHttpClient = new OkHttpClient();
         this.responseWaiter = new ResponseWaiter();
@@ -196,7 +192,7 @@ public class Devi {
         }
     }
 
-    public void setGame(Game game) {
+    private void setGame(Game game) {
         shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
     }
 
@@ -422,7 +418,8 @@ public class Devi {
 
                             builder.setThumbnail(userData.getString("profile_image_url"));
 
-                            logger.log("Sending stream announcement for twitch streamer " + userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
+                            logger.log("Sending stream announcement for twitch streamer " +
+                                    userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
                             MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
                                     .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
                                     .setEmbed(builder.build()).build());
@@ -453,7 +450,7 @@ public class Devi {
         private long channels;
         private long ping;
 
-        public Stats() {
+        Stats() {
             this.shards = shardManager.getShards().size();
             this.guilds = 0;
             this.users = 0;
@@ -473,7 +470,7 @@ public class Devi {
             this.ping = this.ping / this.shards;
         }
 
-        public long getShards() {
+        long getShards() {
             return shards;
         }
 
@@ -485,7 +482,7 @@ public class Devi {
             return guilds;
         }
 
-        public long getPing() {
+        long getPing() {
             return ping;
         }
 
@@ -592,10 +589,6 @@ public class Devi {
 
     public ShardManager getShardManager() {
         return shardManager;
-    }
-
-    public ModLogManager getModLogManager() {
-        return modLogManager;
     }
 
     public List<String> getAdmins() {

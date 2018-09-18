@@ -52,4 +52,12 @@ public class AnimatedEmote {
         if (e == null) return null;
         return e;
     }
+
+    public Emote EvilParrot() {
+        Guild g = devi.getShardManager().getGuildById(guildId);
+        if (g == null) return null;
+        Emote e = g.getEmotesByName("evilparrot", true).get(0);
+        if (e == null) return null;
+        return e;
+    }
 }

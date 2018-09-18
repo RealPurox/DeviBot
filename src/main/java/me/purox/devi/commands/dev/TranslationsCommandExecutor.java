@@ -3,6 +3,7 @@ package me.purox.devi.commands.dev;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
+import me.purox.devi.core.AnimatedEmote;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.ModuleType;
@@ -36,11 +37,11 @@ public class TranslationsCommandExecutor implements CommandExecutor {
                 int id = Integer.parseInt(args[1]);
                 StringBuilder builder = new StringBuilder("**[ID] - Language - Text**");
                 for (Language lang : Language.values()) {
-                    builder.append("\n" + "[`" + id + "`] " + "**" + lang.name() + ":** " + devi.getTranslation(lang, id));
+                    builder.append("\n" + "[`").append(id).append("`] ").append("**").append(lang.name()).append(":** ").append(devi.getTranslation(lang, id));
                 }
                 sender.reply(builder.toString());
             } catch (NumberFormatException e) {
-                sender.reply("Invalid id.");
+                sender.reply("Invalid id. " + new AnimatedEmote(devi).EvilParrot().getAsMention());
             }
         }
 

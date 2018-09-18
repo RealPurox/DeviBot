@@ -31,10 +31,12 @@ public class CommandListener extends ListenerAdapter {
 
         //I'm adding this to the command listener so things don't get fucked up
         //I might want to clean this one day
+        //yeah daniel you probably want to...
         ResponseWaiter waiter = devi.getResponseWaiter();
         if (event.getGuild() != null && waiter.getWaitingResponses().containsKey(event.getGuild().getId())) {
             Set<ResponseWaiter.Waiter> waitingResponses = waiter.getWaitingResponses().get(event.getGuild().getId());
             ResponseWaiter.Waiter[] toRemove = waitingResponses.toArray(new ResponseWaiter.Waiter[0]);
+            //noinspection unchecked
             Set<ResponseWaiter.Waiter> filteredToRemove = Stream.of(toRemove).filter(i -> i.attempt(event, new ResponseWaiter.Response(event.getAuthor(), event.getMessage()))).collect(Collectors.toSet());
             waitingResponses.removeAll(filteredToRemove);
             if (filteredToRemove.size() != 0) return;

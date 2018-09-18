@@ -84,6 +84,7 @@ public class Devi {
         new MessageUtils(this);
         this.animatedEmotes = new AnimatedEmote(this);
 
+
         songsPlayed = 0;
         commandsExecuted = 0;
 
@@ -173,9 +174,8 @@ public class Devi {
             builder.setAutoReconnect(true);
             builder.setShardsTotal(shards);
 
-            // make the dev bot listen to code | display website on main bot
-            builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.watching("devibot.net"));
-
+            //builder.setGame(settings.isDevBot() ? Game.listening("code") : setDefaultPlaying());
+            builder.setGame(Game.listening("startup code."));
             // add event listeners
             builder.addEventListeners(new ReadyListener(this));
             builder.addEventListeners(new CommandListener(this));
@@ -185,6 +185,8 @@ public class Devi {
 
             // build & login
             this.shardManager = builder.build();
+
+            defaultGameLoop();
         } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
             e.printStackTrace();
             logger.wtf("BOOTING FAILED - SHUTTING DOWN");
@@ -196,12 +198,36 @@ public class Devi {
         shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
     }
 
+    private void defaultGameLoop() {
+        if (settings.isDevBot()) {
+            setGame(Game.listening("to code"));
+            return;
+        }
+
+
+        List<Game> gameStatuses = new ArrayList<>();
+
+        gameStatuses.add(Game.listening(new Stats().getUsers() + " users"));
+        gameStatuses.add(Game.playing("type !help"));
+        gameStatuses.add(Game.listening(new Stats().getGuilds() + " guilds"));
+        gameStatuses.add(Game.watching("devibot.net"));
+
+        AtomicInteger index = new AtomicInteger(- 1);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            index.getAndIncrement();
+            if (index.get() > gameStatuses.size()) index.set(0);
+
+            setGame(gameStatuses.get(index.get()));
+
+        }, 0, 2, TimeUnit.MINUTES);
+    }
+
     public void reboot(int minutes, MessageChannel channel) {
         AtomicInteger min = new AtomicInteger(minutes + 1);
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             int next = min.decrementAndGet();
-            setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
+            setGame(Game.playing("rebooting in " + next + " min" + (next == 1 ? "" : "s")));
             if (next == 0) {
                 if (channel != null) {
                     channel.sendMessage(getAnimatedEmotes().FixParrot().getAsMention() + " cya later alligator").complete();

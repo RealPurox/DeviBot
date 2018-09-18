@@ -65,6 +65,7 @@ public class CommandHandler {
         registerCommand("stats", new StatsCommandExecutor(devi));
         registerCommand("urban", new UrbanDictionaryCommandExecutor(devi));
         registerCommand("google", new GoogleCommandExecutor(devi));
+        registerCommand("christmas", new ChristmasCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));

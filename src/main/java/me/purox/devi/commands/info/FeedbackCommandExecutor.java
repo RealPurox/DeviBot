@@ -66,8 +66,7 @@ public class FeedbackCommandExecutor implements CommandExecutor {
             doc.put("message", messageRaw);
             doc.put("viewed", false);
 
-            EmbedBuilder message;
-            message = new EmbedBuilder();
+            EmbedBuilder message = new EmbedBuilder();
             message.setTitle("New Feedback Received");
             message.setColor(Color.decode("#4775d1"));
             message.setThumbnail(sender.getEffectiveAvatarUrl());
@@ -77,8 +76,7 @@ public class FeedbackCommandExecutor implements CommandExecutor {
 
             devi.getDatabaseManager().getClient().getDatabase("website").getCollection("users_feedback").insertOne(doc);
 
-            EmbedBuilder success;
-            success = new EmbedBuilder();
+            EmbedBuilder success = new EmbedBuilder();
             success.setTitle(" ");
             success.setColor(Color.decode("#00e64d"));
             success.setDescription("**" + devi.getTranslation(command.getLanguage(), 487) + "**" + "\n" +

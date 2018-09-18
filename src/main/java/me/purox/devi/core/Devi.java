@@ -63,7 +63,6 @@ public class Devi {
     private HashMap<String, List<String>> streams = new HashMap<>();
     private List<ModuleType> disabledModules = new ArrayList<>();
     private List<String> voters = new ArrayList<>();
-    private List<Game> gameStatuses = new ArrayList<>();
 
     private OkHttpClient okHttpClient;
     private Jedis redisSender;
@@ -178,7 +177,6 @@ public class Devi {
             builder.setAutoReconnect(true);
             builder.setShardsTotal(shards);
 
-            // make the dev bot listen to code | display website on main bot
             //builder.setGame(settings.isDevBot() ? Game.listening("code") : setDefaultPlaying());
             builder.setGame(Game.listening("startup code."));
             // add event listeners
@@ -191,8 +189,8 @@ public class Devi {
 
             // build & login
             this.shardManager = builder.build();
-            defaultGameLoop();
 
+            defaultGameLoop();
         } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
             e.printStackTrace();
             logger.wtf("BOOTING FAILED - SHUTTING DOWN");
@@ -204,29 +202,28 @@ public class Devi {
         shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
     }
 
-    public void defaultGameLoop() throws InterruptedException {
+    private void defaultGameLoop() {
         if (settings.isDevBot()) {
             setGame(Game.listening("to code"));
-        } else {
-            // block current thread for 3 seconds to complete shard loader
-            Thread.sleep(3000);
-
-            gameStatuses.add(Game.listening(new Stats().getUsers() + " users"));
-            gameStatuses.add(Game.playing("type !help"));
-            gameStatuses.add(Game.listening(new Stats().getGuilds() + " guilds"));
-            gameStatuses.add(Game.watching("devibot.net"));
-
-            AtomicInteger i = new AtomicInteger(gameStatuses.size() - 1);
-            Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-                Game game = gameStatuses.get(i.get());
-                i.getAndDecrement();
-                if (i.get() < 0) {
-                    i.set(gameStatuses.size() - 1);
-                }
-                setGame(game);
-
-            }, 0, 2, TimeUnit.MINUTES);
+            return;
         }
+
+
+        List<Game> gameStatuses = new ArrayList<>();
+
+        gameStatuses.add(Game.listening(new Stats().getUsers() + " users"));
+        gameStatuses.add(Game.playing("type !help"));
+        gameStatuses.add(Game.listening(new Stats().getGuilds() + " guilds"));
+        gameStatuses.add(Game.watching("devibot.net"));
+
+        AtomicInteger index = new AtomicInteger(- 1);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            index.getAndIncrement();
+            if (index.get() > gameStatuses.size()) index.set(0);
+
+            setGame(gameStatuses.get(index.get()));
+
+        }, 0, 2, TimeUnit.MINUTES);
     }
 
     public void reboot(int minutes, MessageChannel channel) {

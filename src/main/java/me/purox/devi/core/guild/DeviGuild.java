@@ -85,7 +85,7 @@ public class DeviGuild {
         this.ready = true;
     }
 
-    void log(MessageEmbed embed) {
+    public void log(MessageEmbed embed) {
         TextChannel channel = devi.getShardManager().getTextChannelById(settings.getStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL));
         if (channel != null) {
             MessageUtils.sendMessageAsync(channel, embed);

@@ -45,7 +45,7 @@ public class VolumeCommandExecutor implements CommandExecutor {
         }
 
         guildPlayer.getAudioPlayer().setVolume(volume);
-        sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 190));
+        sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 190, volume));
     }
 
     private MessageEmbed getVolumeEmbed(GuildPlayer guildPlayer, Command command) {

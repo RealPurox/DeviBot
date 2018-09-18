@@ -123,8 +123,10 @@ public class ModLogManager {
             builder.setAuthor(devi.getTranslation(language, 69));
             builder.setDescription(devi.getTranslation(language, 186) + " :pen_ballpoint:");
             builder.addField(devi.getTranslation(language, 88), newMessage.getAuthor().getName() + "#" + newMessage.getAuthor().getDiscriminator() + " ( " + newMessage.getAuthor().getId() + " )", false);
-            builder.addField(devi.getTranslation(language, 183), oldMessage.getContentDisplay(), false);
-            builder.addField(devi.getTranslation(language, 184), newMessage.getContentDisplay(), false);
+            builder.addField(devi.getTranslation(language, 183), oldMessage.getContentDisplay().length() > 1024 ?
+                    oldMessage.getContentDisplay().substring(0, 1022) + ".." : oldMessage.getContentDisplay(), false);
+            builder.addField(devi.getTranslation(language, 184), newMessage.getContentDisplay().length() > 1024 ?
+                    newMessage.getContentDisplay().substring(0, 1022) + ".." : newMessage.getContentDisplay(), false);
             builder.setFooter(devi.getTranslation(language, 69), null);
             builder.setTimestamp(OffsetDateTime.now());
 

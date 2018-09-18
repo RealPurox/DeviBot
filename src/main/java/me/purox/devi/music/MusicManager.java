@@ -27,13 +27,14 @@ public class MusicManager {
 
     public MusicManager (Devi devi) {
         this.devi = devi;
+        this.threadPool = Executors.newSingleThreadScheduledExecutor();
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.guildPlayers = new HashMap<>();
         this.threadPool = Executors.newSingleThreadScheduledExecutor();
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
 
         //check every 2 min if we can destroy GuildPlayers
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+        threadPool.scheduleAtFixedRate(() -> {
             guildPlayers.values().forEach(guildPlayer -> {
                 if (guildPlayer.getDestroyTime() <= System.currentTimeMillis()) {
                     guildPlayer.destroy(true);

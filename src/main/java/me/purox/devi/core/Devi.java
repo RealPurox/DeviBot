@@ -24,7 +24,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.managers.GuildController;
 import net.jodah.expiringmap.ExpiringMap;
 import okhttp3.OkHttpClient;
 import org.bson.Document;
@@ -220,8 +219,8 @@ public class Devi {
 
     private void initDailyReboot() {
         Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 23);
-        today.set(Calendar.MINUTE, 45);
+        today.set(Calendar.HOUR_OF_DAY, 4);
+        today.set(Calendar.MINUTE, 30);
         today.set(Calendar.SECOND, 0);
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {

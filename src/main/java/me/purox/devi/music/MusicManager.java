@@ -30,6 +30,7 @@ public class MusicManager {
         this.threadPool = Executors.newSingleThreadScheduledExecutor();
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.guildPlayers = new HashMap<>();
+        this.threadPool = Executors.newSingleThreadScheduledExecutor();
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
 
         //check every 2 min if we can destroy GuildPlayers

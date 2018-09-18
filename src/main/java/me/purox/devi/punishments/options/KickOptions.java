@@ -1,4 +1,3 @@
 package me.purox.devi.punishments.options;
 
-public class KickOptions {
-}
+public class KickOptions { }

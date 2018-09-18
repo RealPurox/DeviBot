@@ -7,11 +7,11 @@ import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.punishments.options.BanOptions;
 import me.purox.devi.punishments.options.MuteOptions;
 import me.purox.devi.punishments.options.Options;
+import me.purox.devi.punishments.options.VoiceKickOptions;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
+import org.bson.Document;
 
 import java.awt.*;
 import java.time.OffsetDateTime;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public class Punishment {
 
     public enum Type {
-        BAN, SOFTBAN, MUTE, KICK, VOICEKICK, UNBAN, UNMUTE
+        BAN, MUTE, KICK, VOICEKICK, UNBAN, UNMUTE
     }
 
     private DeviGuild deviGuild; //-
@@ -58,19 +58,30 @@ public class Punishment {
                 "channelId: " + channelId + "\n";
     }
 
-    public void execute(Consumer<? super Void> success, Consumer<? super Throwable> error) {
-        System.out.println("Executing Punishment Type : " + type);
-        System.out.println("Options: " + options);
+    private void saveLog() {
+        Document document = new Document()
+                .append("guild", this.deviGuild.getId())
+                .append("case", this.caseId)
+                .append("time", this.time)
+                .append("type", this.type.name())
+                .append("punisher", this.punisher.getId())
+                .append("punished", this.punished.getId())
+                .append("reason", this.reason)
+                .append("message", this.messageId)
+                .append("channel", this.channelId);
+        deviGuild.getDevi().getDatabaseManager().saveToDatabase("punishments", document);
+    }
 
+    public void execute(Consumer<? super Void> success, Consumer<? super Throwable> error) {
         Guild guild = deviGuild.getDevi().getShardManager().getGuildById(deviGuild.getId());
         if (guild == null) {
-            System.out.println("Guild not cached");
+            error.accept(new Throwable());
             return;
         }
 
         TextChannel logChannel = guild.getTextChannelById(deviGuild.getSettings().getStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL));
         if (logChannel == null) {
-            System.out.println("Log channel not found (" + deviGuild.getSettings().getStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL) + ")");
+            execute(guild, success, error);
             return;
         }
 
@@ -90,7 +101,7 @@ public class Punishment {
 
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setColor(new Color(255, 68, 82));
-                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69) + " (" + deviGuild.getDevi().getTranslation(language, 619, String.valueOf(this.caseId)) + ")");
                     builder.setDescription(deviGuild.getDevi().getTranslation(language, 596,
                             punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
                     builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
@@ -100,8 +111,9 @@ public class Punishment {
                     builder.setTimestamp(OffsetDateTime.now());
 
                     MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
-                        execute(guild, success, error);
                         this.messageId = msg.getId();
+                        saveLog();
+                        execute(guild, success, error);
                     });
                 } else execute(guild, success, error);
                 break;
@@ -111,7 +123,7 @@ public class Punishment {
 
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setColor(new Color(71, 255, 38));
-                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69) + " (" + deviGuild.getDevi().getTranslation(language, 619, String.valueOf(this.caseId)) + ")");
                     builder.setDescription(deviGuild.getDevi().getTranslation(language, 600,
                             punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
                     builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
@@ -121,8 +133,9 @@ public class Punishment {
                     builder.setTimestamp(OffsetDateTime.now());
 
                     MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
-                        execute(guild, success, error);
                         this.messageId = msg.getId();
+                        saveLog();
+                        execute(guild, success, error);
                     });
                 } else execute(guild, success, error);
                 break;
@@ -132,7 +145,7 @@ public class Punishment {
 
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setColor(new Color(255, 249, 58));
-                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69) + " (" + deviGuild.getDevi().getTranslation(language, 619, String.valueOf(this.caseId)) + ")");
                     builder.setDescription(deviGuild.getDevi().getTranslation(language, 606,
                             punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
                     builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
@@ -142,8 +155,9 @@ public class Punishment {
                     builder.setTimestamp(OffsetDateTime.now());
 
                     MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
-                        execute(guild, success, error);
                         this.messageId = msg.getId();
+                        saveLog();
+                        execute(guild, success, error);
                     });
                 } else execute(guild, success, error);
                 break;
@@ -153,7 +167,7 @@ public class Punishment {
 
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setColor(new Color(255, 141, 36));
-                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69) + " (" + deviGuild.getDevi().getTranslation(language, 619, String.valueOf(this.caseId)) + ")");
                     builder.setDescription(deviGuild.getDevi().getTranslation(language, 181,
                             punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
                     builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
@@ -163,8 +177,9 @@ public class Punishment {
                     builder.setTimestamp(OffsetDateTime.now());
 
                     MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
-                        execute(guild, success, error);
                         this.messageId = msg.getId();
+                        saveLog();
+                        execute(guild, success, error);
                     });
                 } else execute(guild, success, error);
                 break;
@@ -174,7 +189,7 @@ public class Punishment {
 
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setColor(new Color(93, 242, 255));
-                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69) + " (" + deviGuild.getDevi().getTranslation(language, 619, String.valueOf(this.caseId)) + ")");
                     builder.setDescription(deviGuild.getDevi().getTranslation(language, 611,
                             punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")"));
                     builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
@@ -184,8 +199,31 @@ public class Punishment {
                     builder.setTimestamp(OffsetDateTime.now());
 
                     MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
-                        execute(guild, success, error);
                         this.messageId = msg.getId();
+                        saveLog();
+                        execute(guild, success, error);
+                    });
+                } else execute(guild, success, error);
+                break;
+            case VOICEKICK:
+                if (settings.getBooleanValue(GuildSettings.Settings.MOD_LOG_KICKS)) {
+                    Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setColor(new Color(255, 249, 58));
+                    builder.setAuthor(deviGuild.getDevi().getTranslation(language, 69) + " (" + deviGuild.getDevi().getTranslation(language, 619, String.valueOf(this.caseId)) + ")");
+                    builder.setDescription(deviGuild.getDevi().getTranslation(language, 618,
+                            punished.getName() + "#" + punished.getDiscriminator() + " (" + punished.getAsMention() + ")", ((VoiceKickOptions)this.options).getChannel().getName()));
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 48), reason, true);
+                    builder.addField(deviGuild.getDevi().getTranslation(language, 47),
+                            punisher.getName() + "#" + punisher.getDiscriminator() + " (" + punisher.getAsMention() + ")", true);
+                    builder.setThumbnail(punished.getAvatarUrl());
+                    builder.setTimestamp(OffsetDateTime.now());
+
+                    MessageUtils.sendMessageAsync(logChannel, builder.build(), msg -> {
+                        this.messageId = msg.getId();
+                        saveLog();
+                        execute(guild, success, error);
                     });
                 } else execute(guild, success, error);
                 break;
@@ -195,44 +233,40 @@ public class Punishment {
     }
 
     private void execute(Guild guild, Consumer<? super Void> success, Consumer<? super Throwable> error) {
-                /*command.getEvent().getGuild().getController().removeRolesFromMember(command.getEvent().getGuild().getMember(user), role).queue(success ->
-                sender.reply(Emote.SUCCESS.get() + " " + devi.getTranslation(command.getLanguage(), 56, user.getName() + "#" + user.getDiscriminator())));*/
         switch (type) {
             case BAN:
-                System.out.println("yo banning that dude");
                 //note this might fail
                 MessageUtils.sendPrivateMessageAsync(punished, Emote.INFO + " | " + deviGuild.getDevi().getTranslation(Language.getLanguage(deviGuild.getSettings()
                         .getStringValue(GuildSettings.Settings.LANGUAGE)), 17, "`" + guild.getName() + "`", "\"" + reason + "\""));
                 guild.getController().ban(punished, ((BanOptions)options).getDays(), reason).queue(success, error);
                 break;
             case UNBAN:
-                System.out.println("yo unbanning that dude");
                 guild.getController().unban(punished).queue(success, error);
                 break;
             case KICK:
-                System.out.println("yo kicking that dude");
                 //note this might fail
                 MessageUtils.sendPrivateMessageAsync(punished, Emote.INFO + " | " + deviGuild.getDevi().getTranslation(Language.getLanguage(deviGuild.getSettings()
                         .getStringValue(GuildSettings.Settings.LANGUAGE)), 532, "`" + guild.getName() + "`", "\"" + reason + "\""));
                 guild.getController().kick(punished.getId(), reason).queue(success, error);
                 break;
             case MUTE:
-                System.out.println("yo muting that dude");
                 //note this might fail
                 MessageUtils.sendPrivateMessageAsync(punished, Emote.INFO + " | " + deviGuild.getDevi().getTranslation(Language.getLanguage(deviGuild.getSettings()
                         .getStringValue(GuildSettings.Settings.LANGUAGE)), 609, "`" + guild.getName() + "`", "\"" + reason + "\""));
                 guild.getController().addSingleRoleToMember(guild.getMember(punished), ((MuteOptions)options).getRole()).queue(success, error);
                 break;
             case UNMUTE:
-                System.out.println("yo unmuting that dude");
                 //note this might fail
                 MessageUtils.sendPrivateMessageAsync(punished, Emote.INFO + " | " + deviGuild.getDevi().getTranslation(Language.getLanguage(deviGuild.getSettings()
                         .getStringValue(GuildSettings.Settings.LANGUAGE)), 613, "`" + guild.getName() + "`"));
                 guild.getController().removeSingleRoleFromMember(guild.getMember(punished), ((MuteOptions)options).getRole()).queue(success, error);
                 break;
-            case SOFTBAN:
-                break;
             case VOICEKICK:
+                guild.getController().createVoiceChannel("voice-kick").queue(channel -> {
+                    guild.getController().moveVoiceMember(guild.getMember(punished), (VoiceChannel) channel).queue(moved -> {
+                        channel.delete().queue(success, error);
+                    }, error);
+                }, error);
                 break;
         }
     }

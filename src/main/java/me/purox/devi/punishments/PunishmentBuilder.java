@@ -1,14 +1,12 @@
 package me.purox.devi.punishments;
 
-import com.mongodb.BasicDBObject;
+import com.mongodb.client.model.DBCollectionFindOptions;
 import com.mongodb.client.model.Filters;
-import com.sun.istack.internal.NotNull;
+import com.mongodb.client.model.Sorts;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.punishments.options.*;
 import me.purox.devi.utils.JavaUtils;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.utils.Checks;
 import org.bson.Document;
 
 public class PunishmentBuilder {
@@ -25,10 +23,10 @@ public class PunishmentBuilder {
     public PunishmentBuilder(DeviGuild deviGuild) {
         this.deviGuild = deviGuild;
         Document first = deviGuild.getDevi().getDatabaseManager().getDatabase().getCollection("punishments")
-                .find(Filters.eq("guild_id", deviGuild.getId()))
-                .filter(new BasicDBObject("caseId", -1))
-                .limit(1).first();
-        this.caseId = first == null ? 1 : first.getInteger("caseId");
+                .find(Filters.eq("guild", deviGuild.getId()))
+                .sort(new Document("case", -1))
+                .first();
+        this.caseId = first == null ? 1 : first.getInteger("case") + 1;
         this.time = System.currentTimeMillis();
     }
 
@@ -66,13 +64,11 @@ public class PunishmentBuilder {
         if (this.options != null) {
             if (this.type == Punishment.Type.BAN && !(this.options instanceof BanOptions))
                 throw new IllegalArgumentException(options.getClass().getName() + " cannot be used for Punishment.Type " + this.type);
-            if (this.type == Punishment.Type.SOFTBAN && !(this.options instanceof SoftbanOptions))
-                throw new IllegalArgumentException(options.getClass().getName() + " cannot be used for Punishment.Type " + this.type);
             if (this.type == Punishment.Type.MUTE && !(this.options instanceof MuteOptions))
                 throw new IllegalArgumentException(options.getClass().getName() + " cannot be used for Punishment.Type " + this.type);
             if (this.type == Punishment.Type.KICK && !(this.options instanceof KickOptions))
                 throw new IllegalArgumentException(options.getClass().getName() + " cannot be used for Punishment.Type " + this.type);
-            if (this.type == Punishment.Type.VOICEKICK && !(this.options instanceof VoicekickOptions))
+            if (this.type == Punishment.Type.VOICEKICK && !(this.options instanceof VoiceKickOptions))
                 throw new IllegalArgumentException(options.getClass().getName() + " cannot be used for Punishment.Type " + this.type);
         }
 

@@ -11,8 +11,6 @@ import me.purox.devi.punishments.PunishmentBuilder;
 import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,7 +57,8 @@ public class UnbanCommandExecutor implements CommandExecutor {
                     .setType(Punishment.Type.UNBAN)
                     .setPunished(ban.getUser())
                     .setPunisher(sender)
-                    .build().execute(success -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 600, "`" + ban.getUser().getName() + "#" + ban.getUser().getDiscriminator() + "`")),
+                    .build().execute(success -> sender.reply(Emote.SUCCESS + " | " +
+                            devi.getTranslation(command.getLanguage(), 600, "`" + ban.getUser().getName() + "#" + ban.getUser().getDiscriminator() + "`")),
                     error -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 601)));
         }, failure -> sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 604)));
     }

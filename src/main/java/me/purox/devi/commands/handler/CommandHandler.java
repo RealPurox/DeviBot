@@ -110,9 +110,8 @@ public class CommandHandler {
         registerCommand("current", new CurrentCommandExecutor(devi));
         registerCommand("skip", new SkipCommandExecutor(devi));
         registerCommand("shuffle", new ShuffleCommandExecutor(devi));
-        /*registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
         registerCommand("volume", new VolumeCommandExecutor(devi));
-        registerCommand("loop", new LoopCommandExecutor(devi));*/
+        registerCommand("loop", new LoopCommandExecutor(devi));
     }
 
     private void registerCommand(String commandName, CommandExecutor commandExecutor){

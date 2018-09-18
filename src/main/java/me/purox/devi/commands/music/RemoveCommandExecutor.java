@@ -60,7 +60,7 @@ public class RemoveCommandExecutor implements CommandExecutor {
         }
 
         guildPlayer.getQueue().remove(audioInfo);
-        if (remove == guildPlayer.getCurrentQueueIndex() + 1) {
+        if (remove == 1) {
             guildPlayer.getAudioPlayer().stopTrack();
         }
         sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 474, "\"" + audioInfo.getAudioTrack().getInfo().title + "\""));

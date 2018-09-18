@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,13 @@ public class MusicManager {
     private Devi devi;
     private AudioPlayerManager audioPlayerManager;
     private HashMap<String, GuildPlayer> guildPlayers;
+    private ScheduledExecutorService threadPool;
 
     public MusicManager (Devi devi) {
         this.devi = devi;
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.guildPlayers = new HashMap<>();
+        this.threadPool = Executors.newSingleThreadScheduledExecutor();
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
 
         //check every 2 min if we can destroy GuildPlayers
@@ -67,7 +70,7 @@ public class MusicManager {
             devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " is totally alone in the channel in guild " + guild.getName() + " (" + guild.getId() + ")");
             return true;
         }
-        devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " has not authority to use that command in guild " + guild.getName() + " (" + guild.getId() + ")");
+        devi.getLogger().debug(member.getUser().getName() + "#" + member.getUser().getDiscriminator() + " has no authority to use that command in guild " + guild.getName() + " (" + guild.getId() + ")");
         return false;
     }
 
@@ -81,5 +84,9 @@ public class MusicManager {
 
     public HashMap<String, GuildPlayer> getGuildPlayers() {
         return guildPlayers;
+    }
+
+    public ScheduledExecutorService getThreadPool() {
+        return threadPool;
     }
 }

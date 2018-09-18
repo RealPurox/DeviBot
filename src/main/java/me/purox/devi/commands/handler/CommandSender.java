@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.requests.RestAction;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CommandSender implements User {
 
@@ -101,11 +102,18 @@ public class CommandSender implements User {
         return event.getGuild().getMember(this);
     }
 
-    public void reply(String message) {
-        MessageUtils.sendMessageAsync(event.getChannel(), message);
+    public void reply(String message, Consumer<Message> success) {
+        MessageUtils.sendMessageAsync(event.getChannel(), message, success);
     }
 
+    public void reply(String message) {
+        reply(message, null);
+    }
+
+    public void reply(MessageEmbed embed, Consumer<Message> success) {
+        MessageUtils.sendMessageAsync(event.getChannel(), embed, success);
+    }
     public void reply(MessageEmbed embed) {
-        MessageUtils.sendMessageAsync(event.getChannel(), embed);
+        reply(embed, null);
     }
 }

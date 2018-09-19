@@ -49,18 +49,18 @@ public class RemoveCommandExecutor implements CommandExecutor {
         }
 
         if (remove < 1 || remove > guildPlayer.getQueue().size()) {
-            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), remove));
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 473, remove));
             return;
         }
 
         AudioInfo audioInfo = guildPlayer.getAudioInfoById(remove);
         if (audioInfo == null) {
-            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), remove));
+            sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 473, remove));
             return;
         }
 
         guildPlayer.getQueue().remove(audioInfo);
-        if (remove == guildPlayer.getCurrentQueueIndex() + 1) {
+        if (remove == 1) {
             guildPlayer.getAudioPlayer().stopTrack();
         }
         sender.reply(Emote.SUCCESS.get() + " | " + devi.getTranslation(command.getLanguage(), 474, "\"" + audioInfo.getAudioTrack().getInfo().title + "\""));

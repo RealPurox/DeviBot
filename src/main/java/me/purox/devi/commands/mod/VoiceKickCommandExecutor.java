@@ -6,11 +6,14 @@ import me.purox.devi.commands.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
+import me.purox.devi.punishments.Punishment;
+import me.purox.devi.punishments.PunishmentBuilder;
+import me.purox.devi.punishments.options.Options;
+import me.purox.devi.punishments.options.VoiceKickOptions;
 import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.Arrays;
@@ -28,8 +31,9 @@ public class VoiceKickCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(String[] args, Command command, CommandSender sender) {
-        if (args.length < 2) {
-            sender.reply(Emote.ERROR + " | Invalid arguments. !voicekick <user> [reason]");
+        if(args.length < 1){
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "voicekick <user> [reason]`\n\n" +
+                    devi.getTranslation(command.getLanguage(), 605, "`[reason]`")));
             return;
         }
 
@@ -40,7 +44,8 @@ public class VoiceKickCommandExecutor implements CommandExecutor {
         }
 
         Member member = command.getEvent().getGuild().getMember(user);
-        if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) || command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
+        if (!PermissionUtil.canInteract(command.getEvent().getMember(), member) || user.getId().equals(sender.getId()) ||
+                command.getEvent().getJDA().getSelfUser().getId().equals(sender.getId())) {
             sender.reply(devi.getTranslation(command.getLanguage(), 528));
             return;
         }
@@ -51,6 +56,7 @@ public class VoiceKickCommandExecutor implements CommandExecutor {
             sender.reply(devi.getTranslation(command.getLanguage(), 529));
             return;
         }
+
         if (!member.getVoiceState().inVoiceChannel()) {
             sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 574, "**" + user.getName() + "**"));
             return;
@@ -72,18 +78,26 @@ public class VoiceKickCommandExecutor implements CommandExecutor {
         }
 
         if (!member.hasPermission(Permission.VOICE_CONNECT)) {
-            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 585, "**" + member.getUser().getName() + "**", "`" + devi.getTranslation(command.getLanguage(), 583) + "`"));
+            sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 585, "**" + member.getUser().getName() + "**",
+                    "`" + devi.getTranslation(command.getLanguage(), 583) + "`"));
             return;
         }
 
-        String reason = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
-        VoiceChannel connectedChannel = member.getVoiceState().getChannel();
-        command.getEvent().getGuild().getController().createVoiceChannel("devitemp").queue(temp -> command.getEvent().getGuild().getController().moveVoiceMember(member, (VoiceChannel) temp).queue(
-                success -> {
-                    devi.getModLogManager().logVoiceKick(command.getDeviGuild(), member, command.getEvent().getMember(), connectedChannel, reason);
-                    temp.delete().queue(complete -> sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 575, "**" + user.getName() + "**", "`" + connectedChannel.getName() + "`", "`" + reason + "`")));
-                }));
-            }
+        String reason = args.length == 1 ? "Unknown reason" : Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
+
+        new PunishmentBuilder(command.getDeviGuild())
+                .setReason(reason)
+                .setType(Punishment.Type.VOICEKICK)
+                .setPunished(user)
+                .setPunisher(sender)
+                .setOptions(new VoiceKickOptions().setChannel(member.getVoiceState().getChannel()))
+                .build()
+                .execute(success -> {
+                    sender.reply(Emote.SUCCESS + " | " + devi.getTranslation(command.getLanguage(), 620, "`" + user.getName() + "#" + user.getDiscriminator() + "`"));
+                }, error -> {
+                    sender.reply(Emote.ERROR + " | " + devi.getTranslation(command.getLanguage(), 617));
+                });
+    }
 
     @Override
     public boolean guildOnly() {

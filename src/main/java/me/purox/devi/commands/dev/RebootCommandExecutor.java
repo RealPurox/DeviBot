@@ -3,6 +3,7 @@ package me.purox.devi.commands.dev;
 import me.purox.devi.commands.handler.Command;
 import me.purox.devi.commands.handler.CommandExecutor;
 import me.purox.devi.commands.handler.CommandSender;
+import me.purox.devi.core.AnimatedEmote;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;
@@ -34,7 +35,7 @@ public class RebootCommandExecutor implements CommandExecutor {
             return;
         }
         if(isRebooting){
-            sender.reply(Emote.ERROR + " | Devi is already rebooting.");
+            sender.reply(Emote.ERROR + " | Devi is already rebooting. " + new AnimatedEmote(devi).EvilParrot().getAsMention());
             return;
 
         }

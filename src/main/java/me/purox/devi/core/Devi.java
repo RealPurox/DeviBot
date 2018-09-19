@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import me.purox.devi.Logger;
 import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.listener.*;
-import me.purox.devi.core.guild.ModLogManager;
 import me.purox.devi.commands.handler.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
@@ -24,7 +23,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.managers.GuildController;
 import net.jodah.expiringmap.ExpiringMap;
 import okhttp3.OkHttpClient;
 import org.bson.Document;
@@ -52,7 +50,6 @@ public class Devi {
     private MusicManager musicManager;
     private DatabaseManager databaseManager;
     private CommandHandler commandHandler;
-    private ModLogManager modLogManager;
     private ShardManager shardManager;
     private ResponseWaiter responseWaiter;
     private AnimatedEmote animatedEmotes;
@@ -81,12 +78,12 @@ public class Devi {
         this.settings = new Settings();
         this.musicManager = new MusicManager(this);
         this.databaseManager = new DatabaseManager(this);
-        this.modLogManager = new ModLogManager(this);
         this.logger = new Logger(this);
         this.okHttpClient = new OkHttpClient();
         this.responseWaiter = new ResponseWaiter();
         new MessageUtils(this);
         this.animatedEmotes = new AnimatedEmote(this);
+
 
         songsPlayed = 0;
         commandsExecuted = 0;
@@ -177,19 +174,19 @@ public class Devi {
             builder.setAutoReconnect(true);
             builder.setShardsTotal(shards);
 
-            // make the dev bot listen to code | display website on main bot
-            builder.setGame(settings.isDevBot() ? Game.listening("code") : Game.watching("devibot.net"));
-
+            //builder.setGame(settings.isDevBot() ? Game.listening("code") : setDefaultPlaying());
+            builder.setGame(Game.listening("startup code."));
             // add event listeners
             builder.addEventListeners(new ReadyListener(this));
             builder.addEventListeners(new CommandListener(this));
             builder.addEventListeners(new MessageListener(this));
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
-            builder.addEventListeners(getCommandHandler().getCommands().get("mute"));
 
             // build & login
             this.shardManager = builder.build();
+
+            defaultGameLoop();
         } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
             e.printStackTrace();
             logger.wtf("BOOTING FAILED - SHUTTING DOWN");
@@ -197,8 +194,32 @@ public class Devi {
         }
     }
 
-    public void setGame(Game game) {
+    private void setGame(Game game) {
         shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
+    }
+
+    private void defaultGameLoop() {
+        if (settings.isDevBot()) {
+            setGame(Game.listening("to code"));
+            return;
+        }
+
+
+        List<Game> gameStatuses = new ArrayList<>();
+
+        gameStatuses.add(Game.listening(new Stats().getUsers() + " users"));
+        gameStatuses.add(Game.playing("type !help"));
+        gameStatuses.add(Game.listening(new Stats().getGuilds() + " guilds"));
+        gameStatuses.add(Game.watching("devibot.net"));
+
+        AtomicInteger index = new AtomicInteger(- 1);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            index.getAndIncrement();
+            if (index.get() > gameStatuses.size()) index.set(0);
+
+            setGame(gameStatuses.get(index.get()));
+
+        }, 0, 2, TimeUnit.MINUTES);
     }
 
     public void reboot(int minutes, MessageChannel channel) {
@@ -206,7 +227,7 @@ public class Devi {
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             int next = min.decrementAndGet();
-            setGame(Game.playing("Rebooting in " + next + " min" + (next == 1 ? "" : "s")));
+            setGame(Game.playing("rebooting in " + next + " min" + (next == 1 ? "" : "s")));
             if (next == 0) {
                 if (channel != null) {
                     channel.sendMessage(getAnimatedEmotes().FixParrot().getAsMention() + " cya later alligator").complete();
@@ -220,8 +241,8 @@ public class Devi {
 
     private void initDailyReboot() {
         Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 23);
-        today.set(Calendar.MINUTE, 45);
+        today.set(Calendar.HOUR_OF_DAY, 4);
+        today.set(Calendar.MINUTE, 30);
         today.set(Calendar.SECOND, 0);
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -232,6 +253,7 @@ public class Devi {
         }, today.getTime(), TimeUnit.MICROSECONDS.convert(1, TimeUnit.DAYS));
         this.rebootTime = new Date(today.getTimeInMillis() + 900000);
     }
+
     public void changeTwitchSubscriptionStatus(Collection<String> streamIDs, boolean subscribe) {
         Thread thread = new Thread(() -> {
             Set<String> copy = new HashSet<>(streamIDs);
@@ -328,7 +350,6 @@ public class Devi {
         String translation = deviTranslations.get(language).get(id);
         if (translation == null) {
             if (language == Language.ENGLISH) {
-                System.out.println("yo");
                 sendMessageToDevelopers("Translation for id `" + id + "` not found. Please fix this immediately @everyone");
                 return "Failed to lookup the the translation for id `" + id + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
             }
@@ -423,7 +444,8 @@ public class Devi {
 
                             builder.setThumbnail(userData.getString("profile_image_url"));
 
-                            logger.log("Sending stream announcement for twitch streamer " + userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
+                            logger.log("Sending stream announcement for twitch streamer " +
+                                    userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
                             MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
                                     .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
                                     .setEmbed(builder.build()).build());
@@ -454,7 +476,7 @@ public class Devi {
         private long channels;
         private long ping;
 
-        public Stats() {
+        Stats() {
             this.shards = shardManager.getShards().size();
             this.guilds = 0;
             this.users = 0;
@@ -474,7 +496,7 @@ public class Devi {
             this.ping = this.ping / this.shards;
         }
 
-        public long getShards() {
+        long getShards() {
             return shards;
         }
 
@@ -486,7 +508,7 @@ public class Devi {
             return guilds;
         }
 
-        public long getPing() {
+        long getPing() {
             return ping;
         }
 
@@ -595,10 +617,6 @@ public class Devi {
         return shardManager;
     }
 
-    public ModLogManager getModLogManager() {
-        return modLogManager;
-    }
-
     public List<String> getAdmins() {
         return admins;
     }
@@ -662,6 +680,7 @@ public class Devi {
     public List<String> getVoters() {
         return voters;
     }
+
     public AnimatedEmote getAnimatedEmotes() {
         return animatedEmotes;
     }

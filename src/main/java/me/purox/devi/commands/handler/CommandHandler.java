@@ -65,6 +65,7 @@ public class CommandHandler {
         registerCommand("stats", new StatsCommandExecutor(devi));
         registerCommand("urban", new UrbanDictionaryCommandExecutor(devi));
         registerCommand("google", new GoogleCommandExecutor(devi));
+        registerCommand("christmas", new ChristmasCommandExecutor(devi));
 
         //info commands
         registerCommand("guildstats", new GuildStatsCommandExecutor(devi));
@@ -91,8 +92,6 @@ public class CommandHandler {
         registerCommand("kick", new KickCommandExecutor(devi));
         registerCommand("mute", new MuteCommandExecutor(devi));
         registerCommand("unmute", new UnmuteCommandExecutor(devi));
-        registerCommand("banlist", new BanListCommandExecutor(devi));
-        registerCommand("mutelist", new MuteListCommandExecutor(devi));
         registerCommand("purge", new PurgeCommandExecutor(devi));
         registerCommand("voicekick", new VoiceKickCommandExecutor(devi));
 
@@ -112,9 +111,8 @@ public class CommandHandler {
         registerCommand("current", new CurrentCommandExecutor(devi));
         registerCommand("skip", new SkipCommandExecutor(devi));
         registerCommand("shuffle", new ShuffleCommandExecutor(devi));
-        /*registerCommand("unshuffle", new UnShuffleCommandExecutor(devi));
         registerCommand("volume", new VolumeCommandExecutor(devi));
-        registerCommand("loop", new LoopCommandExecutor(devi));*/
+        registerCommand("loop", new LoopCommandExecutor(devi));
     }
 
     private void registerCommand(String commandName, CommandExecutor commandExecutor){

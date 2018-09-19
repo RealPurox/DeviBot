@@ -1,6 +1,5 @@
 package me.purox.devi.core;
 
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Guild;
 
@@ -13,9 +12,7 @@ public class AnimatedEmote {
         this.devi = devi;
         this.guildId = "392264119102996480";
     }
-    /*
-    ANIMATED PARROT EMOTES
-     */
+
     public Emote PartyParrotEmote() {
         Guild g = devi.getShardManager().getGuildById(guildId);
         if (g == null) return null;
@@ -52,6 +49,14 @@ public class AnimatedEmote {
         Guild g = devi.getShardManager().getGuildById(guildId);
         if (g == null) return null;
         Emote e = g.getEmotesByName("halloweenparrot", true).get(0);
+        if (e == null) return null;
+        return e;
+    }
+
+    public Emote EvilParrot() {
+        Guild g = devi.getShardManager().getGuildById(guildId);
+        if (g == null) return null;
+        Emote e = g.getEmotesByName("evilparrot", true).get(0);
         if (e == null) return null;
         return e;
     }

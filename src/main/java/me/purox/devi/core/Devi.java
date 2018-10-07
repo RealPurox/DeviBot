@@ -32,6 +32,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
+import sun.util.resources.cldr.aa.CalendarData_aa_DJ;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -241,6 +242,7 @@ public class Devi {
 
     private void initDailyReboot() {
         Calendar today = Calendar.getInstance();
+        today.set(Calendar.DAY_OF_YEAR, today.get(Calendar.DAY_OF_YEAR) + 1);
         today.set(Calendar.HOUR_OF_DAY, 4);
         today.set(Calendar.MINUTE, 30);
         today.set(Calendar.SECOND, 0);

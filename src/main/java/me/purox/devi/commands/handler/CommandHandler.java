@@ -73,6 +73,7 @@ public class CommandHandler {
         registerCommand("feedback", new FeedbackCommandExecutor(devi));
         registerCommand("support", new SupportCommandExecutor(devi));
         registerCommand("changelog", new ChangelogCommandExecutor(devi));
+        registerCommand("invite", new InviteCommandExecutor(devi));
 
         //guild commands
         registerCommand("settings", new SettingsCommandExecutor(devi));

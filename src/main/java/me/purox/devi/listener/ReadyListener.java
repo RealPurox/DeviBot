@@ -77,7 +77,6 @@ public class ReadyListener extends ListenerAdapter {
 
     @Override
     public void onException(ExceptionEvent event) {
-        System.out.println("YES");
         devi.sendMessageToDevelopers(event.getCause().toString());
     }
 }

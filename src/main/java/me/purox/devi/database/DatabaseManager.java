@@ -55,6 +55,12 @@ public class DatabaseManager {
         return document;
     }
 
+    public Document getDocument(String key, String value, String collection) {
+        Document document = database.getCollection(collection).find(Filters.eq(key, value)).first();
+        if (document == null) return new Document();
+        return document;
+    }
+
     public List<Document> getDocuments(String key, String value, String collection) {
         List<Document> documents = database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
         if (documents == null) return new ArrayList<>();

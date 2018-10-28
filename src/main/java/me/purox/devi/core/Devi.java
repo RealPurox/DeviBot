@@ -3,12 +3,14 @@ package me.purox.devi.core;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.purox.devi.Logger;
 import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.listener.*;
-import me.purox.devi.commands.handler.CommandHandler;
+import me.purox.devi.commands.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.database.DatabaseManager;
@@ -32,7 +34,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
-import sun.util.resources.cldr.aa.CalendarData_aa_DJ;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -46,6 +47,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class Devi {
+
+    public static final Gson GSON = new GsonBuilder().create();
 
     private Settings settings;
     private MusicManager musicManager;
@@ -201,10 +204,9 @@ public class Devi {
 
     private void defaultGameLoop() {
         if (settings.isDevBot()) {
-            setGame(Game.listening("to code"));
+            setGame(Game.listening("code"));
             return;
         }
-
 
         List<Game> gameStatuses = new ArrayList<>();
 
@@ -575,7 +577,6 @@ public class Devi {
             Guild g = jda.getGuildById("392264119102996480");
             if (g != null) guild.set(g);
         });
-        System.out.println(guild);
         if (guild.get() != null) {
             TextChannel channel = guild.get().getTextChannelById("458740773614125076");
             System.out.println(channel);

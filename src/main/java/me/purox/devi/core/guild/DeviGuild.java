@@ -1,17 +1,19 @@
 package me.purox.devi.core.guild;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
+import com.mongodb.util.JSON;
 import me.purox.devi.core.Devi;
+import me.purox.devi.core.guild.entities.Command;
+import me.purox.devi.core.guild.entities.IgnoredRole;
+import me.purox.devi.core.guild.entities.Punishment;
+import me.purox.devi.core.guild.entities.Stream;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.bson.Document;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class DeviGuild {
 
@@ -19,9 +21,10 @@ public class DeviGuild {
     private GuildSettings settings;
     private String id;
 
-    private List<Document> commands = new ArrayList<>();
-    private List<Document> streams = new ArrayList<>();
-    private List<Document> ignoredRoles = new ArrayList<>();
+    private List<Command> commandEntities = new ArrayList<>();
+    private List<Stream> streams = new ArrayList<>();
+    private List<IgnoredRole> ignoredRoles = new ArrayList<>();
+    private List<Punishment> punishments = new ArrayList<>();
     private boolean ready = false;
 
     public DeviGuild(String id, Devi devi){
@@ -35,10 +38,6 @@ public class DeviGuild {
         for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {
             document.append(setting.name().toLowerCase(), setting.getDefaultValue());
         }
-        document.append("embeds", new HashMap<>());
-        document.append("muted", new HashMap<>());
-        document.append("banned", new HashMap<>());
-        document.append("auto_mod_ignored_roles", new ArrayList<>());
         devi.getDatabaseManager().saveToDatabase("guilds", document, id);
         return document;
     }
@@ -72,14 +71,10 @@ public class DeviGuild {
             }
         }
 
-        MongoCollection<Document> commandCollection = devi.getDatabaseManager().getDatabase().getCollection("commands");
-        commandCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) command -> commands.add(command));
-
-        MongoCollection<Document> streamsCollection = devi.getDatabaseManager().getDatabase().getCollection("streams");
-        streamsCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) stream -> streams.add(stream));
-
-        MongoCollection<Document> autoModIgnoredRolesCollection = devi.getDatabaseManager().getDatabase().getCollection("ignored_roles");
-        autoModIgnoredRolesCollection.find(Filters.eq("guild", this.id)).forEach((Consumer<? super Document>) ignoredRole -> ignoredRoles.add(ignoredRole));
+        this.commandEntities = getEntities(Command.class, "commands");
+        this.streams = getEntities(Stream.class, "streams");
+        this.ignoredRoles = getEntities(IgnoredRole.class, "ignored_roles");
+        this.punishments = getEntities(Punishment.class, "punishments");
 
         this.settings = guildSettings;
         this.ready = true;
@@ -90,6 +85,18 @@ public class DeviGuild {
         if (channel != null) {
             MessageUtils.sendMessageAsync(channel, embed);
         }
+    }
+
+    private <T> List<T> getEntities(Class<T> clazz, String collection) {
+        List<Document> data = devi.getDatabaseManager().getDocuments("guild", id, collection);
+        List<T> entities = new ArrayList<>();
+
+        for (Document document : data) {
+            JSONObject jsonData = document == null ? new JSONObject() : new JSONObject(JSON.serialize(document));
+            entities.add(Devi.GSON.fromJson(jsonData.toString(), clazz));
+        }
+
+        return entities;
     }
 
     public GuildSettings getSettings() {
@@ -104,19 +111,23 @@ public class DeviGuild {
         return id;
     }
 
-    public List<Document> getIgnoredRoles() {
+    public List<IgnoredRole> getIgnoredRoles() {
         return ignoredRoles;
+    }
+
+    public List<Command> getCommandEntities() {
+        return commandEntities;
+    }
+
+    public List<Stream> getStreams() {
+        return streams;
+    }
+
+    public List<Punishment> getPunishments() {
+        return punishments;
     }
 
     public Devi getDevi() {
         return devi;
-    }
-
-    public List<Document> getCommands() {
-        return commands;
-    }
-
-    public List<Document> getStreams() {
-        return streams;
     }
 }

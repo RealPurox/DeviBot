@@ -7,8 +7,8 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import me.purox.devi.commands.handler.Command;
-import me.purox.devi.commands.handler.CommandSender;
+import me.purox.devi.commandsold.handler.ICommand;
+import me.purox.devi.commandsold.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
 import net.dv8tion.jda.core.audio.hooks.ConnectionListener;
@@ -172,7 +172,7 @@ public class GuildPlayer extends AudioEventAdapter {
 
     }
 
-    public void loadSong(String query, Command command, CommandSender sender) {
+    public void loadSong(String query, ICommand command, CommandSender sender) {
         devi.getMusicManager().getAudioPlayerManager().loadItem(query, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
@@ -212,7 +212,7 @@ public class GuildPlayer extends AudioEventAdapter {
         });
     }
 
-    public void join(Command command, CommandSender sender, boolean silent) {
+    public void join(ICommand command, CommandSender sender, boolean silent) {
         devi.getMusicManager().getThreadPool().submit(() -> {
             AudioManager audioManager = guild.getAudioManager();
 
@@ -287,7 +287,7 @@ public class GuildPlayer extends AudioEventAdapter {
         });
     }
 
-    public void leave(Command command, CommandSender sender, boolean silent) {
+    public void leave(ICommand command, CommandSender sender, boolean silent) {
         devi.getMusicManager().getThreadPool().submit(() -> {
             GuildVoiceState deviVoiceState = guild.getSelfMember().getVoiceState();
             AudioManager audioManager = guild.getAudioManager();

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class Logger {
+public class Logger implements Thread.UncaughtExceptionHandler {
 
     private List<Document> logs;
     private boolean debug;
@@ -71,5 +71,10 @@ public class Logger {
 
         logs.add(logDoc);
         System.out.println(log);
+    }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable throwable) {
+        error("[Thread: " + thread.getName() + "] An exception occurred in " + thread.getStackTrace()[0].getClassName() + " at line " + throwable.getStackTrace()[0]);
     }
 }

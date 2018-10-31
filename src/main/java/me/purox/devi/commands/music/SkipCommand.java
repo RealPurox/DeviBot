@@ -1,31 +1,27 @@
-package me.purox.devi.commandsold.music;
+package me.purox.devi.commands.music;
 
-import me.purox.devi.commandsold.handler.ICommand;
-import me.purox.devi.commandsold.handler.CommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.ICommand;
+import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
-import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 
-import java.util.List;
-
-public class SkipCommandExecutor implements CommandExecutor {
+public class SkipCommand extends ICommand {
 
     private Devi devi;
 
-    public SkipCommandExecutor(Devi devi) {
+    public SkipCommand(Devi devi) {
+        super("skip");
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, ICommand command, CommandSender sender) {
-        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
+    public void execute(CommandSender sender, Command command) {
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getGuild());
 
-        Member member = command.getEvent().getMember();
+        Member member = command.getMember();
         if (!devi.getMusicManager().isDJorAlone(member, member.getVoiceState().getChannel(), member.getGuild())) {
             sender.reply(devi.getTranslation(command.getLanguage(), 454));
             return;
@@ -42,7 +38,7 @@ public class SkipCommandExecutor implements CommandExecutor {
         }
         int amount;
         try {
-            amount = args.length == 0 ? 1 : Integer.parseInt(args[0]);
+            amount = command.getArgs().length == 0 ? 1 : Integer.parseInt(command.getArgs()[0]);
         } catch (NumberFormatException e) {
             amount = 1;
         }
@@ -61,30 +57,6 @@ public class SkipCommandExecutor implements CommandExecutor {
             AudioInfo next = guildPlayer.getCurrent();
             sender.reply(Emote.MUSIC.get() + " | " + devi.getTranslation(command.getLanguage(), 137, "**" + next.getAudioTrack().getInfo().title + "**"));
         }
-    }
 
-    @Override
-    public boolean guildOnly() {
-        return true;
-    }
-
-    @Override
-    public int getDescriptionTranslationID() {
-        return 131;
-    }
-
-    @Override
-    public List<String> getAliases() {
-        return null;
-    }
-
-    @Override
-    public Permission getPermission() {
-        return null;
-    }
-
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.MUSIC;
     }
 }

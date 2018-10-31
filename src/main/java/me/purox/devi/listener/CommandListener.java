@@ -2,9 +2,7 @@ package me.purox.devi.listener;
 
 import me.purox.devi.commands.CommandHandler;
 import me.purox.devi.commands.ICommand;
-import me.purox.devi.commandsold.handler.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.entities.Command;
 import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.core.guild.DeviGuild;

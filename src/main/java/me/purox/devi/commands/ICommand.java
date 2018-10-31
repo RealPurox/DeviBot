@@ -1,6 +1,5 @@
 package me.purox.devi.commands;
 
-import me.purox.devi.commandsold.handler.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.ModuleType;

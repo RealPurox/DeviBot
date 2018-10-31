@@ -1,4 +1,4 @@
-package me.purox.devi.commandsold.handler;
+package me.purox.devi.commands;
 
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.JDA;

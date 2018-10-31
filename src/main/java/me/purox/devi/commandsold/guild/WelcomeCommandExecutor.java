@@ -1,5 +1,6 @@
 package me.purox.devi.commandsold.guild;
 
+import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commandsold.guild.handler.*;
 import me.purox.devi.commandsold.handler.*;
 import me.purox.devi.core.Devi;

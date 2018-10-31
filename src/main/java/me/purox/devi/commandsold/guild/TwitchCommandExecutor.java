@@ -3,7 +3,7 @@ package me.purox.devi.commandsold.guild;
 import com.mongodb.client.result.UpdateResult;
 import me.purox.devi.commandsold.handler.ICommand;
 import me.purox.devi.commandsold.handler.CommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
 import me.purox.devi.core.ModuleType;

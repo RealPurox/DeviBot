@@ -1,34 +1,32 @@
-package me.purox.devi.commandsold.dev;
+package me.purox.devi.commands.admin;
 
-import me.purox.devi.commandsold.handler.ICommand;
-import me.purox.devi.commandsold.handler.CommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.CommandSender;
+import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.ModuleType;
-import net.dv8tion.jda.core.Permission;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
-public class AdminDisableCommandExecutor implements CommandExecutor {
+public class DisableModuleCommand extends ICommand {
 
     private Devi devi;
 
-    public AdminDisableCommandExecutor(Devi devi) {
+    public DisableModuleCommand(Devi devi) {
+        super("admindisable");
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, ICommand command, CommandSender sender) {
+    public void execute(CommandSender sender, Command command) {
         if (!devi.getAdmins().contains(sender.getId())) return;
 
-        if (args.length == 0) {
+        if (command.getArgs().length == 0) {
             sender.reply("Invalid amount of arguments provided. Correct usage: `" + command.getPrefix() + "admindisable [--list, --all, <module type>]`");
             return;
         }
 
-        if (args[0].equalsIgnoreCase("--list")) {
+        if (command.getArgs()[0].equalsIgnoreCase("--list")) {
             if (devi.getDisabledModules().size() == 0) {
                 sender.reply("All modules are currently enabled. If one module does not work in a specific guild, it's most likely that they have disabled that module in their guild.");
                 return;
@@ -37,12 +35,12 @@ public class AdminDisableCommandExecutor implements CommandExecutor {
             return;
         }
 
-        if (args[0].equalsIgnoreCase("--all")) {
+        if (command.getArgs()[0].equalsIgnoreCase("--all")) {
             sender.reply("All modules: `" + (Arrays.stream(ModuleType.values()).map(ModuleType::name).collect(Collectors.joining("`, `"))) + "`");
             return;
         }
 
-        ModuleType moduleType = ModuleType.getByName(Arrays.stream(args).collect(Collectors.joining(" ")));
+        ModuleType moduleType = ModuleType.getByName(String.join(" ", command.getArgs()));
         if (moduleType == null) {
             sender.reply("Specified module not found. Use `" + command.getPrefix() + "admindisable --all` to get a list of all modules.");
             return;
@@ -63,30 +61,6 @@ public class AdminDisableCommandExecutor implements CommandExecutor {
         } else {
             sender.reply("Something went wrong while attempting to disable the specified module");
         }
-    }
 
-    @Override
-    public boolean guildOnly() {
-        return false;
-    }
-
-    @Override
-    public int getDescriptionTranslationID() {
-        return 0;
-    }
-
-    @Override
-    public List<String> getAliases() {
-        return null;
-    }
-
-    @Override
-    public Permission getPermission() {
-        return null;
-    }
-
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.DEV;
     }
 }

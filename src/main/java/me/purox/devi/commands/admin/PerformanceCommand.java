@@ -1,32 +1,29 @@
-package me.purox.devi.commandsold.dev;
+package me.purox.devi.commands.admin;
 
 import com.sun.management.OperatingSystemMXBean;
-import me.purox.devi.commandsold.handler.ICommand;
-import me.purox.devi.commandsold.handler.CommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.CommandSender;
+import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
-import me.purox.devi.core.ModuleType;
 import me.purox.devi.utils.TimeUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
 
 import java.awt.*;
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class PerformanceCommandExecutor implements CommandExecutor {
+public class PerformanceCommand extends ICommand {
 
     private Devi devi;
 
-    public PerformanceCommandExecutor(Devi devi) {
+    public PerformanceCommand(Devi devi) {
+        super("performance");
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, ICommand command, CommandSender sender) {
+    public void execute(CommandSender sender, Command command) {
         if (!devi.getAdmins().contains(sender.getId())) return;
 
         long millis = ManagementFactory.getRuntimeMXBean().getUptime();
@@ -102,30 +99,5 @@ public class PerformanceCommandExecutor implements CommandExecutor {
     private int getTotalRam() {
         Runtime runtime = Runtime.getRuntime();
         return Math.round((float)(runtime.totalMemory() / 1048576L));
-    }
-
-    @Override
-    public boolean guildOnly() {
-        return false;
-    }
-
-    @Override
-    public int getDescriptionTranslationID() {
-        return 0;
-    }
-
-    @Override
-    public List<String> getAliases() {
-        return null;
-    }
-
-    @Override
-    public Permission getPermission() {
-        return null;
-    }
-
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.DEV;
     }
 }

@@ -1,19 +1,16 @@
 package me.purox.devi.commands;
 
-import me.purox.devi.commands.admin.TestCommand;
+import me.purox.devi.commands.admin.*;
 import me.purox.devi.commands.fun.*;
-import me.purox.devi.commands.game.HiveCommand;
-import me.purox.devi.commands.game.HypixelCommand;
-import me.purox.devi.commands.game.OsuCommand;
-import me.purox.devi.commands.game.SteamCommand;
-import me.purox.devi.commands.nsfw.UrbanDictionaryCommand;
-import me.purox.devi.commandsold.general.UrbanDictionaryCommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.game.*;
+import me.purox.devi.commands.music.*;
+import me.purox.devi.commands.nsfw.*;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.MessageUtils;
+import net.dv8tion.jda.core.Permission;
 
 import java.util.LinkedHashMap;
 
@@ -28,6 +25,14 @@ public class CommandHandler {
 
         //dev
         registerCommand(new TestCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new DisableModuleCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new EnableModuleCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new StatsCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new EvalCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new GuildDataCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new PerformanceCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new RebootCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new ReloadCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         //fun
         registerCommand(new CatCommand(devi).setDescriptionId(541).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
         registerCommand(new CatFactCommand(devi).setDescriptionId(537).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
@@ -44,7 +49,20 @@ public class CommandHandler {
         registerCommand(new HypixelCommand(devi).setDescriptionId(225).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
         registerCommand(new OsuCommand(devi).setDescriptionId(512).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
         registerCommand(new SteamCommand(devi).setDescriptionId(511).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
-        //nsfw
+        //music
+        registerCommand(new CurrentCommand(devi).setDescriptionId(128).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new JoinCommand(devi).setDescriptionId(99).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new LeaveCommand(devi).setDescriptionId(143).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new LoopCommand(devi).setDescriptionId(369).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(Permission.MANAGE_CHANNEL));
+        registerCommand(new PauseCommand(devi).setDescriptionId(122).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new PlayCommand(devi).setDescriptionId(115).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new QueueCommand(devi).setDescriptionId(117).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new RemoveCommand(devi).setDescriptionId(460).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new ShuffleCommand(devi).setDescriptionId(138).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new SkipCommand(devi).setDescriptionId(131).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new UnPauseCommand(devi).setDescriptionId(125).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        registerCommand(new VolumeCommand(devi).setDescriptionId(189).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        //not save for work & wife
         registerCommand(new UrbanDictionaryCommand(devi).setDescriptionId(568).setGuildOnly(false).setModuleType(ModuleType.NSFW_COMMANDS).setPremission(null));
     }
 

@@ -1,36 +1,34 @@
-package me.purox.devi.commandsold.music;
+package me.purox.devi.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import me.purox.devi.commandsold.handler.ICommand;
-import me.purox.devi.commandsold.handler.CommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.ICommand;
+import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Emote;
-import me.purox.devi.core.ModuleType;
 import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class QueueCommandExecutor implements CommandExecutor {
+public class QueueCommand extends ICommand {
 
     private Devi devi;
 
-    public QueueCommandExecutor(Devi devi) {
+    public QueueCommand(Devi devi) {
+        super("queue");
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, ICommand command, CommandSender sender) {
-        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getEvent().getGuild());
+    public void execute(CommandSender sender, Command command) {
+        GuildPlayer guildPlayer = devi.getMusicManager().getGuildPlayer(command.getGuild());
 
-        if (Arrays.asList(args).contains("--raw") && devi.getAdmins().contains(sender.getId())) {
+        if (Arrays.asList(command.getArgs()).contains("--raw") && devi.getAdmins().contains(sender.getId())) {
             StringBuilder sb = new StringBuilder();
             for (AudioInfo audioInfo : guildPlayer.getQueue()) {
                 sb.append(audioInfo.toString()).append("\n");
@@ -77,12 +75,13 @@ public class QueueCommandExecutor implements CommandExecutor {
             }
 
             /*if (isMore) {
-                builder.appendDescription("[Click here](https://www.devibot.net/guild/" + command.getEvent().getGuild().getId() + "/queue) to display the rest of the queue");
+                builder.appendDescription("[Click here](https://www.devibot.net/guild/" + command.getGuild().getId() + "/queue) to display the rest of the queue");
             }*/
         }
 
         builder.setFooter(devi.getTranslation(command.getLanguage(), 468) + ": " + guildPlayer.getQueue().size() + " " + guildPlayer.getQueueDuration().replaceAll("`", ""), null);
         sender.reply(builder.build());
+
     }
 
     private String songIdToString(int id) {
@@ -99,28 +98,4 @@ public class QueueCommandExecutor implements CommandExecutor {
                 .replaceAll("9", ":nine:");
     }
 
-    @Override
-    public boolean guildOnly() {
-        return true;
-    }
-
-    @Override
-    public int getDescriptionTranslationID() {
-        return 117;
-    }
-
-    @Override
-    public List<String> getAliases() {
-        return null;
-    }
-
-    @Override
-    public Permission getPermission() {
-        return null;
-    }
-
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.MUSIC;
-    }
 }

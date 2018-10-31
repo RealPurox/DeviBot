@@ -1,7 +1,7 @@
 package me.purox.devi.commands.fun;
 
 import me.purox.devi.commands.ICommand;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
 
 import java.util.Random;

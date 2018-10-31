@@ -1,25 +1,22 @@
-package me.purox.devi.commandsold.dev;
+package me.purox.devi.commands.admin;
 
-import me.purox.devi.commandsold.handler.ICommand;
-import me.purox.devi.commandsold.handler.CommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.CommandSender;
+import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.ModuleType;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.awt.*;
-import java.util.List;
 
-public class EvalCommandExecutor implements CommandExecutor {
+public class EvalCommand extends ICommand {
 
     private Devi devi;
     private ScriptEngine engine;
 
-    public EvalCommandExecutor(Devi devi) {
+    public EvalCommand(Devi devi) {
+        super("eval");
         this.devi = devi;
         engine = new ScriptEngineManager().getEngineByName("nashorn");
         try {
@@ -40,15 +37,16 @@ public class EvalCommandExecutor implements CommandExecutor {
     }
 
     @Override
-    public void execute(String[] args, ICommand command, CommandSender sender) {
+    public void execute(CommandSender sender, Command command) {
         if (!devi.getAdmins().contains(sender.getId())) return;
 
-        String evaluation = String.join(" ", args);
+        String evaluation = String.join(" ", command.getArgs());
 
-        engine.put("args", args);
+        engine.put("args", command.getArgs());
         engine.put("command", command);
         engine.put("sender", sender);
         engine.put("devi", devi);
+        engine.put("icommand", this);
 
         try {
             if (evaluation.contains("sender.reply(")) {
@@ -73,30 +71,6 @@ public class EvalCommandExecutor implements CommandExecutor {
             builder.appendDescription("```");
             sender.reply(builder.build());
         }
-    }
 
-    @Override
-    public boolean guildOnly() {
-        return false;
-    }
-
-    @Override
-    public int getDescriptionTranslationID() {
-        return 0;
-    }
-
-    @Override
-    public List<String> getAliases() {
-        return null;
-    }
-
-    @Override
-    public Permission getPermission() {
-        return null;
-    }
-
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.DEV;
     }
 }

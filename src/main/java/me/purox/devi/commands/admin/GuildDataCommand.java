@@ -1,10 +1,8 @@
-package me.purox.devi.commandsold.dev;
+package me.purox.devi.commands.admin;
 
-import me.purox.devi.commandsold.handler.ICommand;
-import me.purox.devi.commandsold.handler.CommandExecutor;
-import me.purox.devi.commandsold.handler.CommandSender;
+import me.purox.devi.commands.CommandSender;
+import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.ModuleType;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.guild.entities.Command;
@@ -12,27 +10,25 @@ import me.purox.devi.core.guild.entities.Stream;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
 import me.purox.devi.utils.MessageUtils;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 
-import java.util.List;
-
-public class GuildDataCommandExecutor implements CommandExecutor {
+public class GuildDataCommand extends ICommand {
 
     private Devi devi;
 
-    public GuildDataCommandExecutor(Devi devi) {
+    public GuildDataCommand(Devi devi) {
+        super("guilddata");
         this.devi = devi;
     }
 
     @Override
-    public void execute(String[] args, ICommand command, CommandSender sender) {
+    public void execute(CommandSender sender, Command command) {
         if (!devi.getAdmins().contains(sender.getId())) return;
 
-        Message message = MessageUtils.sendMessageSync(command.getEvent().getChannel(), "Collecting guild data..");
+        Message message = MessageUtils.sendMessageSync(command.getChannel(), "Collecting guild data..");
         if (message == null) return;
 
-        DeviGuild deviGuild = args.length == 0 ? command.getDeviGuild() : new DeviGuild(args[0], devi);
+        DeviGuild deviGuild = command.getArgs().length == 0 ? command.getDeviGuild() : new DeviGuild(command.getArgs()[0], devi);
         StringBuilder builder = new StringBuilder();
 
         builder.append("/*-----------------------*/\n");
@@ -40,7 +36,7 @@ public class GuildDataCommandExecutor implements CommandExecutor {
         builder.append("/*-----------------------*/\n\n");
 
 
-        for (Command commandEntity : deviGuild.getCommandEntities()) {
+        for (me.purox.devi.core.guild.entities.Command commandEntity : deviGuild.getCommandEntities()) {
             builder.append("------------------------\n");
             builder.append("Unique ID: ").append(commandEntity.get_id()).append("\n");
             builder.append("Invoke: ").append(commandEntity.getInvoke()).append("\n");
@@ -77,30 +73,6 @@ public class GuildDataCommandExecutor implements CommandExecutor {
                 .asJSON(res -> message.editMessage("Collected guild settings: https://hastebin.com/" + res.getBody().getString("key")).queue(),
                         failure -> message.editMessage("Failed to upload guild settings to hastebin.").queue());
 
-    }
 
-    @Override
-    public boolean guildOnly() {
-        return true;
-    }
-
-    @Override
-    public int getDescriptionTranslationID() {
-        return 0;
-    }
-
-    @Override
-    public List<String> getAliases() {
-        return null;
-    }
-
-    @Override
-    public Permission getPermission() {
-        return null;
-    }
-
-    @Override
-    public ModuleType getModuleType() {
-        return null;
     }
 }

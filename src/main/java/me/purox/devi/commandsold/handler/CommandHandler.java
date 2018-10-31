@@ -1,13 +1,6 @@
 package me.purox.devi.commandsold.handler;
 
-import me.purox.devi.commandsold.dev.*;
-import me.purox.devi.commandsold.guild.*;
-import me.purox.devi.commandsold.guild.custom.*;
-import me.purox.devi.commandsold.info.*;
-import me.purox.devi.commandsold.info.HelpCommandExecutor;
-import me.purox.devi.commandsold.mod.*;
-import me.purox.devi.commandsold.general.*;
-import me.purox.devi.commandsold.music.*;
+import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.Language;

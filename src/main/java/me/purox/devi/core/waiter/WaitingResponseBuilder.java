@@ -1,6 +1,6 @@
 package me.purox.devi.core.waiter;
 
-import me.purox.devi.commandsold.handler.ICommand;
+import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.GuildSettings;
@@ -49,11 +49,11 @@ public class WaitingResponseBuilder {
 
     private WaiterVoid customVoid;
 
-    public WaitingResponseBuilder(Devi devi, ICommand command) {
-        this.executor = command.getEvent().getAuthor();
-        this.channel = command.getEvent().getChannel();
-        this.trigger = command.getEvent().getMessage();
-        this.guild = command.getEvent().getGuild();
+    public WaitingResponseBuilder(Devi devi, ICommand.Command command) {
+        this.executor = command.getAuthor();
+        this.channel = command.getChannel();
+        this.trigger = command.getMessage();
+        this.guild = command.getGuild();
         this.devi = devi;
 
         Language language = Language.getLanguage(devi.getDeviGuild(guild.getId()).getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));

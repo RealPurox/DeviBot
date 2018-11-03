@@ -3,8 +3,13 @@ package me.purox.devi.commands;
 import me.purox.devi.commands.admin.*;
 import me.purox.devi.commands.fun.*;
 import me.purox.devi.commands.game.*;
+import me.purox.devi.commands.info.*;
+import me.purox.devi.commands.management.*;
+import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.music.*;
 import me.purox.devi.commands.nsfw.*;
+import me.purox.devi.commands.twitch.ListStreamCommand;
+import me.purox.devi.commands.twitch.TwitchCommand;
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.Language;
 import me.purox.devi.core.ModuleType;
@@ -27,7 +32,7 @@ public class CommandHandler {
         registerCommand(new TestCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new DisableModuleCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new EnableModuleCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
-        registerCommand(new StatsCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new AdminStatsCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new EvalCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new GuildDataCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new PerformanceCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
@@ -44,6 +49,18 @@ public class CommandHandler {
         registerCommand(new GoogleCommand(devi).setDescriptionId(579).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
         registerCommand(new NumberFactCommand(devi).setDescriptionId(216).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
         registerCommand(new RandomColorCommand(devi).setDescriptionId(404).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
+        //info
+        registerCommand(new ChangeLogCommand(devi).setDescriptionId(491).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new FeedbackCommand(devi).setDescriptionId(483).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new GuildStatsCommand(devi).setDescriptionId(426).setGuildOnly(true).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new HelpCommand(devi).setDescriptionId(38).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new InviteCommand(devi).setDescriptionId(621).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new PingCommand(devi).setDescriptionId(543).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new StatsCommand(devi).setDescriptionId(550).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new SupportCommand(devi).setDescriptionId(590).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new UserInfoCommand(devi).setDescriptionId(438).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+        registerCommand(new WeatherCommand(devi).setDescriptionId(400).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
+
         //game
         registerCommand(new HiveCommand(devi).setDescriptionId(226).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
         registerCommand(new HypixelCommand(devi).setDescriptionId(225).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
@@ -53,7 +70,7 @@ public class CommandHandler {
         registerCommand(new CurrentCommand(devi).setDescriptionId(128).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new JoinCommand(devi).setDescriptionId(99).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new LeaveCommand(devi).setDescriptionId(143).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
-        registerCommand(new LoopCommand(devi).setDescriptionId(369).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(Permission.MANAGE_CHANNEL));
+        registerCommand(new LoopCommand(devi).setDescriptionId(369).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new PauseCommand(devi).setDescriptionId(122).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new PlayCommand(devi).setDescriptionId(115).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new QueueCommand(devi).setDescriptionId(117).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
@@ -62,6 +79,28 @@ public class CommandHandler {
         registerCommand(new SkipCommand(devi).setDescriptionId(131).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new UnPauseCommand(devi).setDescriptionId(125).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new VolumeCommand(devi).setDescriptionId(189).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
+        //management
+        registerCommand(new SettingsCommand(devi).setDescriptionId(45).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new AutoModCommand(devi).setDescriptionId(73).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new ModLogCommand(devi).setDescriptionId(58).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new PrefixCommand(devi).setDescriptionId(248).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new LanguageCommand(devi).setDescriptionId(253).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new AddCommandCommand(devi).setDescriptionId(177).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new EditCommandCommand(devi).setDescriptionId(228).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new EditCommandCommand(devi).setDescriptionId(228).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new ListCommandCommand(devi).setDescriptionId(192).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new RemoveCommandCommand(devi).setDescriptionId(194).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT_COMMANDS).setPremission(Permission.MANAGE_SERVER));
+        //moderation
+        registerCommand(new BanCommand(devi).setDescriptionId(39).setGuildOnly(true).setModuleType(ModuleType.MODERATION).setPremission(Permission.BAN_MEMBERS));
+        registerCommand(new KickCommand(devi).setDescriptionId(536).setGuildOnly(true).setModuleType(ModuleType.MODERATION).setPremission(Permission.KICK_MEMBERS));
+        registerCommand(new MuteCommand(devi).setDescriptionId(41).setGuildOnly(true).setModuleType(ModuleType.MODERATION).setPremission(Permission.VOICE_MUTE_OTHERS));
+        registerCommand(new PurgeCommand(devi).setDescriptionId(151).setGuildOnly(true).setModuleType(ModuleType.MODERATION).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new UnbanCommand(devi).setDescriptionId(43).setGuildOnly(true).setModuleType(ModuleType.MODERATION).setPremission(Permission.BAN_MEMBERS));
+        registerCommand(new UnmuteCommand(devi).setDescriptionId(44).setGuildOnly(true).setModuleType(ModuleType.MODERATION).setPremission(Permission.VOICE_MUTE_OTHERS));
+        registerCommand(new VoiceKickCommand(devi).setDescriptionId(576).setGuildOnly(true).setModuleType(ModuleType.MODERATION).setPremission(Permission.KICK_MEMBERS));
+        //twitch
+        registerCommand(new TwitchCommand(devi).setDescriptionId(311).setGuildOnly(true).setModuleType(ModuleType.TWITCH).setPremission(Permission.MANAGE_SERVER));
+        registerCommand(new ListStreamCommand(devi).setDescriptionId(200).setGuildOnly(true).setModuleType(ModuleType.TWITCH).setPremission(Permission.MANAGE_SERVER));
         //not save for work & wife
         registerCommand(new UrbanDictionaryCommand(devi).setDescriptionId(568).setGuildOnly(false).setModuleType(ModuleType.NSFW_COMMANDS).setPremission(null));
     }

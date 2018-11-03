@@ -113,7 +113,16 @@ public class CommandSender implements User {
     public void reply(MessageEmbed embed, Consumer<Message> success) {
         MessageUtils.sendMessageAsync(event.getChannel(), embed, success);
     }
+
     public void reply(MessageEmbed embed) {
         reply(embed, null);
+    }
+
+    public void reply(Message message, Consumer<Message> success) {
+        MessageUtils.sendMessageAsync(event.getChannel(), message, success);
+    }
+
+    public void reply(Message message) {
+        reply(message, null);
     }
 }

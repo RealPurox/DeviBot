@@ -187,10 +187,10 @@ public class Devi {
             builder.setGame(Game.listening("startup code."));
             // add event listeners
             builder.addEventListeners(new ReadyListener(this));
-            //builder.addEventListeners(new CommandListener(this));
-            //builder.addEventListeners(new MessageListener(this));
-            //builder.addEventListeners(new AutoModListener(this));
-            //builder.addEventListeners(new ModLogListener(this));
+            builder.addEventListeners(new CommandListener(this));
+            builder.addEventListeners(new MessageListener(this));
+            builder.addEventListeners(new AutoModListener(this));
+            builder.addEventListeners(new ModLogListener(this));
 
             // build & login
             this.shardManager = builder.build();

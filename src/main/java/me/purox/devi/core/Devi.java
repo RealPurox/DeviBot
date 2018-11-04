@@ -9,6 +9,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.purox.devi.Logger;
 import me.purox.devi.core.waiter.ResponseWaiter;
+import me.purox.devi.entities.AnimatedEmote;
+import me.purox.devi.entities.Language;
+import me.purox.devi.entities.ModuleType;
 import me.purox.devi.listener.*;
 import me.purox.devi.commands.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
@@ -17,8 +20,7 @@ import me.purox.devi.database.DatabaseManager;
 import me.purox.devi.music.MusicManager;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
-import me.purox.devi.utils.DiscordUtils;
-import me.purox.devi.utils.MessageUtils;
+import me.purox.devi.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -41,6 +43,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -49,6 +52,8 @@ import java.util.function.Consumer;
 public class Devi {
 
     public static final Gson GSON = new GsonBuilder().create();
+
+    private ScheduledExecutorService threadPool;
 
     private Settings settings;
     private MusicManager musicManager;
@@ -77,6 +82,8 @@ public class Devi {
     private Date rebootTime;
 
     public Devi() {
+        this.threadPool = Executors.newSingleThreadScheduledExecutor();
+
         // init handlers / managers / settings / utils
         this.commandHandler = new CommandHandler(this);
         this.settings = new Settings();
@@ -121,7 +128,7 @@ public class Devi {
         loadTranslations();
         // load streams
         loadStreams();
-        // reboot everyday at 12am
+        // reboot everyday at 4:30am
         initDailyReboot();
 
         try {
@@ -171,21 +178,19 @@ public class Devi {
             changeTwitchSubscriptionStatus(subscribeToStream, true);
 
             // create builder
-            int shards = 1;
 
             DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder();
             builder.setToken(settings.getBotToken());
             builder.setAutoReconnect(true);
-            builder.setShardsTotal(shards);
 
             //builder.setGame(settings.isDevBot() ? Game.listening("code") : setDefaultPlaying());
             builder.setGame(Game.listening("startup code."));
             // add event listeners
             builder.addEventListeners(new ReadyListener(this));
-            builder.addEventListeners(new CommandListener(this));
-            builder.addEventListeners(new MessageListener(this));
-            builder.addEventListeners(new AutoModListener(this));
-            builder.addEventListeners(new ModLogListener(this));
+            //builder.addEventListeners(new CommandListener(this));
+            //builder.addEventListeners(new MessageListener(this));
+            //builder.addEventListeners(new AutoModListener(this));
+            //builder.addEventListeners(new ModLogListener(this));
 
             // build & login
             this.shardManager = builder.build();
@@ -480,7 +485,7 @@ public class Devi {
         private long channels;
         private long ping;
 
-        Stats() {
+        public Stats() {
             this.shards = shardManager.getShards().size();
             this.guilds = 0;
             this.users = 0;
@@ -500,7 +505,7 @@ public class Devi {
             this.ping = this.ping / this.shards;
         }
 
-        long getShards() {
+        public long getShards() {
             return shards;
         }
 
@@ -512,63 +517,13 @@ public class Devi {
             return guilds;
         }
 
-        long getPing() {
+        public long getPing() {
             return ping;
         }
 
         public long getUsers() {
             return users;
         }
-    }
-
-    public void startVoteChecker() {
-        // update voters every 5 mins
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> new RequestBuilder(okHttpClient)
-                .setRequestType(Request.RequestType.GET)
-                .setURL("https://discordbots.org/api/bots/354361427731152907/votes")
-                .addHeader("Authorization", settings.getDiscordBotsDotOrgToken())
-                .build().asString(json -> {
-                    if (json.getBody().startsWith("{")) return;
-                    JSONArray jsonArray = new JSONArray(json.getBody());
-                    jsonArray.forEach(object -> {
-                        JSONObject vote = (JSONObject) object;
-                        if(!vote.has(vote.getString("id"))) voters.add(vote.getString("id"));
-                    });
-                }), 0, 1, TimeUnit.MINUTES);
-    }
-
-    public void startStatsPusher(){
-        if (this.settings.isDevBot()) return;
-        //post every half an hour to bot lists
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            Stats stats = new Stats();
-            new RequestBuilder(okHttpClient)
-                    .setURL("https://discordbots.org/api/bots/354361427731152907/stats")
-                    .setRequestType(Request.RequestType.POST)
-                    //body
-                    .appendBody("server_count", stats.getGuilds())
-                    //header
-                    .addHeader("Authorization", settings.getDiscordBotsDotOrgToken())
-                    .build().asStringSync();
-        }, 0, 30, TimeUnit.MINUTES);
-
-        //post stats every 2 min to the website
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            Stats stats = new Stats();
-            new RequestBuilder(okHttpClient)
-                    .setURL("https://www.devibot.net/api/stats")
-                    .setRequestType(Request.RequestType.POST)
-                    //body
-                    .appendBody("shards", stats.getShards())
-                    .appendBody("guilds", stats.getGuilds())
-                    .appendBody("users", stats.getUsers())
-                    .appendBody("channels", stats.getChannels())
-                    .appendBody("average_ping", stats.getPing())
-                    //header
-                    .addHeader("Authorization", "Bearer " + settings.getDeviAPIAuthorization())
-                    .addHeader("Content-Type", "application/json")
-                    .build().asStringSync();
-        }, 0, 2, TimeUnit.MINUTES);
     }
 
     public void sendMessageToDevelopers(Object o) {
@@ -598,6 +553,10 @@ public class Devi {
                 MessageUtils.sendMessageAsync(channel, o);
             }
         }
+    }
+
+    public ScheduledExecutorService getThreadPool() {
+        return threadPool;
     }
 
     private DeviGuild createDeviGuild(String id) {

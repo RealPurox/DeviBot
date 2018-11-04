@@ -3,7 +3,7 @@ package me.purox.devi.commands.admin;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.ModuleType;
+import me.purox.devi.entities.ModuleType;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

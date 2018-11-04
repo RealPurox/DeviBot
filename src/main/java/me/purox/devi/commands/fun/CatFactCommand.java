@@ -3,7 +3,7 @@ package me.purox.devi.commands.fun;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Emote;
+import me.purox.devi.entities.Emote;
 import me.purox.devi.request.Request;
 import me.purox.devi.request.RequestBuilder;
 import org.json.JSONObject;

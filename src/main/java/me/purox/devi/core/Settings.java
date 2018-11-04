@@ -41,11 +41,11 @@ public class Settings {
         return System.getenv("OSU_KEY");
     }
 
-    String getDeviAPIAuthorization() {
+    public String getDeviAPIAuthorization() {
         return System.getenv("DEVI_AUTH");
     }
 
-    String getDiscordBotsDotOrgToken() {
+    public String getDiscordBotsDotOrgToken() {
         return System.getenv("DISCORD_BOTS_ORG_TOKEN");
     }
 

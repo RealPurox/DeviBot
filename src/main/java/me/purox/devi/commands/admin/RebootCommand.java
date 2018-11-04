@@ -2,9 +2,9 @@ package me.purox.devi.commands.admin;
 
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
-import me.purox.devi.core.AnimatedEmote;
+import me.purox.devi.entities.AnimatedEmote;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Emote;
+import me.purox.devi.entities.Emote;
 import me.purox.devi.utils.TimeUtils;
 
 import java.util.Date;

@@ -1,7 +1,9 @@
 package me.purox.devi.listener;
 
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
+import me.purox.devi.core.agents.StatsPusherAgent;
+import me.purox.devi.core.agents.VoteCheckAgent;
+import me.purox.devi.entities.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.JDA;
@@ -13,6 +15,8 @@ import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+
+import java.util.concurrent.ScheduledExecutorService;
 
 public class ReadyListener extends ListenerAdapter {
 
@@ -50,10 +54,15 @@ public class ReadyListener extends ListenerAdapter {
 
         //last shard booted
         if(jda.getShardInfo().getShardId() == jda.getShardInfo().getShardTotal() - 1) {
-            devi.startStatsPusher();
-            devi.startVoteChecker();
+            ScheduledExecutorService threadPool = devi.getThreadPool();
 
-            new Thread(() -> {
+            StatsPusherAgent statsPusherAgent = new StatsPusherAgent(threadPool, devi);
+            statsPusherAgent.start();
+
+            VoteCheckAgent voteCheckAgent = new VoteCheckAgent(threadPool, devi);
+            voteCheckAgent.start();
+
+            threadPool.submit(() -> {
                 for (Guild guild : event.getJDA().getGuilds()) {
                     // load all guild settings real quick so we can make sure they all have data stored in the database
                     new DeviGuild(guild.getId(), devi);
@@ -62,7 +71,7 @@ public class ReadyListener extends ListenerAdapter {
                         guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
                     }
                 }
-            }).start();
+            });
         }
 
         Guild staffGuild = jda.getGuildById("392264119102996480");

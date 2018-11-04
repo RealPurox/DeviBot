@@ -3,7 +3,7 @@ package me.purox.devi.commands.management;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
+import me.purox.devi.entities.Language;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Role;

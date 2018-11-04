@@ -1,6 +1,6 @@
 package me.purox.devi.core.guild;
 
-import me.purox.devi.core.Emote;
+import me.purox.devi.entities.Emote;
 import net.dv8tion.jda.core.entities.Guild;
 
 import java.util.HashMap;

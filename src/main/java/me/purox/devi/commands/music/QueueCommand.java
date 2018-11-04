@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Emote;
+import me.purox.devi.entities.Emote;
 import me.purox.devi.music.AudioInfo;
 import me.purox.devi.music.GuildPlayer;
 import me.purox.devi.request.Request;

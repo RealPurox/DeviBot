@@ -3,7 +3,7 @@ package me.purox.devi.commands.info;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Emote;
+import me.purox.devi.entities.Emote;
 import me.purox.devi.utils.DiscordUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.IMentionable;

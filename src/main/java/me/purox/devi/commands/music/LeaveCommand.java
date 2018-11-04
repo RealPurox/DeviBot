@@ -3,7 +3,7 @@ package me.purox.devi.commands.music;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Emote;
+import me.purox.devi.entities.Emote;
 import me.purox.devi.music.GuildPlayer;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;

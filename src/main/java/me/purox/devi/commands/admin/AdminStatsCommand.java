@@ -3,7 +3,7 @@ package me.purox.devi.commands.admin;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
+import me.purox.devi.entities.Language;
 
 public class AdminStatsCommand extends ICommand {
 

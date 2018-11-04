@@ -1,4 +1,4 @@
-package me.purox.devi.core;
+package me.purox.devi.entities;
 
 public enum Language {
 

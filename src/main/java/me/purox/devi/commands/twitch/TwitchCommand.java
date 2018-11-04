@@ -4,7 +4,7 @@ import com.mongodb.client.result.UpdateResult;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Emote;
+import me.purox.devi.entities.Emote;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.core.guild.entities.Stream;
 import me.purox.devi.core.waiter.WaitingResponse;

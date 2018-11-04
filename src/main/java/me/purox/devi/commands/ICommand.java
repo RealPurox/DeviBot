@@ -1,8 +1,8 @@
 package me.purox.devi.commands;
 
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
-import me.purox.devi.core.ModuleType;
+import me.purox.devi.entities.Language;
+import me.purox.devi.entities.ModuleType;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import net.dv8tion.jda.core.Permission;

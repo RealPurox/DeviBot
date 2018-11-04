@@ -1,8 +1,8 @@
 package me.purox.devi.core.waiter;
 
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Emote;
-import me.purox.devi.core.Language;
+import me.purox.devi.entities.Emote;
+import me.purox.devi.entities.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.utils.DiscordUtils;

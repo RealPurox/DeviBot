@@ -1,15 +1,13 @@
 package me.purox.devi.utils;
 
 import me.purox.devi.core.Devi;
-import me.purox.devi.core.Language;
 import me.purox.devi.core.guild.DeviGuild;
 import me.purox.devi.core.guild.GuildSettings;
+import me.purox.devi.entities.Language;
 import net.dv8tion.jda.client.exceptions.VerificationLevelException;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
-import net.dv8tion.jda.core.requests.restaction.MessageAction;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.function.Consumer;

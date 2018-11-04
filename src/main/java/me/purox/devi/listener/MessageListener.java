@@ -2,7 +2,7 @@ package me.purox.devi.listener;
 
 import me.purox.devi.core.Devi;
 import me.purox.devi.core.guild.GuildSettings;
-import me.purox.devi.core.Language;
+import me.purox.devi.entities.Language;
 import me.purox.devi.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;

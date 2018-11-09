@@ -1,13 +1,10 @@
 package me.purox.devi.commands;
 
 import me.purox.devi.commands.admin.*;
-import me.purox.devi.commands.fun.*;
-import me.purox.devi.commands.game.*;
 import me.purox.devi.commands.info.*;
 import me.purox.devi.commands.management.*;
 import me.purox.devi.commands.mod.*;
 import me.purox.devi.commands.music.*;
-import me.purox.devi.commands.nsfw.*;
 import me.purox.devi.commands.twitch.ListStreamCommand;
 import me.purox.devi.commands.twitch.TwitchCommand;
 import me.purox.devi.core.Devi;
@@ -38,34 +35,15 @@ public class CommandHandler {
         registerCommand(new PerformanceCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new RebootCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new ReloadCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
-        //fun
-        registerCommand(new CatCommand(devi).setDescriptionId(541).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new CatFactCommand(devi).setDescriptionId(537).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new ChristmasCommand(devi).setDescriptionId(593).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new ChuckNorrisCommand(devi).setDescriptionId(218).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new DogCommand(devi).setDescriptionId(539).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new DogFactCommand(devi).setDescriptionId(542).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new FlipCoinCommand(devi).setDescriptionId(401).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new GoogleCommand(devi).setDescriptionId(579).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new NumberFactCommand(devi).setDescriptionId(216).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
-        registerCommand(new RandomColorCommand(devi).setDescriptionId(404).setGuildOnly(false).setModuleType(ModuleType.FUN_COMMANDS).setPremission(null));
         //info
         registerCommand(new ChangeLogCommand(devi).setDescriptionId(491).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new FeedbackCommand(devi).setDescriptionId(483).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
-        registerCommand(new GuildStatsCommand(devi).setDescriptionId(426).setGuildOnly(true).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new HelpCommand(devi).setDescriptionId(38).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new InviteCommand(devi).setDescriptionId(621).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new PingCommand(devi).setDescriptionId(543).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new StatsCommand(devi).setDescriptionId(550).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new SupportCommand(devi).setDescriptionId(590).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
-        registerCommand(new UserInfoCommand(devi).setDescriptionId(438).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new WeatherCommand(devi).setDescriptionId(400).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
-
-        //game
-        registerCommand(new HiveCommand(devi).setDescriptionId(226).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
-        registerCommand(new HypixelCommand(devi).setDescriptionId(225).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
-        registerCommand(new OsuCommand(devi).setDescriptionId(512).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
-        registerCommand(new SteamCommand(devi).setDescriptionId(511).setGuildOnly(false).setModuleType(ModuleType.GAME_COMMANDS).setPremission(null));
         //music
         registerCommand(new CurrentCommand(devi).setDescriptionId(128).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
         registerCommand(new JoinCommand(devi).setDescriptionId(99).setGuildOnly(true).setModuleType(ModuleType.MUSIC).setPremission(null));
@@ -101,8 +79,6 @@ public class CommandHandler {
         //twitch
         registerCommand(new TwitchCommand(devi).setDescriptionId(311).setGuildOnly(true).setModuleType(ModuleType.TWITCH).setPremission(Permission.MANAGE_SERVER));
         registerCommand(new ListStreamCommand(devi).setDescriptionId(200).setGuildOnly(true).setModuleType(ModuleType.TWITCH).setPremission(Permission.MANAGE_SERVER));
-        //not save for work & wife
-        registerCommand(new UrbanDictionaryCommand(devi).setDescriptionId(568).setGuildOnly(false).setModuleType(ModuleType.NSFW_COMMANDS).setPremission(null));
     }
 
     private void registerCommand(ICommand commandExecutor){

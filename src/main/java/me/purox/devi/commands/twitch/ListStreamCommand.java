@@ -18,7 +18,7 @@ public class ListStreamCommand extends ICommand {
     private Devi devi;
 
     public ListStreamCommand(Devi devi) {
-        super("listtream", "liststreamer", "listtwitch");
+        super("streamlist", "liststream", "liststreamer", "listtwitch");
         this.devi = devi;
     }
 

@@ -1,5 +1,6 @@
 package me.purox.devi.commands.info;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;
@@ -36,12 +37,13 @@ public class HelpCommand extends ICommand {
             //builder.appendDescription("Example: `" + command.getPrefix() + "modulehelp music`");
 
             for (ModuleType moduleType : ModuleType.values()) {
+                if (moduleType == ModuleType.DEV) continue;
                 if (devi.getDisabledModules().contains(moduleType))
                     builder.addField(moduleType.getName(), devi.getTranslation(command.getLanguage(), 391), false);
                 else if (commands.keySet().stream().anyMatch(invoke -> commands.get(invoke).getModuleType() == moduleType))
-                    builder.addField(moduleType.getName(), "`" + command.getPrefix() + commands.keySet().stream()
+                    builder.addField(moduleType.getName(), "```asciidoc\n# " + commands.keySet().stream()
                             .filter(invoke -> commands.get(invoke).getModuleType() == moduleType)
-                            .collect(Collectors.joining("`, `" + command.getPrefix())) + "`", false);
+                            .collect(Collectors.joining(", ")) + "```", false);
             }
 
             sender.reply(builder.build());

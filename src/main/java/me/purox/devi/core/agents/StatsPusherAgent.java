@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class StatsPusherAgent implements Agent {
+public class StatsPusherAgent extends Agent {
 
     private ScheduledExecutorService threadPool;
     private Devi devi;
@@ -16,8 +16,11 @@ public class StatsPusherAgent implements Agent {
     private ScheduledFuture<?> websiteStatsPusherAgent;
     private ScheduledFuture<?> discordBotListStatsPusherAgent;
 
-    public StatsPusherAgent(ScheduledExecutorService threadPool, Devi devi) {
-        this.threadPool = threadPool;
+    private boolean running = false;
+
+    public StatsPusherAgent(Devi devi) {
+        super(devi);
+        this.threadPool = devi.getThreadPool();
         this.devi = devi;
     }
 
@@ -61,18 +64,27 @@ public class StatsPusherAgent implements Agent {
     @Override
     public void start() {
         if (devi.getSettings().isDevBot()) return;
+        super.start();
 
         this.websiteStatsPusherAgent = threadPool.scheduleAtFixedRate(new WebsiteStatsPusherAgent(), 0, 2, TimeUnit.MINUTES);
         this.discordBotListStatsPusherAgent = threadPool.scheduleAtFixedRate(new DiscordBotListStatsPusherAgent(), 0, 30, TimeUnit.MINUTES);
+        this.running = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
     }
 
     @Override
     public void stop() {
         if (devi.getSettings().isDevBot()) return;
+        super.stop();
 
         if (this.websiteStatsPusherAgent != null)
             this.websiteStatsPusherAgent.cancel(true);
         if (this.discordBotListStatsPusherAgent != null)
             this.discordBotListStatsPusherAgent.cancel(true);
+        this.running = false;
     }
 }

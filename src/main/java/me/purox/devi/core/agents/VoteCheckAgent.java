@@ -10,15 +10,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class VoteCheckAgent implements Agent {
+public class VoteCheckAgent extends Agent {
 
     private ScheduledExecutorService threadPool;
     private Devi devi;
 
     private ScheduledFuture<?> voteCheckerAgent;
 
-    public VoteCheckAgent(ScheduledExecutorService threadPool, Devi devi) {
-        this.threadPool = threadPool;
+    private boolean running = false;
+
+    public VoteCheckAgent(Devi devi) {
+        super(devi);
+        this.threadPool = devi.getThreadPool();
         this.devi = devi;
     }
 
@@ -43,12 +46,21 @@ public class VoteCheckAgent implements Agent {
 
     @Override
     public void start() {
+        super.start();
         this.voteCheckerAgent = threadPool.scheduleAtFixedRate(new VoteCheckerAgent(), 0, 5, TimeUnit.MINUTES);
+        this.running = true;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
     }
 
     @Override
     public void stop() {
+        super.stop();
         if (this.voteCheckerAgent != null)
             this.voteCheckerAgent.cancel(true);
+        this.running = false;
     }
 }

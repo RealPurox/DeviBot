@@ -14,7 +14,9 @@ import net.dv8tion.jda.core.events.ExceptionEvent;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.core.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.hooks.SubscribeEvent;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -49,40 +51,30 @@ public class ReadyListener extends ListenerAdapter {
 
     @Override
     public void onReady(ReadyEvent event) {
-        JDA jda = event.getJDA();
-        devi.getLogger().log(jda.getShardInfo() + " is ready");
-
-        //last shard booted
-        if(jda.getShardInfo().getShardId() == jda.getShardInfo().getShardTotal() - 1) {
-            ScheduledExecutorService threadPool = devi.getThreadPool();
-
-            StatsPusherAgent statsPusherAgent = new StatsPusherAgent(threadPool, devi);
-            statsPusherAgent.start();
-
-            VoteCheckAgent voteCheckAgent = new VoteCheckAgent(threadPool, devi);
-            voteCheckAgent.start();
-
-            threadPool.submit(() -> {
-                for (Guild guild : event.getJDA().getGuilds()) {
-                    // load all guild settings real quick so we can make sure they all have data stored in the database
-                    new DeviGuild(guild.getId(), devi);
-                    // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.
-                    if (guild.getSelfMember().getVoiceState().inVoiceChannel()) {
-                        guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel());
-                    }
-                }
-            });
-        }
-
-        Guild staffGuild = jda.getGuildById("392264119102996480");
-        if (staffGuild != null) {
-            Role seniorAdministrators = staffGuild.getRolesByName("Senior Administrator", false).get(0);
-            Role administrators = staffGuild.getRolesByName("Administrator", false).get(0);
-            staffGuild.getMembersWithRoles(seniorAdministrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
-            staffGuild.getMembersWithRoles(administrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
+        JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
+        if(shardInfo.getShardId() == shardInfo.getShardTotal() - 1) {
+            devi.getLogger().log(shardInfo + " is ready");
+            devi.getAgentManager().startAllAgents();
         }
     }
 
+    @Override
+    public void onGuildReady(GuildReadyEvent event) {
+        Guild guild = event.getGuild();
+
+        //staff guild is ready => load admins
+        if (guild.getId().equals("392264119102996480")) {
+            Role seniorAdministrators = guild.getRolesByName("Senior Administrator", false).get(0);
+            Role administrators = guild.getRolesByName("Administrator", false).get(0);
+            guild.getMembersWithRoles(seniorAdministrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
+            guild.getMembersWithRoles(administrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
+        }
+
+        // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.
+        if (guild.getSelfMember().getVoiceState().inVoiceChannel()) {
+            devi.getThreadPool().submit(() -> guild.getAudioManager().openAudioConnection(guild.getSelfMember().getVoiceState().getChannel()));
+        }
+    }
 
     @Override
     public void onException(ExceptionEvent event) {

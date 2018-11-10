@@ -8,6 +8,8 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.purox.devi.Logger;
+import me.purox.devi.core.agents.Agent;
+import me.purox.devi.core.agents.AgentManager;
 import me.purox.devi.core.waiter.ResponseWaiter;
 import me.purox.devi.entities.AnimatedEmote;
 import me.purox.devi.entities.Language;
@@ -62,6 +64,7 @@ public class Devi {
     private ShardManager shardManager;
     private ResponseWaiter responseWaiter;
     private AnimatedEmote animatedEmotes;
+    private AgentManager agentManager;
 
     private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
@@ -94,6 +97,7 @@ public class Devi {
         this.responseWaiter = new ResponseWaiter();
         new MessageUtils(this);
         this.animatedEmotes = new AnimatedEmote(this);
+        this.agentManager = new AgentManager(this);
 
 
         songsPlayed = 0;
@@ -647,4 +651,7 @@ public class Devi {
         return animatedEmotes;
     }
 
+    public AgentManager getAgentManager() {
+        return agentManager;
+    }
 }

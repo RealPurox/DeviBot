@@ -52,7 +52,7 @@ public class GameLoopAgent extends Agent {
     @Override
     void start() {
         super.start();
-        this.gameLoopAgent = threadPool.scheduleAtFixedRate(new VoteCheckerAgent(), 0, 15, TimeUnit.SECONDS);
+        this.gameLoopAgent = threadPool.scheduleAtFixedRate(new VoteCheckerAgent(), 0, 1, TimeUnit.MINUTES);
         running = true;
     }
 

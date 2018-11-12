@@ -58,6 +58,17 @@ public class StatsPusherAgent extends Agent {
                     //header
                     .addHeader("Authorization", devi.getSettings().getDiscordBotsDotOrgToken())
                     .build().asStringSync();
+
+            new RequestBuilder(devi.getOkHttpClient())
+                    .setURL("https://discordbotlist.com/api/bots/354361427731152907/stats")
+                    .setRequestType(Request.RequestType.POST)
+                    //body
+                    .appendBody("guilds", stats.getGuilds())
+                    .appendBody("users", stats.getUsers())
+                    //header
+                    .addHeader("Authorization", "Bot " + devi.getSettings().getDiscordBotListComToken())
+                    .addHeader("Content-Type", "application/json")
+                    .build().asStringSync();
         }
     }
 

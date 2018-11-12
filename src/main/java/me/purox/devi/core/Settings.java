@@ -49,6 +49,10 @@ public class Settings {
         return System.getenv("DISCORD_BOTS_ORG_TOKEN");
     }
 
+    public String getDiscordBotListComToken() {
+        return System.getenv("DISCORD_BOT_LIST_COM_TOKEN");
+    }
+
     public boolean isDevBot() {
         return devBot;
     }

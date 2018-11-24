@@ -64,10 +64,15 @@ public class ReadyListener extends ListenerAdapter {
 
         //staff guild is ready => load admins
         if (guild.getId().equals("392264119102996480")) {
-            Role seniorAdministrators = guild.getRolesByName("Senior Administrator", false).get(0);
-            Role administrators = guild.getRolesByName("Administrator", false).get(0);
+            Role seniorAdministrators = guild.getRoleById("430805692073639944");
+            Role administrators = guild.getRoleById("422327365251629066");
+            Role supportTeam = guild.getRoleById("422327399401652224");
+            Role translationTeam = guild.getRoleById("422399690085105687");
+
             guild.getMembersWithRoles(seniorAdministrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
             guild.getMembersWithRoles(administrators).forEach(member -> devi.getAdmins().add(member.getUser().getId()));
+            guild.getMembersWithRoles(supportTeam).forEach(member -> devi.getSupportTeam().add(member.getUser().getId()));
+            guild.getMembersWithRoles(translationTeam).forEach(member -> devi.getTranslators().add(member.getUser().getId()));
         }
 
         // re-open audio connection if the bot was shut down but is still in a voice channel once it's booted again.

@@ -66,8 +66,12 @@ public class Devi {
     private AnimatedEmote animatedEmotes;
     private AgentManager agentManager;
 
-    private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private List<String> admins = new ArrayList<>();
+    private List<String> translators = new ArrayList<>();
+    private List<String> supportTeam = new ArrayList<>();
+
+
+    private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private LoadingCache<String, DeviGuild> deviGuildLoadingCache;
     private HashMap<Language, HashMap<Integer, String>> deviTranslations = new HashMap<>();
     private HashMap<String, List<String>> streams = new HashMap<>();
@@ -98,7 +102,6 @@ public class Devi {
         new MessageUtils(this);
         this.animatedEmotes = new AnimatedEmote(this);
         this.agentManager = new AgentManager(this);
-
 
         songsPlayed = 0;
         commandsExecuted = 0;
@@ -584,6 +587,14 @@ public class Devi {
     }
 
     public List<String> getAdmins() {
+        return admins;
+    }
+
+    public List<String> getTranslators() {
+        return admins;
+    }
+
+    public List<String> getSupportTeam() {
         return admins;
     }
 

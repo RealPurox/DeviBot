@@ -1,6 +1,5 @@
 package me.purox.devi.commands.info;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
 import me.purox.devi.core.Devi;

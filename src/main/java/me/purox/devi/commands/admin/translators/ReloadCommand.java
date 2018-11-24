@@ -1,4 +1,4 @@
-package me.purox.devi.commands.admin;
+package me.purox.devi.commands.admin.translators;
 
 import me.purox.devi.commands.CommandSender;
 import me.purox.devi.commands.ICommand;
@@ -9,13 +9,13 @@ public class ReloadCommand extends ICommand {
     private Devi devi;
 
     public ReloadCommand(Devi devi) {
-        super("reload");
+        super("reload", "reloadtranslations");
         this.devi = devi;
     }
 
     @Override
     public void execute(CommandSender sender, Command command) {
-        if (!devi.getAdmins().contains(sender.getId())) return;
+        if (!devi.getTranslators().contains(sender.getId()) || (!devi.getAdmins().contains(sender.getId()))) return;
         devi.loadTranslations();
         sender.reply("Translations reloaded " + devi.getAnimatedEmotes().PartyParrotEmote().getAsMention());
     }

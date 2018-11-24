@@ -1,6 +1,8 @@
 package me.purox.devi.commands;
 
 import me.purox.devi.commands.admin.*;
+import me.purox.devi.commands.admin.translators.ReloadCommand;
+import me.purox.devi.commands.admin.translators.TranslationProgressCommand;
 import me.purox.devi.commands.info.*;
 import me.purox.devi.commands.management.*;
 import me.purox.devi.commands.mod.*;
@@ -35,6 +37,8 @@ public class CommandHandler {
         registerCommand(new PerformanceCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new RebootCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
         registerCommand(new ReloadCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+        registerCommand(new TranslationProgressCommand(devi).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPremission(null));
+
         //info
         registerCommand(new ChangeLogCommand(devi).setDescriptionId(491).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));
         registerCommand(new FeedbackCommand(devi).setDescriptionId(483).setGuildOnly(false).setModuleType(ModuleType.INFO_COMMANDS).setPremission(null));

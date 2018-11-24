@@ -52,7 +52,7 @@ public class WeatherCommand extends ICommand {
 
             List<Channel> list = limit.first(1);
             Channel city = list.get(0);
-            if(city != null) {
+            if (city != null) {
                 //wind
                 direction = city.getWind().getDirection() + "°";
                 speed = city.getWind().getSpeed() + "km/h";

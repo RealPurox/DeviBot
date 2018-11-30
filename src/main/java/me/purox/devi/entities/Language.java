@@ -2,7 +2,7 @@ package me.purox.devi.entities;
 
 public enum Language {
 
-    ENGLISH("eng"), ITALIAN("ita"), GERMAN("ger"), SPANISH("esp"), SWEDISH("swe"), NORWEGIAN("nor"), TURKISH("trk"), /*PORTUGUESE("prt")*/, FRENCH("fra"), /*HUNGARIAN("hun")*/;
+    ENGLISH("eng"), ITALIAN("ita"), GERMAN("ger"), SPANISH("esp"), SWEDISH("swe"), NORWEGIAN("nor"), TURKISH("trk"), FRENCH("fra");
 
     private String registry;
     Language(String registry) {

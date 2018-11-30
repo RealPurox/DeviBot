@@ -109,7 +109,7 @@ public class TwitchCommand extends ICommand {
 
                         command.getDeviGuild().getStreams().add(Devi.GSON.fromJson(document.toJson(), Stream.class));
                         sender.reply(builder.build());
-                        devi.getRedisSender().hset("streams#1", id, user.toString());
+                        devi.getRedisManager().getSender().hset("streams#1", id, user.toString());
                         devi.getLogger().log("Added twitch streamer " + user.getString("display_name") + " (" + id + ") to guild " + command.getGuild().getName() + " (" + command.getGuild().getId() + ")");
                     } else {
                         sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));
@@ -195,7 +195,7 @@ public class TwitchCommand extends ICommand {
 
                         command.getDeviGuild().getStreams().remove(stream);
                         sender.reply(builder.build());
-                        devi.getRedisSender().hset("streams#1", id, user.toString());
+                        devi.getRedisManager().getSender().hset("streams#1", id, user.toString());
                         devi.getLogger().log("Removed twitch streamer " + user.getString("display_name") + " (" + id + ") from guild " + command.getGuild().getName() + " (" + command.getGuild().getId() + ")");
                     } else {
                         sender.reply(Emote.ERROR.get() + " | " + devi.getTranslation(command.getLanguage(), 202, "<https://www.devibot.net/support>"));

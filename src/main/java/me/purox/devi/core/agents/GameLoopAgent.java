@@ -27,8 +27,8 @@ public class GameLoopAgent extends Agent {
         this.devi = devi;
     }
 
-    private class VoteCheckerAgent implements Runnable {
-        // update voters every 5 mins
+    private class GameUpdateAgent implements Runnable {
+        // update game every minute
         int index = 0;
         @Override
         public void run() {
@@ -52,7 +52,7 @@ public class GameLoopAgent extends Agent {
     @Override
     void start() {
         super.start();
-        this.gameLoopAgent = threadPool.scheduleAtFixedRate(new VoteCheckerAgent(), 0, 1, TimeUnit.MINUTES);
+        this.gameLoopAgent = threadPool.scheduleAtFixedRate(new GameUpdateAgent(), 0, 1, TimeUnit.MINUTES);
         running = true;
     }
 

@@ -8,16 +8,15 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.purox.devi.Logger;
-import me.purox.devi.core.agents.Agent;
 import me.purox.devi.core.agents.AgentManager;
 import me.purox.devi.core.waiter.ResponseWaiter;
+import me.purox.devi.database.RedisManager;
 import me.purox.devi.entities.AnimatedEmote;
 import me.purox.devi.entities.Language;
 import me.purox.devi.entities.ModuleType;
 import me.purox.devi.listener.*;
 import me.purox.devi.commands.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
-import me.purox.devi.core.guild.GuildSettings;
 import me.purox.devi.database.DatabaseManager;
 import me.purox.devi.music.MusicManager;
 import me.purox.devi.request.Request;
@@ -25,22 +24,14 @@ import me.purox.devi.request.RequestBuilder;
 import me.purox.devi.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.jodah.expiringmap.ExpiringMap;
 import okhttp3.OkHttpClient;
 import org.bson.Document;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
-import redis.clients.jedis.exceptions.JedisDataException;
 
 import javax.security.auth.login.LoginException;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -65,11 +56,9 @@ public class Devi {
     private ResponseWaiter responseWaiter;
     private AnimatedEmote animatedEmotes;
     private AgentManager agentManager;
+    private RedisManager redisManager;
 
     private List<String> admins = new ArrayList<>();
-    private List<String> translators = new ArrayList<>();
-    private List<String> supportTeam = new ArrayList<>();
-
 
     private ExpiringMap<String, String> prunedMessages = ExpiringMap.builder().variableExpiration().build();
     private LoadingCache<String, DeviGuild> deviGuildLoadingCache;
@@ -79,12 +68,10 @@ public class Devi {
     private List<String> voters = new ArrayList<>();
 
     private OkHttpClient okHttpClient;
-    private Jedis redisSender;
     private Logger logger;
 
-    private int songsPlayed;
-    private int commandsExecuted;
-    private boolean redisConnection = false;
+    private int songsPlayed = 0;
+    private int commandsExecuted = 0;
 
     private Date rebootTime;
 
@@ -92,6 +79,7 @@ public class Devi {
         this.threadPool = Executors.newSingleThreadScheduledExecutor();
 
         // init handlers / managers / settings / utils
+        new MessageUtils(this);
         this.commandHandler = new CommandHandler(this);
         this.settings = new Settings();
         this.musicManager = new MusicManager(this);
@@ -99,12 +87,9 @@ public class Devi {
         this.logger = new Logger(this);
         this.okHttpClient = new OkHttpClient();
         this.responseWaiter = new ResponseWaiter();
-        new MessageUtils(this);
         this.animatedEmotes = new AnimatedEmote(this);
         this.agentManager = new AgentManager(this);
-
-        songsPlayed = 0;
-        commandsExecuted = 0;
+        this.redisManager = new RedisManager(this);
 
         // create cache loader.
         this.deviGuildLoadingCache = CacheBuilder.newBuilder()
@@ -139,33 +124,11 @@ public class Devi {
         initDailyReboot();
 
         try {
-            // subscribe to redis channel async because it's blocking the current thread
-            Thread redisThread = new Thread(() -> {
-                try {
-                    redisSender = new Jedis("54.38.182.128");
-                    redisSender.auth(settings.getDeviAPIAuthorization());
-
-                    Jedis receiverRedis = new Jedis("54.38.182.128");
-                    receiverRedis.auth(settings.getDeviAPIAuthorization());
-                    redisConnection = true;
-                    receiverRedis.subscribe(getJedisPubSub(), "devi_update", "devi_twitch_event");
-                } catch (JedisDataException e) {
-                    redisConnection = false;
-                    e.printStackTrace();
-                }
-            });
-            redisThread.setName("Devi Redis Thread");
-            redisThread.start();
-
-            // block current thread for 1 second to make sure redis is connected
-            Thread.sleep(1000);
-
             // subscribe to twitch events
             Set<String> subscribeToStream = new HashSet<>();
             for (String streamID : streams.keySet()) {
-                if (!redisConnection) break;
                 //get time of last subscription
-                String lastSubscription = getRedisSender().hget("streams#2", streamID);
+                String lastSubscription = redisManager.getSender().hget("streams#2", streamID);
                 //there is no record of a last subscription, subscribe to stream events.
                 if (lastSubscription == null) {
                     subscribeToStream.add(streamID);
@@ -201,9 +164,7 @@ public class Devi {
 
             // build & login
             this.shardManager = builder.build();
-
-            defaultGameLoop();
-        } catch (JedisConnectionException | LoginException | NumberFormatException | InterruptedException e) {
+        } catch (JedisConnectionException | LoginException | NumberFormatException e) {
             e.printStackTrace();
             logger.wtf("BOOTING FAILED - SHUTTING DOWN");
             System.exit(-5);
@@ -212,29 +173,6 @@ public class Devi {
 
     private void setGame(Game game) {
         shardManager.getShards().forEach(shard -> shard.getPresence().setGame(game));
-    }
-
-    private void defaultGameLoop() {
-        if (settings.isDevBot()) {
-            setGame(Game.listening("code"));
-            return;
-        }
-
-        List<Game> gameStatuses = new ArrayList<>();
-
-        gameStatuses.add(Game.listening(new Stats().getUsers() + " users"));
-        gameStatuses.add(Game.playing("type !help"));
-        gameStatuses.add(Game.listening(new Stats().getGuilds() + " guilds"));
-        gameStatuses.add(Game.watching("devibot.net"));
-
-        AtomicInteger index = new AtomicInteger(- 1);
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            index.getAndIncrement();
-            if (index.get() > gameStatuses.size()) index.set(0);
-
-            setGame(gameStatuses.get(index.get()));
-
-        }, 0, 2, TimeUnit.MINUTES);
     }
 
     public void reboot(int minutes, MessageChannel channel) {
@@ -305,7 +243,7 @@ public class Devi {
                     if (response != null && response.getStatus() != 202) {
                         logger.error("Failed to subscribe to twitch stream: " + id + ", retrying in 60 seconds.");
                     } else {
-                        getRedisSender().hset("streams#2", id, String.valueOf(System.currentTimeMillis()));
+                        redisManager.getSender().hset("streams#2", id, String.valueOf(System.currentTimeMillis()));
                         remove.add(id);
                     }
                 }
@@ -374,6 +312,7 @@ public class Devi {
         return translation;
 
     }
+
     public DeviGuild getDeviGuild(String id) {
         try {
             return deviGuildLoadingCache.get(id);
@@ -385,103 +324,6 @@ public class Devi {
 
     public Stats getCurrentStats() {
         return new Stats();
-    }
-
-    private JedisPubSub getJedisPubSub() {
-        return new JedisPubSub() {
-            @Override
-            public void onMessage(String channel, String message) {
-                logger.log("Received a message from the website: " + message);
-                //<editor-fold desc="devi_update channel">
-                if (channel.equals("devi_update")) {
-                    JSONObject update = new JSONObject(message);
-
-                    DeviGuild deviGuild = getDeviGuild(update.getString("guild_id"));
-                    deviGuild.getSettings().setStringValue(GuildSettings.Settings.PREFIX, update.getString("change_prefix"));
-                    deviGuild.getSettings().setStringValue(GuildSettings.Settings.LANGUAGE, update.getString("change_language"));
-                    deviGuild.getSettings().setBooleanValue(GuildSettings.Settings.MOD_LOG_ENABLED, update.getString("change_mod_log_settings").equals("true"));
-                    deviGuild.getSettings().setStringValue(GuildSettings.Settings.MOD_LOG_CHANNEL, update.getString("change_mod_log_channel"));
-                    deviGuild.saveSettings();
-
-                    JSONObject confirmObject = new JSONObject().put("guild_id", update.getString("guild_id"));
-                    redisSender.publish("devi_update_confirm", confirmObject.toString());
-                }
-                //</editor-fold>
-
-                //<editor-fold desc="devi_twitch_event channel">
-                if (channel.equals("devi_twitch_event")) {
-                    JSONObject object = new JSONArray(message).getJSONObject(0);
-
-                    if (streams.containsKey(object.getString("user_id"))) {
-                        for (String guildID : streams.get(object.getString("user_id"))) {
-                            if (shardManager == null) return;
-
-                            DeviGuild deviGuild = getDeviGuild(guildID);
-
-                            Guild guild = null;
-                            for (JDA jda : shardManager.getShards()) {
-                                for (Guild g : jda.getGuilds()) {
-                                    if (g.getId().equals(guildID)) {
-                                        guild = g;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (guild == null) return;
-
-                            TextChannel textChannel = DiscordUtils.getTextChannel(deviGuild.getSettings().getStringValue(GuildSettings.Settings.TWITCH_CHANNEL), guild);
-                            if (textChannel == null) return;
-
-                            Language language = Language.getLanguage(deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
-
-                            JSONObject user = new RequestBuilder(okHttpClient).setURL("https://api.twitch.tv/helix/users?id=" + object.getString("user_id"))
-                                    .addHeader("Client-ID", getSettings().getTwitchClientID())
-                                    .addHeader("Authorization", "Bearer " + getSettings().getTwitchSecret())
-                                    .setRequestType(Request.RequestType.GET).build().asJSONSync().getBody();
-
-                            JSONObject game = new RequestBuilder(okHttpClient).setURL("https://api.twitch.tv/helix/games?id=" + object.getString("game_id"))
-                                    .addHeader("Client-ID", getSettings().getTwitchClientID())
-                                    .addHeader("Authorization", "Bearer " + getSettings().getTwitchSecret())
-                                    .setRequestType(Request.RequestType.GET).build().asJSONSync().getBody();
-
-                            if (user.getJSONArray("data").length() == 0) return;
-                            JSONObject userData = user.getJSONArray("data").getJSONObject(0);
-                            String url = "https://www.twitch.tv/" + userData.getString("login");
-
-                            EmbedBuilder builder = new EmbedBuilder();
-                            builder.setColor(new Color(100, 65, 164));
-                            builder.setAuthor(userData.getString("display_name"), url, "https://www.twitch.tv/p/assets/uploads/glitch_474x356.png");
-                            builder.setImage(object.getString("thumbnail_url").replace("{width}", "480").replace("{height}", "270"));
-                            builder.setDescription(object.getString("title"));
-                            builder.addField(getTranslation(language, 208), String.valueOf(object.getInt("viewer_count")), true);
-
-                            if (game.getJSONArray("data").length() != 0)
-                                builder.addField(getTranslation(language, 209), game.getJSONArray("data").getJSONObject(0).getString("name"), true);
-
-                            builder.setThumbnail(userData.getString("profile_image_url"));
-
-                            logger.log("Sending stream announcement for twitch streamer " +
-                                    userData.getString("display_name") + " (" + object.getString("user_id") + ") to guild " + guild.getName() + " (" + guild.getId() + " )");
-                            MessageUtils.sendMessageAsync(textChannel, new MessageBuilder()
-                                    .setContent(getTranslation(language, 211, userData.getString("display_name"), url))
-                                    .setEmbed(builder.build()).build());
-                            getRedisSender().hset("streams#1", object.getString("user_id"), userData.toString());
-                        }
-                    }
-                }
-                //</editor-fold>
-            }
-
-            @Override
-            public void onSubscribe(String channel, int subscribedChannels) {
-                logger.log("Subscribed to redis channel " + channel);
-            }
-
-            @Override
-            public void onUnsubscribe(String channel, int subscribedChannels) {
-                logger.log("Unsubscribe from redis channel " + channel);
-            }
-        };
     }
 
     public class Stats {
@@ -598,6 +440,10 @@ public class Devi {
         return admins;
     }
 
+    public RedisManager getRedisManager() {
+        return redisManager;
+    }
+
     public MusicManager getMusicManager() {
         return musicManager;
     }
@@ -620,10 +466,6 @@ public class Devi {
 
     public HashMap<String, List<String>> getStreams() {
         return streams;
-    }
-
-    public Jedis getRedisSender() {
-        return redisSender;
     }
 
     public ExpiringMap<String, String> getPrunedMessages() {

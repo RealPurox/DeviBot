@@ -46,7 +46,7 @@ public class ListStreamCommand extends ICommand {
         builder.setFooter(devi.getTranslation(command.getLanguage(), 33, command.getPrefix() + "streamlist [page]"), null);
 
         for (Stream stream : rawStreamDocumentPages.get(page - 1)) {
-            String raw = devi.getRedisSender().hget("streams#1", stream.getStream());
+            String raw = devi.getRedisManager().getSender().hget("streams#1", stream.getStream());
             JSONObject data;
 
             if (raw == null) data = null;

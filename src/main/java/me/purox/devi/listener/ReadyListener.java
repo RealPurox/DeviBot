@@ -52,8 +52,9 @@ public class ReadyListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
+        devi.getLogger().log(shardInfo + " is ready");
+        //all shards have booted, we may now start all of our agents
         if(shardInfo.getShardId() == shardInfo.getShardTotal() - 1) {
-            devi.getLogger().log(shardInfo + " is ready");
             devi.getAgentManager().startAllAgents();
         }
     }

@@ -153,7 +153,6 @@ public class Devi {
             builder.setToken(settings.getBotToken());
             builder.setAutoReconnect(true);
 
-            //builder.setGame(settings.isDevBot() ? Game.listening("code") : setDefaultPlaying());
             builder.setGame(Game.listening("startup code."));
             // add event listeners
             builder.addEventListeners(new ReadyListener(this));
@@ -161,6 +160,7 @@ public class Devi {
             builder.addEventListeners(new MessageListener(this));
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
+            builder.addEventListeners(new LearningListener(this));
 
             // build & login
             this.shardManager = builder.build();

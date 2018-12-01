@@ -14,7 +14,5 @@ public class TestCommand extends ICommand {
     }
 
     @Override
-    public void execute(CommandSender sender, Command command) {
-        sender.reply("New command tracker works perfect.");
-    }
+    public void execute(CommandSender sender, Command command) { }
 }

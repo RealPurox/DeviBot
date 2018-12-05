@@ -39,20 +39,18 @@ public class PerformanceCommand extends ICommand {
         OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
         double cpuLoad = osBean.getSystemCpuLoad() * 100;
-        DecimalFormat f = new DecimalFormat("#.00");
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode("#36393E"));
         builder.addField("Threads", String.valueOf(threads), true);
-        builder.addField("Using Memory", getUsedRam() + " MB", true);
-        builder.addField("Free Memory", getFreeRam() + " MB", true);
-        builder.addField("Total Memory", getTotalRam() + " MB", true);
-        builder.addField("Max Memory", getMaxRam() + " MB", true);
-        builder.addField("Operating System", System.getProperty("os.name") + ", " + System.getProperty("os.version"), true);
-        builder.addField("CPU Usage",  f.format(cpuLoad) + "%", true);
+        builder.addField("CPU Usage",  decimalFormat.format(cpuLoad) + "%", true);
+        builder.addField("Server Status", getServerStatus(), true);
+
+        builder.addField("Memory", getUsedRam() + "MB [" + getRamBar() + "] " + getTotalRam() + " MB (" + getRamPercent() + "%)", false);
+
         builder.addField("Audio Connections" , String.valueOf(audioConnections.get()), true);
         builder.addField("Commands Executed", String.valueOf(devi.getCommandsExecuted()), true);
         builder.addField("Songs Played", String.valueOf(devi.getSongsPlayed()), true);
-        builder.addField("Server Status", getServerStatus(), true);
         builder.addField("Response time", devi.getShardManager().getAveragePing() + " ms", true);
         builder.addField("Uptime", uptime, false);
 
@@ -99,5 +97,24 @@ public class PerformanceCommand extends ICommand {
     private int getTotalRam() {
         Runtime runtime = Runtime.getRuntime();
         return Math.round((float)(runtime.totalMemory() / 1048576L));
+    }
+
+    private String getRamBar() {
+        StringBuilder ram = new StringBuilder("[|");
+        int percent = getRamPercent();
+
+        for (int i = 0; i < percent / 2; i++) {
+            ram.append("|");
+        }
+        ram.append("](https://www.devibot.net/)");
+        for (int i = 0; i < 50 - percent / 2; i++) {
+            ram.append("|");
+        }
+
+        return ram.toString();
+    }
+
+    private int getRamPercent() {
+        return (int) ((double) getUsedRam() / (double) getTotalRam() * 100);
     }
 }

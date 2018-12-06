@@ -6,14 +6,8 @@ import me.purox.devi.core.Devi;
 import me.purox.devi.entities.Emote;
 import me.purox.devi.entities.Language;
 import me.purox.devi.core.guild.GuildSettings;
-import me.purox.devi.core.waiter.WaitingResponseBuilder;
 import me.purox.devi.utils.Reactions;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Message;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
 
 public class LanguageCommand extends ICommand {
 

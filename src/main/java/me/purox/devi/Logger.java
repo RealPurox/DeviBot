@@ -21,7 +21,7 @@ public class Logger implements Thread.UncaughtExceptionHandler {
         this.devi = devi;
         this.logs = new ArrayList<>();
         this.debug = true;
-        this.dateFormat = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
+        this.dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::pushLogs, 1, 1, TimeUnit.MINUTES);
     }

@@ -27,7 +27,7 @@ public class HelpCommand extends ICommand {
             EmbedBuilder builder = new EmbedBuilder();
 
             builder.setAuthor(devi.getTranslation(command.getLanguage(), 388), "https://www.devibot.net/wiki");
-            builder.setColor(Color.decode("#7289da"));
+            builder.setColor(devi.getColor());
 
             builder.appendDescription("\n");
             builder.appendDescription(devi.getTranslation(command.getLanguage(), 389, "`" + command.getPrefix() + "help <command>`") + " ");

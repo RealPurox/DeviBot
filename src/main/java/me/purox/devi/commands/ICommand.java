@@ -80,9 +80,12 @@ public abstract class ICommand {
         private String invoke;
         private String raw;
         private String[] args;
+        private Devi devi;
 
         public Command(MessageReceivedEvent event, String prefix, Devi devi) {
             super(event.getJDA(), event.getResponseNumber(), event.getMessage());
+
+            this.devi = devi;
 
             String[] split = event.getMessage().getContentRaw().substring(prefix.length()).split(" ");
             List<String> list = new ArrayList<>(Arrays.asList(split));
@@ -92,13 +95,13 @@ public abstract class ICommand {
             this.raw = event.getMessage().getContentRaw();
             this.prefix = prefix;
 
-            this.deviGuild = devi.getDeviGuild(event.getGuild().getId());
-            this.language = Language.getLanguage(this.deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
+            this.deviGuild = event.getGuild() == null ? null : devi.getDeviGuild(event.getGuild().getId());
+            this.language = event.getGuild() == null ? Language.ENGLISH : Language.getLanguage(this.deviGuild.getSettings().getStringValue(GuildSettings.Settings.LANGUAGE));
         }
 
         @Nullable
         public ICommand getICommand() {
-            return deviGuild.getDevi().getCommandHandler().getCommands().get(invoke);
+            return devi.getCommandHandler().getCommands().get(invoke);
         }
 
         public DeviGuild getDeviGuild() {

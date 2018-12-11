@@ -22,17 +22,15 @@ public class StatsCommand extends ICommand {
     public void execute(CommandSender sender, Command command) {
         Devi.Stats stats = devi.getCurrentStats();
 
-        String pfpUrl = "https://cdn.discordapp.com/avatars/354361427731152907/0dddb9e6f92b0c338e780ced51077239.png";
-
         long millis = ManagementFactory.getRuntimeMXBean().getUptime();
 
         String uptime = TimeUtils.toRelative(millis);
         uptime = uptime.substring(0, uptime.length() - 3);
 
         EmbedBuilder em = new EmbedBuilder();
-        em.setAuthor("Devi", null, pfpUrl);
-        em.setColor(Color.decode("#7289da"));
-        em.setThumbnail(pfpUrl);
+        em.setAuthor("Devi", null, command.getJDA().getSelfUser().getAvatarUrl());
+        em.setColor(devi.getColor());
+        em.setThumbnail(command.getJDA().getSelfUser().getAvatarUrl());
 
         em.addField(devi.getTranslation(command.getLanguage(), 545), stats.getGuilds() + " " + devi.getTranslation(command.getLanguage(), 554), true); // guilds
         em.addField(devi.getTranslation(command.getLanguage(), 546), stats.getUsers() + " " + devi.getTranslation(command.getLanguage(), 553), true); // users

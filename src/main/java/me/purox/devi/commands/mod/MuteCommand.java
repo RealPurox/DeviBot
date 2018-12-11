@@ -77,7 +77,7 @@ public class MuteCommand extends ICommand {
         Role role = command.getGuild().getRoleById(command.getDeviGuild().getSettings().getStringValue(GuildSettings.Settings.MUTE_ROLE));
 
         if (role == null) {
-            command.getGuild().getController().createRole().setMentionable(false).setColor(Color.decode("#7289DA"))
+            command.getGuild().getController().createRole().setMentionable(false).setColor(devi.getColor())
                     .setName("Muted").queue(muteRole -> {
                 command.getGuild().getController().modifyRolePositions().selectPosition(muteRole)
                         .moveTo(command.getGuild().getSelfMember().getRoles().get(0).getPosition() - 1).queue();

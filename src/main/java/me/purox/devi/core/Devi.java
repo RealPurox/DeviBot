@@ -32,6 +32,7 @@ import org.bson.Document;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import javax.security.auth.login.LoginException;
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +58,8 @@ public class Devi {
     private AnimatedEmote animatedEmotes;
     private AgentManager agentManager;
     private RedisManager redisManager;
+
+    private SupportChatListener supportChatListener;
 
     private List<String> admins = new ArrayList<>();
 
@@ -90,6 +93,8 @@ public class Devi {
         this.animatedEmotes = new AnimatedEmote(this);
         this.agentManager = new AgentManager(this);
         this.redisManager = new RedisManager(this);
+
+        this.supportChatListener = new SupportChatListener(this);
 
         // create cache loader.
         this.deviGuildLoadingCache = CacheBuilder.newBuilder()
@@ -161,6 +166,7 @@ public class Devi {
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
             builder.addEventListeners(new LearningListener(this));
+            builder.addEventListeners(supportChatListener);
 
             // build & login
             this.shardManager = builder.build();
@@ -376,11 +382,7 @@ public class Devi {
     }
 
     public void sendMessageToDevelopers(Object o) {
-        AtomicReference<Guild> guild = new AtomicReference<>(null);
-        shardManager.getShards().forEach(jda -> {
-            Guild g = jda.getGuildById("392264119102996480");
-            if (g != null) guild.set(g);
-        });
+        AtomicReference<Guild> guild = getStaffGuild();
         if (guild.get() != null) {
             TextChannel channel = guild.get().getTextChannelById("458740773614125076");
             System.out.println(channel);
@@ -391,17 +393,22 @@ public class Devi {
     }
 
     public void sendFeedbackMessage(Object o) {
-        AtomicReference<Guild> guild = new AtomicReference<>(null);
-        shardManager.getShards().forEach(jda -> {
-            Guild g = jda.getGuildById("392264119102996480");
-            if (g != null) guild.set(g);
-        });
+        AtomicReference<Guild> guild = getStaffGuild();
         if (guild.get() != null) {
             TextChannel channel = guild.get().getTextChannelById("472755048833613824");
             if (channel != null) {
                 MessageUtils.sendMessageAsync(channel, o);
             }
         }
+    }
+
+    public AtomicReference<Guild> getStaffGuild() {
+        AtomicReference<Guild> guild = new AtomicReference<>(null);
+        shardManager.getShards().forEach(jda -> {
+            Guild g = jda.getGuildById("392264119102996480");
+            if (g != null) guild.set(g);
+        });
+        return guild;
     }
 
     public ScheduledExecutorService getThreadPool() {
@@ -506,5 +513,13 @@ public class Devi {
 
     public AgentManager getAgentManager() {
         return agentManager;
+    }
+
+    public SupportChatListener getSupportChatListener() {
+        return supportChatListener;
+    }
+
+    public Color getColor() {
+        return getSettings().isDevBot() ? Color.decode("#F48924") : Color.decode("#7289DA");
     }
 }

@@ -19,7 +19,7 @@ public class InviteCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(Color.decode("#4775d1"));
+        embed.setColor(devi.getColor());
         embed.setAuthor(devi.getTranslation(command.getLanguage(), 622), null, command.getJDA().getSelfUser().getAvatarUrl());
         embed.setDescription(devi.getTranslation(command.getLanguage(), 623, "(https://discordapp.com/oauth2/authorize?client_id=354361427731152907&scope=bot)"));
         sender.reply(embed.build());

@@ -23,7 +23,7 @@ public class SettingsCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         //create builder
-        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(Color.decode("#7289da"));
+        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(devi.getColor());
         embedBuilder.setAuthor(devi.getTranslation(command.getLanguage(), 3, command.getGuild().getName()));
 
         // add fields

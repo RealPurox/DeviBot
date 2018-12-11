@@ -21,7 +21,7 @@ public class LanguageCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         //send them the translation menu with reactions
-        sender.reply(getTranslatedMessage(sender, command.getLanguage()), (message -> Reactions.reactionGUI(sender, message, callback -> {
+        sender.reply(getTranslatedMessage(sender, command.getLanguage()), (message) -> Reactions.reactionGUI(command.getJDA(), sender.getId(), true, message, callback -> {
             //get language by the emote they reacted with
             Language language = Language.getLanguage(callback);
             //language not found (they probably reacted with something else)
@@ -45,7 +45,7 @@ public class LanguageCommand extends ICommand {
                 msg.editMessage(new MessageBuilder(msg).append("\n\n").append(Emote.INFO).append(" | ").append(devi.getTranslation(lang, 626)).build()).queue();
                 msg.clearReactions().queue(placeHolder -> {}, placeHolder -> {});
             }, placeHolder -> {});
-        }, Language.getAllLanguageFlags())));
+        }, Language.getAllLanguageFlags()));
     }
 
     private String getTranslatedMessage(CommandSender sender, Language lang) {

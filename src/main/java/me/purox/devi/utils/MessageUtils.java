@@ -56,6 +56,23 @@ public class MessageUtils {
         return false;
     }
 
+    public static void sendPrivateMessageAsync(User user, Object object, Consumer<? super Message> callback) {
+        try {
+            if (user.isBot()) return;
+
+            if (object instanceof MessageEmbed)
+                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((MessageEmbed) object).queue(callback));
+            else if (object instanceof String)
+                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((String) object).queue(callback));
+            else if (object instanceof Message)
+                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((Message) object).queue(callback));
+            else throw new UnsupportedOperationException("Cannot send object " + object + " in messages");
+
+        } catch (IllegalStateException | IllegalArgumentException | UnsupportedOperationException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void sendPrivateMessageAsync(User user, Object object) {
         try {
             if (user.isBot()) return;
@@ -99,7 +116,7 @@ public class MessageUtils {
     //todo failure consumer
     public static void sendMessageAsync(MessageChannel channel, Object object, Consumer<? super Message> consumer) {
         if (channel.getType() == ChannelType.PRIVATE) {
-            sendPrivateMessageAsync(((PrivateChannel)channel).getUser(), object);
+            sendPrivateMessageAsync(((PrivateChannel)channel).getUser(), object, consumer);
             return;
         }
 

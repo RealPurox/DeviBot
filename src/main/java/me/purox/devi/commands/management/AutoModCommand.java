@@ -58,7 +58,7 @@ public class AutoModCommand extends ICommand {
     }
 
     private void sendAutoModEmbed(ICommand.Command command, CommandSender sender) {
-        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(Color.decode("#7289da"));
+        EmbedBuilder embedBuilder = new EmbedBuilder().setColor(devi.getColor());
         embedBuilder.setAuthor(devi.getTranslation(command.getLanguage(), 74));
 
         for (GuildSettings.Settings setting : GuildSettings.Settings.values()) {

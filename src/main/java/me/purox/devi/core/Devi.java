@@ -14,6 +14,7 @@ import me.purox.devi.database.RedisManager;
 import me.purox.devi.entities.AnimatedEmote;
 import me.purox.devi.entities.Language;
 import me.purox.devi.entities.ModuleType;
+import me.purox.devi.entities.supportchat.SupportChat;
 import me.purox.devi.listener.*;
 import me.purox.devi.commands.CommandHandler;
 import me.purox.devi.core.guild.DeviGuild;
@@ -29,6 +30,7 @@ import net.dv8tion.jda.core.entities.*;
 import net.jodah.expiringmap.ExpiringMap;
 import okhttp3.OkHttpClient;
 import org.bson.Document;
+import org.json.JSONObject;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import javax.security.auth.login.LoginException;
@@ -40,26 +42,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class Devi {
 
     public static final Gson GSON = new GsonBuilder().create();
 
-    private ScheduledExecutorService threadPool;
+    private ScheduledExecutorService threadPool = Executors.newSingleThreadScheduledExecutor();
 
-    private Settings settings;
-    private MusicManager musicManager;
-    private DatabaseManager databaseManager;
-    private CommandHandler commandHandler;
+    private Settings settings = new Settings();
+    private MusicManager musicManager = new MusicManager(this);
+    private DatabaseManager databaseManager = new DatabaseManager(this);
+    private CommandHandler commandHandler = new CommandHandler(this);
+    private AgentManager agentManager = new AgentManager(this);
+    private RedisManager redisManager = new RedisManager(this);
     private ShardManager shardManager;
-    private ResponseWaiter responseWaiter;
-    private AnimatedEmote animatedEmotes;
-    private AgentManager agentManager;
-    private RedisManager redisManager;
 
-    private SupportChatListener supportChatListener;
+    private AnimatedEmote animatedEmotes = new AnimatedEmote(this);
+    private ResponseWaiter responseWaiter = new ResponseWaiter();
 
     private List<String> admins = new ArrayList<>();
 
@@ -69,9 +69,10 @@ public class Devi {
     private HashMap<String, List<String>> streams = new HashMap<>();
     private List<ModuleType> disabledModules = new ArrayList<>();
     private List<String> voters = new ArrayList<>();
+    private List<SupportChat> supportChats = new ArrayList<>();
 
-    private OkHttpClient okHttpClient;
-    private Logger logger;
+    private OkHttpClient okHttpClient = new OkHttpClient();
+    private Logger logger = new Logger(this);
 
     private int songsPlayed = 0;
     private int commandsExecuted = 0;
@@ -79,22 +80,7 @@ public class Devi {
     private Date rebootTime;
 
     public Devi() {
-        this.threadPool = Executors.newSingleThreadScheduledExecutor();
-
-        // init handlers / managers / settings / utils
         new MessageUtils(this);
-        this.commandHandler = new CommandHandler(this);
-        this.settings = new Settings();
-        this.musicManager = new MusicManager(this);
-        this.databaseManager = new DatabaseManager(this);
-        this.logger = new Logger(this);
-        this.okHttpClient = new OkHttpClient();
-        this.responseWaiter = new ResponseWaiter();
-        this.animatedEmotes = new AnimatedEmote(this);
-        this.agentManager = new AgentManager(this);
-        this.redisManager = new RedisManager(this);
-
-        this.supportChatListener = new SupportChatListener(this);
 
         // create cache loader.
         this.deviGuildLoadingCache = CacheBuilder.newBuilder()
@@ -125,6 +111,8 @@ public class Devi {
         loadTranslations();
         // load streams
         loadStreams();
+        // load support chats
+        loadSupportChats();
         // reboot everyday at 4:30am
         initDailyReboot();
 
@@ -166,7 +154,7 @@ public class Devi {
             builder.addEventListeners(new AutoModListener(this));
             builder.addEventListeners(new ModLogListener(this));
             builder.addEventListeners(new LearningListener(this));
-            builder.addEventListeners(supportChatListener);
+            builder.addEventListeners(new SupportChatListener(this));
 
             // build & login
             this.shardManager = builder.build();
@@ -262,6 +250,14 @@ public class Devi {
         });
         thread.setName("Devi Twitch Webhook Thread");
         thread.start();
+    }
+
+    private void loadSupportChats() {
+        Map<String, String> chats = redisManager.getSender().hgetAll("support_chats");
+        for (String user : chats.keySet()) {
+            JSONObject data = new JSONObject(chats.get(user));
+            supportChats.add(new SupportChat(user, data.getString("staff"), data.getString("channel")));
+        }
     }
 
     private void loadStreams() {
@@ -382,9 +378,9 @@ public class Devi {
     }
 
     public void sendMessageToDevelopers(Object o) {
-        AtomicReference<Guild> guild = getStaffGuild();
-        if (guild.get() != null) {
-            TextChannel channel = guild.get().getTextChannelById("458740773614125076");
+        Guild guild = getStaffGuild();
+        if (guild != null) {
+            TextChannel channel = guild.getTextChannelById("458740773614125076");
             System.out.println(channel);
             if (channel != null) {
                 MessageUtils.sendMessageAsync(channel, o);
@@ -393,22 +389,21 @@ public class Devi {
     }
 
     public void sendFeedbackMessage(Object o) {
-        AtomicReference<Guild> guild = getStaffGuild();
-        if (guild.get() != null) {
-            TextChannel channel = guild.get().getTextChannelById("472755048833613824");
+        Guild guild = getStaffGuild();
+        if (guild != null) {
+            TextChannel channel = guild.getTextChannelById("472755048833613824");
             if (channel != null) {
                 MessageUtils.sendMessageAsync(channel, o);
             }
         }
     }
 
-    public AtomicReference<Guild> getStaffGuild() {
-        AtomicReference<Guild> guild = new AtomicReference<>(null);
-        shardManager.getShards().forEach(jda -> {
-            Guild g = jda.getGuildById("392264119102996480");
-            if (g != null) guild.set(g);
-        });
-        return guild;
+    public Guild getStaffGuild() {
+        for (JDA shard : shardManager.getShards()) {
+            if (shard.getGuildById("392264119102996480") != null)
+            return shard.getGuildById("392264119102996480");
+        }
+        return null;
     }
 
     public ScheduledExecutorService getThreadPool() {
@@ -515,8 +510,8 @@ public class Devi {
         return agentManager;
     }
 
-    public SupportChatListener getSupportChatListener() {
-        return supportChatListener;
+    public List<SupportChat> getSupportChats() {
+        return supportChats;
     }
 
     public Color getColor() {

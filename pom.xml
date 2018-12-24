@@ -9,9 +9,16 @@
     <packaging>pom</packaging>
     <version>1.0.0</version>
 
+    <name>Devi</name>
+
+    <build>
+        <defaultGoal>clean install</defaultGoal>
+    </build>
+
     <modules>
         <module>Mainframe</module>
         <module>Provider</module>
+        <module>gRPC</module>
     </modules>
 
     <properties>

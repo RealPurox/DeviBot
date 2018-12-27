@@ -3,9 +3,8 @@ package net.devibot.provider;
 import ch.qos.logback.classic.Level;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.grpc.ManagedChannel;
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
+import io.grpc.*;
+import net.devibot.provider.manager.MainframeManager;
 import net.devibot.provider.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,7 @@ public class Provider {
         root.setLevel(Level.INFO);
 
         try {
-            if (args.length < 2 || !args[0].equalsIgnoreCase("-port"))
-                throw new Exception("Please provide a port");
-            provider = new Provider(Integer.parseInt(args[1]));
+            provider = new Provider();
         } catch (Exception e) {
             logger.error("", e);
             System.exit(0);
@@ -41,21 +38,24 @@ public class Provider {
     private Config config;
     private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(100);
 
-    private ManagedChannel mainframe;
+    private Server server;
 
-    public Provider(int port) {
+    private MainframeManager mainframeManager;
+
+    private int id;
+
+    public Provider() {
         this.config = Config.loadConfig();
         connect();
     }
 
-    private Server server;
 
     private void connect() {
         //create server
         try {
             //start service
             server = ServerBuilder.forPort(this.config.getPort())
-                    .addService(new GrpcService(this))
+                    //todo .addService(new GrpcService(this))
                     .build().start();
             //block a thread
             threadPool.submit(() -> {
@@ -66,14 +66,30 @@ public class Provider {
                 }
             });
 
-            logger.info("Running on port " + config.getPort() + ". Now attempting to connect to Mainframe.");
+            logger.info("Provider running on port " + config.getPort() + ".");
 
+            //define mainframe
+            mainframeManager = new MainframeManager(this);
+            mainframeManager.initialRequest();
         } catch (Exception e) {
+            logger.error("", e);
             System.exit(0);
         }
     }
 
     public Config getConfig() {
         return config;
+    }
+
+    public ScheduledExecutorService getThreadPool() {
+        return threadPool;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

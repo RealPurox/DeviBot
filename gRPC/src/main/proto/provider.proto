@@ -2,15 +2,6 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 
-option java_package = "net.devibot.grpc.providerservice";
+option java_package = "net.devibot.grpc.provider";
 
-service ProviderService {
-    rpc connectToMainframe (ConnectToMainframeRequest) returns (ConnectToMainframeResponse);
-}
-
-message ConnectToMainframeRequest { }
-
-message ConnectToMainframeResponse {
-    bool success = 1;
-    int32 provider_id = 2;
-}
+import "messages.proto";

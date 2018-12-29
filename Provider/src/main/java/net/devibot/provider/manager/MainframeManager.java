@@ -2,6 +2,8 @@ package net.devibot.provider.manager;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.ConnectToMainframeRequest;
@@ -9,6 +11,8 @@ import net.devibot.grpc.messages.ConnectToMainframeResponse;
 import net.devibot.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.*;
 
 public class MainframeManager {
 
@@ -27,7 +31,21 @@ public class MainframeManager {
     public void initialRequest() {
         MainframeServiceGrpc.MainframeServiceStub stub = MainframeServiceGrpc.newStub(mainframeChannel);
 
-        stub.connectionAttempt(ConnectToMainframeRequest.newBuilder().build(), new StreamObserver<ConnectToMainframeResponse>() {
+        String ip = null;
+
+        try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+            logger.error("", e);
+            logger.error("Failed to figure out ip address. Abandoning.");
+            System.exit(0);
+        }
+
+        ConnectToMainframeRequest.Builder builder = ConnectToMainframeRequest.newBuilder();
+        builder.setPort(provider.getConfig().getPort());
+        builder.setIp(ip);
+
+        stub.connectionAttempt(builder.build(), new StreamObserver<ConnectToMainframeResponse>() {
             @Override
             public void onNext(ConnectToMainframeResponse response) {
                 if (!response.getSuccess()) {
@@ -42,8 +60,14 @@ public class MainframeManager {
 
             @Override
             public void onError(Throwable throwable) {
+                if (throwable instanceof StatusRuntimeException && ((StatusRuntimeException) throwable).getStatus().getCode() == Status.Code.UNAVAILABLE) {
+                    logger.error("!!! -- !!! Mainframe is offline !!! -- !!!");
+                    logger.error("!!! -- !!! Mainframe is offline !!! -- !!!");
+                    logger.error("!!! -- !!! Mainframe is offline !!! -- !!!");
+                    System.exit(0);
+                }
+
                 logger.error("", throwable);
-                logger.error("An error occurred while attempting to connect to mainframe .. Abandoning.");
                 System.exit(0);
             }
 

@@ -6,11 +6,14 @@ import com.google.gson.GsonBuilder;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import net.devibot.mainframe.grpc.GrpcService;
+import net.devibot.mainframe.manager.ProviderManager;
+import net.devibot.mainframe.tasks.KeepAliveAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Mainframe {
 
@@ -36,7 +39,7 @@ public class Mainframe {
     }
 
     private Config config;
-    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(100);
+    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1000);
 
     public Mainframe() {
         this.config = Config.loadConfig();
@@ -44,6 +47,8 @@ public class Mainframe {
     }
 
     private Server server;
+
+    private ProviderManager providerManager;
 
     private void connect() {
         //create server
@@ -62,6 +67,10 @@ public class Mainframe {
             });
 
             logger.info("Mainframe running on port " + config.getPort() + ".");
+            this.providerManager = new ProviderManager(this);
+
+            //keep alive
+            threadPool.scheduleAtFixedRate(new KeepAliveAgent(this), 0, 15, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error("", e);
             System.exit(0);
@@ -72,5 +81,11 @@ public class Mainframe {
         return config;
     }
 
+    public ProviderManager getProviderManager() {
+        return providerManager;
+    }
 
+    public ScheduledExecutorService getThreadPool() {
+        return threadPool;
+    }
 }

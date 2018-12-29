@@ -36,7 +36,7 @@ public class Provider {
     }
 
     private Config config;
-    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(100);
+    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1000);
 
     private Server server;
 
@@ -55,7 +55,7 @@ public class Provider {
         try {
             //start service
             server = ServerBuilder.forPort(this.config.getPort())
-                    //todo .addService(new GrpcService(this))
+                    .addService(new GrpcService(this))
                     .build().start();
             //block a thread
             threadPool.submit(() -> {
@@ -83,6 +83,10 @@ public class Provider {
 
     public ScheduledExecutorService getThreadPool() {
         return threadPool;
+    }
+
+    public MainframeManager getMainframeManager() {
+        return mainframeManager;
     }
 
     public int getId() {

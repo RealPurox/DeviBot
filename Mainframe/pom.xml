@@ -73,16 +73,12 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-        </dependency>
 
         <dependency>
-            <artifactId>GRPC</artifactId>
-            <groupId>net.devibot.grpc</groupId>
+            <artifactId>Core</artifactId>
+            <groupId>net.devibot.core</groupId>
             <version>1.0.0</version>
         </dependency>
+
     </dependencies>
 </project>

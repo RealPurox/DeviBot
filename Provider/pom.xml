@@ -62,15 +62,10 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-        </dependency>
 
         <dependency>
-            <artifactId>GRPC</artifactId>
-            <groupId>net.devibot.grpc</groupId>
+            <groupId>net.devibot.core</groupId>
+            <artifactId>Core</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -83,7 +78,12 @@
                     <groupId>club.minnced</groupId>
                     <artifactId>opus-java</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
+
     </dependencies>
 </project>

@@ -19,6 +19,7 @@
         <module>Mainframe</module>
         <module>Provider</module>
         <module>gRPC</module>
+        <module>Core</module>
     </modules>
 
     <properties>

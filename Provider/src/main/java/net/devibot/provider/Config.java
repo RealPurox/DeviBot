@@ -4,14 +4,11 @@ import java.io.*;
 
 public class Config {
 
-    private int port = 0;
-
     private String mainframeIp = "";
     private int mainframePort = 0;
 
-    public int getPort() {
-        return port;
-    }
+    private String botToken = "";
+    private boolean devMode = true;
 
     public String getMainframeIp() {
         return mainframeIp;
@@ -21,7 +18,15 @@ public class Config {
         return mainframePort;
     }
 
-    public static Config loadConfig() {
+    public String getBotToken() {
+        return botToken;
+    }
+
+    public boolean isDevMode() {
+        return devMode;
+    }
+
+    static Config loadConfig() {
         File file = new File("provider_config.json");
         Config config = new Config();
 

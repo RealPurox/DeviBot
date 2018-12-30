@@ -3,9 +3,8 @@ package net.devibot.provider;
 import ch.qos.logback.classic.Level;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.grpc.*;
+import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.manager.MainframeManager;
-import net.devibot.provider.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,36 +37,19 @@ public class Provider {
     private Config config;
     private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1000);
 
-    private Server server;
-
     private MainframeManager mainframeManager;
 
-    private int id;
+    private DiscordBot discordBot;
 
     public Provider() {
         this.config = Config.loadConfig();
         connect();
     }
 
-
     private void connect() {
         //create server
         try {
-            //start service
-            server = ServerBuilder.forPort(this.config.getPort())
-                    .addService(new GrpcService(this))
-                    .build().start();
-            //block a thread
-            threadPool.submit(() -> {
-                try {
-                    server.awaitTermination();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            });
-
-            logger.info("Provider running on port " + config.getPort() + ".");
-
+            logger.info("(X) Initializing Mainframe ... ");
             //define mainframe
             mainframeManager = new MainframeManager(this);
             mainframeManager.initialRequest();
@@ -75,6 +57,10 @@ public class Provider {
             logger.error("", e);
             System.exit(0);
         }
+    }
+
+    public void initializeDiscordBot() {
+        this.discordBot = new DiscordBot(this);
     }
 
     public Config getConfig() {
@@ -87,13 +73,5 @@ public class Provider {
 
     public MainframeManager getMainframeManager() {
         return mainframeManager;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

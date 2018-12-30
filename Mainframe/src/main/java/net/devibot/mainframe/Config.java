@@ -5,6 +5,7 @@ import java.io.*;
 public class Config {
 
     private int port = 0;
+    private String databaseUrl = "";
 
     public int getPort() {
         return port;

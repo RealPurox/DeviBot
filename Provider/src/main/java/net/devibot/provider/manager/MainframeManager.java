@@ -1,6 +1,5 @@
 package net.devibot.provider.manager;
 
-import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
@@ -12,7 +11,7 @@ import net.devibot.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainframeManager {
 
@@ -20,59 +19,45 @@ public class MainframeManager {
 
     private Provider provider;
 
-    private ManagedChannel mainframeChannel;
+    private MainframeServiceGrpc.MainframeServiceStub mainframeStub;
 
     public MainframeManager(Provider provider) {
         this.provider = provider;
 
-        mainframeChannel = ManagedChannelBuilder.forAddress(provider.getConfig().getMainframeIp(), provider.getConfig().getMainframePort()).usePlaintext().executor(provider.getThreadPool()).build();
+        mainframeStub = MainframeServiceGrpc.newStub(ManagedChannelBuilder.forAddress(provider.getConfig().getMainframeIp(),
+                provider.getConfig().getMainframePort()).usePlaintext().executor(provider.getThreadPool()).build());
     }
 
     public void initialRequest() {
-        MainframeServiceGrpc.MainframeServiceStub stub = MainframeServiceGrpc.newStub(mainframeChannel);
-
-        String ip = null;
-
         try {
-            ip = InetAddress.getLocalHost().getHostAddress();
+            AtomicBoolean block = new AtomicBoolean(true);
+
+            mainframeStub.connectionAttempt(ConnectToMainframeRequest.newBuilder().build(), new StreamObserver<ConnectToMainframeResponse>() {
+                @Override
+                public void onNext(ConnectToMainframeResponse connectToMainframeResponse) {
+                    block.set(false);
+                    logger.info("(X) Mainframe initialized successfully");
+                    provider.initializeDiscordBot();
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    if (throwable instanceof StatusRuntimeException && ((StatusRuntimeException) throwable).getStatus().getCode() == Status.Code.UNAVAILABLE) {
+                        logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
+                        logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
+                        logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
+                    } else logger.error("", throwable);
+                    System.exit(0);
+                }
+
+                @Override
+                public void onCompleted() { }
+            });
+
+            //block the thread so we don't close the JVM yet
+            while (block.get());
         } catch (Exception e) {
             logger.error("", e);
-            logger.error("Failed to figure out ip address. Abandoning.");
-            System.exit(0);
         }
-
-        ConnectToMainframeRequest.Builder builder = ConnectToMainframeRequest.newBuilder();
-        builder.setPort(provider.getConfig().getPort());
-        builder.setIp(ip);
-
-        stub.connectionAttempt(builder.build(), new StreamObserver<ConnectToMainframeResponse>() {
-            @Override
-            public void onNext(ConnectToMainframeResponse response) {
-                if (!response.getSuccess()) {
-                    logger.info("Mainframe refused connection .. Abandoning.");
-                    System.exit(0);
-                    return;
-                }
-
-                logger.info("Mainframe connection succeeded. Provider ID: " + response.getProviderId());
-                provider.setId(response.getProviderId());
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                if (throwable instanceof StatusRuntimeException && ((StatusRuntimeException) throwable).getStatus().getCode() == Status.Code.UNAVAILABLE) {
-                    logger.error("!!! -- !!! Mainframe is offline !!! -- !!!");
-                    logger.error("!!! -- !!! Mainframe is offline !!! -- !!!");
-                    logger.error("!!! -- !!! Mainframe is offline !!! -- !!!");
-                    System.exit(0);
-                }
-
-                logger.error("", throwable);
-                System.exit(0);
-            }
-
-            @Override
-            public void onCompleted() { }
-        });
     }
 }

@@ -3,7 +3,8 @@ package net.devibot.provider.core;
 import net.devibot.core.request.RequestBuilder;
 import net.devibot.provider.Config;
 import net.devibot.provider.Provider;
-import net.devibot.provider.entities.Stats;
+import net.devibot.provider.listener.ReadyListener;
+import net.devibot.provider.manager.AgentManager;
 import net.devibot.provider.manager.MainframeManager;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -18,6 +19,8 @@ public class DiscordBot {
 
     private final Logger logger = LoggerFactory.getLogger(DiscordBot.class);
 
+    private AgentManager agentManager;
+
     private Provider provider;
     private ShardManager shardManager;
 
@@ -25,6 +28,9 @@ public class DiscordBot {
 
     public DiscordBot(Provider provider) {
         this.provider = provider;
+
+        this.agentManager = new AgentManager(this);
+
         initialize();
     }
 
@@ -35,6 +41,9 @@ public class DiscordBot {
             builder.setToken(getConfig().getBotToken());
             builder.setAutoReconnect(true);
             builder.setHttpClient(okHttpClient);
+
+            //listener
+            builder.addEventListeners(new ReadyListener(this));
 
             this.shardManager = builder.build();
         } catch (Exception e) {
@@ -64,5 +73,9 @@ public class DiscordBot {
 
     public ShardManager getShardManager() {
         return shardManager;
+    }
+
+    public AgentManager getAgentManager() {
+        return agentManager;
     }
 }

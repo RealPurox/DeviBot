@@ -10,6 +10,8 @@ public class Config {
     private String botToken = "";
     private boolean devMode = true;
 
+    private String defaultPrefix = "";
+
     private String websiteAuthenticationKey = "";
 
     private String discordBotsDotOrgToken = "";

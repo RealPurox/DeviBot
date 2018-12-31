@@ -10,6 +10,10 @@ public class Config {
     private String botToken = "";
     private boolean devMode = true;
 
+    private String websiteAuthenticationKey = "";
+
+    private String discordBotsDotOrgToken = "";
+
     public String getMainframeIp() {
         return mainframeIp;
     }
@@ -24,6 +28,14 @@ public class Config {
 
     public boolean isDevMode() {
         return devMode;
+    }
+
+    public String getWebsiteAuthenticationKey() {
+        return websiteAuthenticationKey;
+    }
+
+    public String getDiscordBotsDotOrgToken() {
+        return discordBotsDotOrgToken;
     }
 
     static Config loadConfig() {

@@ -74,4 +74,8 @@ public class Provider {
     public MainframeManager getMainframeManager() {
         return mainframeManager;
     }
+
+    public DiscordBot getDiscordBot() {
+        return discordBot;
+    }
 }

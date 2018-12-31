@@ -1,7 +1,9 @@
 package net.devibot.provider.core;
 
+import net.devibot.core.request.RequestBuilder;
 import net.devibot.provider.Config;
 import net.devibot.provider.Provider;
+import net.devibot.provider.entities.Stats;
 import net.devibot.provider.manager.MainframeManager;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -40,6 +42,10 @@ public class DiscordBot {
         }
     }
 
+    public RequestBuilder newRequestBuilder() {
+        return new RequestBuilder(okHttpClient, getThreadPool());
+    }
+
     public Color getColor() {
         return getConfig().isDevMode() ? Color.decode("#F48924") : Color.decode("#7289DA");
     }
@@ -54,5 +60,9 @@ public class DiscordBot {
 
     public Config getConfig() {
         return this.provider.getConfig();
+    }
+
+    public ShardManager getShardManager() {
+        return shardManager;
     }
 }

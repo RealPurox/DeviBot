@@ -1,5 +1,7 @@
 package net.devibot.mainframe;
 
+import net.devibot.core.Core;
+
 import java.io.*;
 
 public class Config {
@@ -19,7 +21,7 @@ public class Config {
             try {
                 FileWriter writer = new FileWriter(file);
 
-                Mainframe.GSON.toJson(config, writer);
+                Core.GSON.toJson(config, writer);
                 writer.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -31,7 +33,7 @@ public class Config {
 
         try {
             FileReader reader = new FileReader(file);
-            config = Mainframe.GSON.fromJson(reader, Config.class);
+            config = Core.GSON.fromJson(reader, Config.class);
             reader.close();
         } catch (Exception e) {
             e.printStackTrace();

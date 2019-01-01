@@ -1,10 +1,9 @@
 package net.devibot.mainframe;
 
 import ch.qos.logback.classic.Level;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import net.devibot.core.Core;
 import net.devibot.mainframe.service.GeneralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +14,14 @@ import java.util.concurrent.ScheduledExecutorService;
 public class Mainframe {
 
     private static Logger logger = LoggerFactory.getLogger(Mainframe.class);
-    public static final Gson GSON = new GsonBuilder().create();
 
     private static Mainframe mainframe;
 
     public static void main(String[] args) {
         ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.INFO);
+
+        Core.setup();
 
         try {
             mainframe = new Mainframe();

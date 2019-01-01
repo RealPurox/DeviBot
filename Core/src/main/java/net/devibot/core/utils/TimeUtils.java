@@ -1,4 +1,4 @@
-package net.devibot.core;
+package net.devibot.core.utils;
 
 import java.util.Date;
 import java.util.LinkedHashMap;

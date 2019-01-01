@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+option java_package = "net.devibot.grpc.entities";
+
+message GuildSettings {
+    string prefix = 1;
+    string language = 2;
+
+    string mute_role = 3;
+
+    bool mod_log_enabled = 4;
+    string mod_log_channel = 5;
+    string mod_log_mutes = 6;
+    bool mod_log_bans = 7;
+    bool mod_log_kicks = 8;
+    bool mod_log_voice_kicks = 9;
+    bool mod_log_message_edited = 10;
+    bool mod_log_message_deleted = 11;
+
+    bool auto_mod_enabled = 12;
+    bool auto_mod_anti_ads = 13;
+    bool auto_mod_anti_caps = 14;
+    bool auto_mod_anti_emoji_spam = 15;
+}
+
+message DeviGuild {
+    string id = 1;
+    GuildSettings settings = 2;
+}

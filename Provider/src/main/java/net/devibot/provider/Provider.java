@@ -1,8 +1,7 @@
 package net.devibot.provider;
 
 import ch.qos.logback.classic.Level;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import net.devibot.core.Core;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.manager.MainframeManager;
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import java.util.concurrent.ScheduledExecutorService;
 public class Provider {
 
     private static Logger logger = LoggerFactory.getLogger(Provider.class);
-    public static final Gson GSON = new GsonBuilder().create();
 
     private static Provider provider;
 
@@ -25,6 +23,8 @@ public class Provider {
     public static void main(String[] args) {
         ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.INFO);
+
+        Core.setup();
 
         try {
             provider = new Provider();
@@ -53,6 +53,9 @@ public class Provider {
             //define mainframe
             mainframeManager = new MainframeManager(this);
             mainframeManager.initialRequest();
+
+            //DatabaseManager databaseManager = DatabaseManager.getInstance();
+            //databaseManager.saveToDatabase("logs", new Document("test", 123));
         } catch (Exception e) {
             logger.error("", e);
             System.exit(0);

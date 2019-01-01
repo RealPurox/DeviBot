@@ -1,4 +1,4 @@
-package net.devibot.core;
+package net.devibot.core.utils;
 
 import java.util.ArrayList;
 import java.util.List;

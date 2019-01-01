@@ -1,6 +1,6 @@
 package net.devibot.core.request;
 
-import net.devibot.core.JavaUtils;
+import net.devibot.core.utils.JavaUtils;
 import okhttp3.OkHttpClient;
 import org.json.JSONObject;
 

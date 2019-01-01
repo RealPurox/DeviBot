@@ -1,49 +1,25 @@
-package net.devibot.provider;
+package net.devibot.core;
 
-import net.devibot.core.Core;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 public class Config {
 
-    private String mainframeIp = "";
-    private int mainframePort = 0;
+    private String mongoUrl = "";
 
-    private String botToken = "";
     private boolean devMode = true;
 
-    private String defaultPrefix = "";
-
-    private String websiteAuthenticationKey = "";
-
-    private String discordBotsDotOrgToken = "";
-
-    public String getMainframeIp() {
-        return mainframeIp;
-    }
-
-    public int getMainframePort() {
-        return mainframePort;
-    }
-
-    public String getBotToken() {
-        return botToken;
+    public String getMongoUrl() {
+        return mongoUrl;
     }
 
     public boolean isDevMode() {
         return devMode;
     }
 
-    public String getWebsiteAuthenticationKey() {
-        return websiteAuthenticationKey;
-    }
-
-    public String getDiscordBotsDotOrgToken() {
-        return discordBotsDotOrgToken;
-    }
-
     static Config loadConfig() {
-        File file = new File("provider_config.json");
+        File file = new File("core_config.json");
         Config config = new Config();
 
         if (!file.exists()) {

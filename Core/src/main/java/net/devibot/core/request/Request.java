@@ -1,6 +1,6 @@
 package net.devibot.core.request;
 
-import net.devibot.core.JavaUtils;
+import net.devibot.core.utils.JavaUtils;
 import okhttp3.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;

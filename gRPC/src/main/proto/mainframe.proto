@@ -11,5 +11,7 @@ service MainframeService {
     rpc connectionAttempt (ConnectToMainframeRequest) returns (ConnectToMainframeResponse);
 
     rpc getDeviGuild (DeviGuildRequest) returns (DeviGuild);
+
+    rpc getTranslations (TranslationRequest) returns (TranslationResponse);
 }
 

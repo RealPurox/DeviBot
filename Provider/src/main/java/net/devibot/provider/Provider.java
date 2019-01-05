@@ -3,6 +3,7 @@ package net.devibot.provider;
 import ch.qos.logback.classic.Level;
 import net.devibot.core.Core;
 import net.devibot.provider.core.DiscordBot;
+import net.devibot.provider.manager.CacheManager;
 import net.devibot.provider.manager.MainframeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,6 @@ public class Provider {
     }
 
     public static void main(String[] args) {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
-
         Core.setup();
 
         try {
@@ -38,6 +36,7 @@ public class Provider {
     private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1000);
 
     private MainframeManager mainframeManager;
+    private CacheManager cacheManager;
 
     private DiscordBot discordBot;
 
@@ -50,12 +49,12 @@ public class Provider {
         //create server
         try {
             logger.info("(X) Initializing Mainframe ... ");
+            //define cacheManager
+            cacheManager = new CacheManager(this);
+
             //define mainframe
             mainframeManager = new MainframeManager(this);
             mainframeManager.initialRequest();
-
-            //DatabaseManager databaseManager = DatabaseManager.getInstance();
-            //databaseManager.saveToDatabase("logs", new Document("test", 123));
         } catch (Exception e) {
             logger.error("", e);
             System.exit(0);
@@ -80,5 +79,9 @@ public class Provider {
 
     public DiscordBot getDiscordBot() {
         return discordBot;
+    }
+
+    public CacheManager getCacheManager() {
+        return cacheManager;
     }
 }

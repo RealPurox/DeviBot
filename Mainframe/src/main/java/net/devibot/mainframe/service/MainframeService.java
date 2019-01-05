@@ -1,19 +1,22 @@
 package net.devibot.mainframe.service;
 
+import com.mongodb.Block;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.database.DatabaseManager;
 import net.devibot.grpc.entities.DeviGuild;
+import net.devibot.grpc.entities.Translation;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
-import net.devibot.grpc.messages.ConnectToMainframeRequest;
-import net.devibot.grpc.messages.ConnectToMainframeResponse;
-import net.devibot.grpc.messages.DeviGuildRequest;
+import net.devibot.grpc.messages.*;
 import net.devibot.mainframe.Mainframe;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplBase {
 
@@ -45,7 +48,6 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
 
             if (results.isEmpty()) {
                 deviGuild = new net.devibot.core.entities.DeviGuild(guildId).toGrpc();
-                logger.info("");
                 return;
             }
 
@@ -53,9 +55,29 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
             deviGuild = Core.GSON.fromJson(guildData.toJson(), net.devibot.core.entities.DeviGuild.class).toGrpc();
         } catch (Exception e) {
             logger.error("", e);
-            responseObserver.onNext(new net.devibot.core.entities.DeviGuild(guildId).toGrpc());
+            deviGuild = new net.devibot.core.entities.DeviGuild(guildId).toGrpc();
         } finally {
             responseObserver.onNext(deviGuild);
+            responseObserver.onCompleted();
+        }
+    }
+
+    @Override
+    public void getTranslations(TranslationRequest request, StreamObserver<TranslationResponse> responseObserver) {
+        String language = request.getLanguage();
+
+        try {
+            DatabaseManager databaseManager = DatabaseManager.getInstance();
+
+            List<Translation> grpcTranslations = new ArrayList<>();
+            for(Document document : databaseManager.getDatabase().getCollection("translations").find()) {
+                grpcTranslations.add(Translation.newBuilder().setId(Integer.parseInt(document.getString("_id"))).setText(document.getString(language) == null ? "none" : document.getString(language)).build());
+            }
+            responseObserver.onNext(TranslationResponse.newBuilder().addAllTranslations(grpcTranslations).build());
+        } catch (Exception e) {
+            logger.error("", e);
+            responseObserver.onNext(TranslationResponse.newBuilder().build());
+        } finally {
             responseObserver.onCompleted();
         }
     }

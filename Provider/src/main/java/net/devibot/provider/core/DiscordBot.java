@@ -1,41 +1,26 @@
 package net.devibot.provider.core;
 
-import com.github.benmanes.caffeine.cache.AsyncCacheLoader;
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import net.devibot.core.entities.DeviGuild;
 import net.devibot.core.request.RequestBuilder;
 import net.devibot.provider.Config;
 import net.devibot.provider.Provider;
+import net.devibot.provider.listener.GuildJoinLeaveListener;
 import net.devibot.provider.listener.ReadyListener;
 import net.devibot.provider.manager.AgentManager;
+import net.devibot.provider.manager.CacheManager;
 import net.devibot.provider.manager.MainframeManager;
+import net.devibot.provider.utils.Translator;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class DiscordBot {
 
     private final Logger logger = LoggerFactory.getLogger(DiscordBot.class);
-
-    private AsyncLoadingCache<String, DeviGuild> deviGuildAsyncLoadingCache = Caffeine.newBuilder()
-            .buildAsync(new AsyncCacheLoader<String, DeviGuild>() {
-                @Nonnull
-                @Override
-                public CompletableFuture<DeviGuild> asyncLoad(@Nonnull String guildId, @Nonnull Executor executor) {
-                    CompletableFuture<DeviGuild> future = new CompletableFuture<>();
-                    executor.execute(() -> provider.getMainframeManager().getDeviGuild(guildId, future::complete));
-                    return future;
-                }
-            });
 
     private AgentManager agentManager;
 
@@ -47,12 +32,11 @@ public class DiscordBot {
     public DiscordBot(Provider provider) {
         this.provider = provider;
 
+        //initialize manager, translator, etc before starting the bot
         this.agentManager = new AgentManager(this);
+        Translator.initialize();
 
         initialize();
-
-        DeviGuild deviGuild = deviGuildAsyncLoadingCache.get("392264119102996480").join();
-        System.out.println(deviGuild.getPrefix());
     }
 
     private void initialize() {
@@ -65,6 +49,7 @@ public class DiscordBot {
 
             //listener
             builder.addEventListeners(new ReadyListener(this));
+            builder.addEventListeners(new GuildJoinLeaveListener(this));
 
             this.shardManager = builder.build();
         } catch (Exception e) {
@@ -98,5 +83,9 @@ public class DiscordBot {
 
     public AgentManager getAgentManager() {
         return agentManager;
+    }
+
+    public CacheManager getCacheManager() {
+        return provider.getCacheManager();
     }
 }

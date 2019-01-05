@@ -6,13 +6,13 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
-import net.devibot.grpc.messages.ConnectToMainframeRequest;
-import net.devibot.grpc.messages.ConnectToMainframeResponse;
-import net.devibot.grpc.messages.DeviGuildRequest;
+import net.devibot.grpc.messages.*;
 import net.devibot.provider.Provider;
+import net.devibot.provider.entities.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -66,11 +66,9 @@ public class MainframeManager {
 
 
     public void getDeviGuild(String id, Consumer<? super DeviGuild> consumer) {
-        logger.info("Got Guild Request for id " + id);
         mainframeStub.getDeviGuild(DeviGuildRequest.newBuilder().setId(id).build(), new StreamObserver<net.devibot.grpc.entities.DeviGuild>() {
             @Override
             public void onNext(net.devibot.grpc.entities.DeviGuild deviGuild) {
-                logger.info("Provided with DB settings");
                 consumer.accept(new DeviGuild(deviGuild));
             }
 
@@ -78,8 +76,28 @@ public class MainframeManager {
             public void onError(Throwable throwable) {
                 logger.error("", throwable);
                 logger.warn("Failed to retrieve guild data. See exception above.");
-                logger.info("Provided with default settings");
                 consumer.accept(new DeviGuild(id));
+            }
+
+            @Override
+            public void onCompleted() { }
+        });
+    }
+
+    public void getTranslationsForLanguage(String language, Consumer<HashMap<Integer, String>> consumer) {
+        mainframeStub.getTranslations(TranslationRequest.newBuilder().setLanguage(language).build(), new StreamObserver<TranslationResponse>() {
+            @Override
+            public void onNext(TranslationResponse translationResponse) {
+                HashMap<Integer, String> translations = new HashMap<>();
+                translationResponse.getTranslationsList().forEach(translation -> translations.put(translation.getId(), translation.getText()));
+                consumer.accept(translations);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                logger.error("", throwable);
+                logger.warn("Failed to retrieve translation data. See exception above.");
+                consumer.accept(new HashMap<>());
             }
 
             @Override

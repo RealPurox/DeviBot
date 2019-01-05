@@ -26,3 +26,8 @@ message DeviGuild {
     bool auto_mod_anti_caps = 15;
     bool auto_mod_anti_emoji_spam = 16;
 }
+
+message Translation {
+    int32 id = 1;
+    string text = 2;
+}

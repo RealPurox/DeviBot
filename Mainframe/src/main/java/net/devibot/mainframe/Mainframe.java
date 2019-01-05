@@ -1,6 +1,5 @@
 package net.devibot.mainframe;
 
-import ch.qos.logback.classic.Level;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import net.devibot.core.Core;
@@ -18,9 +17,6 @@ public class Mainframe {
     private static Mainframe mainframe;
 
     public static void main(String[] args) {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
-
         Core.setup();
 
         try {

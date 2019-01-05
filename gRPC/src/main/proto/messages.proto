@@ -4,6 +4,8 @@ option java_multiple_files = true;
 
 option java_package = "net.devibot.grpc.messages";
 
+import "entities.proto";
+
 message ConnectToMainframeRequest {
     int32 port = 1;
     string ip = 2;
@@ -16,6 +18,14 @@ message ConnectToMainframeResponse {
 
 message DeviGuildRequest {
     string id = 1;
+}
+
+message TranslationRequest {
+    string language = 1;
+}
+
+message TranslationResponse {
+    repeated Translation translations = 1;
 }
 
 message DefaultSuccessResponse {

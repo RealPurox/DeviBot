@@ -14,8 +14,15 @@ message ConnectToMainframeResponse {
     int32 provider_id = 2;
 }
 
-message KeepAliveMessage {}
+message DeviGuildRequest {
+    string id = 1;
+}
 
 message DefaultSuccessResponse {
     bool success = 1;
+}
+
+message ExtendedSuccessResponse {
+    bool success = 1;
+    string message = 2;
 }

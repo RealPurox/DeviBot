@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import net.devibot.core.Core;
-import net.devibot.mainframe.service.GeneralService;
+import net.devibot.mainframe.service.MainframeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class Mainframe {
         try {
             //start service
             server = ServerBuilder.forPort(this.config.getPort())
-                    .addService(new GeneralService(this))
+                    .addService(new MainframeService(this))
                     .build().start();
             //block a thread
             threadPool.submit(() -> {

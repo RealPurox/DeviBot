@@ -9,5 +9,7 @@ import "messages.proto";
 
 service MainframeService {
     rpc connectionAttempt (ConnectToMainframeRequest) returns (ConnectToMainframeResponse);
+
+    rpc getDeviGuild (DeviGuildRequest) returns (DeviGuild);
 }
 

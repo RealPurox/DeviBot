@@ -9,6 +9,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import net.devibot.core.Core;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -31,24 +32,20 @@ public class DatabaseManager {
         this.client = MongoClients.create(Core.CONFIG.getMongoUrl());
         this.database = client.getDatabase(Core.CONFIG.isDevMode() ? "development" : "master");
 
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            if (logs.isEmpty()) return;
-            database.getCollection("logs").insertMany(logs);
-            logs.clear();
-        }, 0, 15, TimeUnit.SECONDS);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::pushLogs, 0, 15, TimeUnit.SECONDS);
     }
 
     public MongoClient getClient() {
         return client;
     }
 
-    public UpdateResult saveToDatabase(String collection, Document document, String id) {
+    public UpdateResult saveToDatabase(String collection, Document document, ObjectId id) {
         return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
     }
 
     public UpdateResult saveToDatabase(String collection, Document document) {
-        String id = UUID.randomUUID().toString();
-        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+        ObjectId objectId = new ObjectId();
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", objectId), document.append("_id", objectId), new UpdateOptions().upsert(true));
     }
 
     public DeleteResult removeFromDatabase(String collection, String id) {
@@ -62,9 +59,7 @@ public class DatabaseManager {
     }
 
     public List<Document> getDocuments(String key, String value, String collection) {
-        List<Document> documents = database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
-        if (documents == null) return new ArrayList<>();
-        return documents;
+        return database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
     }
 
     public MongoDatabase getDatabase() {
@@ -75,4 +70,10 @@ public class DatabaseManager {
         this.logs.add(document);
     }
 
+    //used in shutdown hook
+    public void pushLogs() {
+        if (logs.isEmpty()) return;
+        database.getCollection("logs").insertMany(logs);
+        logs.clear();
+    }
 }

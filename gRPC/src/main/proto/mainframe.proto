@@ -13,5 +13,7 @@ service MainframeService {
     rpc getDeviGuild (DeviGuildRequest) returns (DeviGuild);
 
     rpc getTranslations (TranslationRequest) returns (TranslationResponse);
+
+    rpc requestDeviGuildSettingsSave (DeviGuildSettingsSaveRequest) returns (DefaultSuccessResponse);
 }
 

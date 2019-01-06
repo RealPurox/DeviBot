@@ -2,12 +2,14 @@ package net.devibot.provider.commands;
 
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.provider.commands.dev.TestCommand;
+import net.devibot.provider.commands.management.PrefixCommand;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.entities.Emote;
 import net.devibot.provider.entities.Language;
 import net.devibot.provider.entities.ModuleType;
 import net.devibot.provider.utils.MessageUtils;
 import net.devibot.provider.utils.Translator;
+import net.dv8tion.jda.core.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +30,9 @@ public class CommandHandler {
 
         //DEV COMMANDS
         registerCommand(new TestCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
+
+        //MANAGEMENT COMMANDS
+        registerCommand(new PrefixCommand(discordBot).setDescriptionId(248).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT).setPermission(Permission.MANAGE_SERVER));
     }
 
     private void registerCommand(ICommand iCommand) {

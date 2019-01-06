@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
@@ -39,13 +40,18 @@ public class DatabaseManager {
         return client;
     }
 
-    public UpdateResult saveToDatabase(String collection, Document document, ObjectId id) {
-        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new UpdateOptions().upsert(true));
+    public UpdateResult saveToDatabase(String collection, Document document, String id) {
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", id), document.append("_id", id), new ReplaceOptions().upsert(true));
+    }
+
+    public UpdateResult saveToDatabase(String collection, Document document, String key, String value) {
+        ObjectId objectId = new ObjectId();
+        return database.getCollection(collection).replaceOne(Filters.eq(key, value), document.append("_id", objectId), new ReplaceOptions().upsert(true));
     }
 
     public UpdateResult saveToDatabase(String collection, Document document) {
         ObjectId objectId = new ObjectId();
-        return database.getCollection(collection).replaceOne(Filters.eq("_id", objectId), document.append("_id", objectId), new UpdateOptions().upsert(true));
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", objectId.toString()), document.append("_id", objectId.toString()), new ReplaceOptions().upsert(true));
     }
 
     public DeleteResult removeFromDatabase(String collection, String id) {

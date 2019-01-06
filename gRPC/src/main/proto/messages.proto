@@ -28,6 +28,10 @@ message TranslationResponse {
     repeated Translation translations = 1;
 }
 
+message DeviGuildSettingsSaveRequest {
+    DeviGuild guild = 1;
+}
+
 message DefaultSuccessResponse {
     bool success = 1;
 }

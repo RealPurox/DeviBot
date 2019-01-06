@@ -1,5 +1,6 @@
 package net.devibot.provider.agents;
 
+import net.devibot.core.agents.Agent;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.entities.Stats;
 import net.dv8tion.jda.core.entities.Game;

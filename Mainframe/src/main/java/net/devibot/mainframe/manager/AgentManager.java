@@ -1,9 +1,8 @@
-package net.devibot.provider.manager;
+package net.devibot.mainframe.manager;
 
 import net.devibot.core.agents.Agent;
-import net.devibot.provider.agents.GameLoopAgent;
-import net.devibot.provider.agents.StatsPusherAgent;
-import net.devibot.provider.core.DiscordBot;
+import net.devibot.mainframe.Mainframe;
+import net.devibot.mainframe.agents.SettingsUpdateAgent;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,18 +10,17 @@ import java.util.List;
 
 public class AgentManager {
 
-    private enum Type {
-        STATS_PUSHER, GAME_LOOP
+    public enum Type {
+        SETTINGS_UPDATE
     }
 
-    private DiscordBot discordBot;
+    private Mainframe mainframe;
     private List<Agent> agents = new ArrayList<>();
     private LinkedHashMap<Type, List<Agent>> agentTypeMap = new LinkedHashMap<>();
 
-    public AgentManager(DiscordBot discordBot) {
-        this.discordBot = discordBot;
-        registerAgent(Type.STATS_PUSHER, new StatsPusherAgent(discordBot));
-        registerAgent(Type.GAME_LOOP, new GameLoopAgent(discordBot));
+    public AgentManager(Mainframe mainframe) {
+        this.mainframe = mainframe;
+        registerAgent(Type.SETTINGS_UPDATE, new SettingsUpdateAgent(mainframe));
     }
 
     private void registerAgent(Type type, Agent agent) {

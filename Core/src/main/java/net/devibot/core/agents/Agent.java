@@ -1,4 +1,4 @@
-package net.devibot.provider.agents;
+package net.devibot.core.agents;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

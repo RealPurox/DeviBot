@@ -8,7 +8,6 @@ import net.devibot.core.entities.DeviGuild;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
 import net.devibot.provider.Provider;
-import net.devibot.provider.entities.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,6 @@ public class MainframeManager {
         }
     }
 
-
     public void getDeviGuild(String id, Consumer<? super DeviGuild> consumer) {
         mainframeStub.getDeviGuild(DeviGuildRequest.newBuilder().setId(id).build(), new StreamObserver<net.devibot.grpc.entities.DeviGuild>() {
             @Override
@@ -99,6 +97,19 @@ public class MainframeManager {
                 logger.warn("Failed to retrieve translation data. See exception above.");
                 consumer.accept(new HashMap<>());
             }
+
+            @Override
+            public void onCompleted() { }
+        });
+    }
+
+    public void requestDeviGuildSettingsSave(DeviGuild deviGuild) {
+        mainframeStub.requestDeviGuildSettingsSave(DeviGuildSettingsSaveRequest.newBuilder().setGuild(deviGuild.toGrpc()).build(), new StreamObserver<DefaultSuccessResponse>() {
+            @Override
+            public void onNext(DefaultSuccessResponse defaultSuccessResponse) { }
+
+            @Override
+            public void onError(Throwable throwable) { }
 
             @Override
             public void onCompleted() { }

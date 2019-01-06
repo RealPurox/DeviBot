@@ -3,6 +3,7 @@ package net.devibot.mainframe;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import net.devibot.core.Core;
+import net.devibot.mainframe.manager.AgentManager;
 import net.devibot.mainframe.service.MainframeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,8 @@ public class Mainframe {
         connect();
     }
 
+    private AgentManager agentManager;
+
     private Server server;
 
     private void connect() {
@@ -53,6 +56,9 @@ public class Mainframe {
                 }
             });
 
+            agentManager = new AgentManager(this);
+            agentManager.startAllAgents();
+
             logger.info("Mainframe running on port " + config.getPort() + ".");
         } catch (Exception e) {
             logger.error("", e);
@@ -66,5 +72,9 @@ public class Mainframe {
 
     public ScheduledExecutorService getThreadPool() {
         return threadPool;
+    }
+
+    public AgentManager getAgentManager() {
+        return agentManager;
     }
 }

@@ -2,7 +2,8 @@ package net.devibot.provider.entities;
 
 public enum ModuleType {
 
-    DEV(false);
+    DEV(false),
+    MANAGEMENT(true);
 
     private boolean canBeDisabled;
 

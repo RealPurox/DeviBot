@@ -5,7 +5,8 @@ public enum Emote {
     // error/success
     ERROR("<:error:455049961831268354>"),
     SUCCESS("<:success:455049950930403348>"),
-    // misc stuff
+    // misc stuff,
+    INFO("<:info:458663927568400397>"),
     BAN("<:ban:531406340187488259>"),
     TWITCH("<:twitch:531406978409431052>"),
     // statuses

@@ -1,6 +1,5 @@
 package net.devibot.provider;
 
-import ch.qos.logback.classic.Level;
 import net.devibot.core.Core;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.manager.CacheManager;

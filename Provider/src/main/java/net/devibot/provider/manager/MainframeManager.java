@@ -87,7 +87,10 @@ public class MainframeManager {
             @Override
             public void onNext(TranslationResponse translationResponse) {
                 HashMap<Integer, String> translations = new HashMap<>();
-                translationResponse.getTranslationsList().forEach(translation -> translations.put(translation.getId(), translation.getText()));
+                translationResponse.getTranslationsList().forEach(translation -> {
+                    if (!translation.getText().equals("none") || translation.getText() == null)
+                        translations.put(translation.getId(), translation.getText());
+                });
                 consumer.accept(translations);
             }
 

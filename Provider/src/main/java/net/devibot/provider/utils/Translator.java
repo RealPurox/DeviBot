@@ -41,4 +41,7 @@ public class Translator {
         return translation;
     }
 
+    public static HashMap<Language, HashMap<Integer, String>> getTranslations() {
+        return translations;
+    }
 }

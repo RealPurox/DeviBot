@@ -13,8 +13,7 @@ public enum Language {
     SWEDISH("swe", "\uD83C\uDDF8\uD83C\uDDEA", 167),
     TURKISH("trk", "\uD83C\uDDF9\uD83C\uDDF7", 168),
     FRENCH("fra", "\uD83C\uDDEB\uD83C\uDDF7", 169),
-    NORWEGIAN("nor", "\uD83C\uDDF3\uD83C\uDDF4", 624),
-    UNKNOWN("unknown", "", -1);
+    NORWEGIAN("nor", "\uD83C\uDDF3\uD83C\uDDF4", 624);
 
     private String registry;
     private String emojiFlag;
@@ -48,10 +47,10 @@ public enum Language {
             if (lang.getName().equalsIgnoreCase(input) || lang.getRegistry().equalsIgnoreCase(input) || lang.getEmojiFlag().equalsIgnoreCase(input))
                 return lang;
         }
-        return UNKNOWN;
+        return null;
     }
 
-    public static Collection<String> getAllLangaugeFlags() {
+    public static Collection<String> getAllLanguageFlags() {
         return Arrays.stream(values()).map(Language::getEmojiFlag).collect(Collectors.toList());
     }
 }

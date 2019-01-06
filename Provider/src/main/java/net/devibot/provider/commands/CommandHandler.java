@@ -2,6 +2,7 @@ package net.devibot.provider.commands;
 
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.provider.commands.dev.TestCommand;
+import net.devibot.provider.commands.management.LanguageCommand;
 import net.devibot.provider.commands.management.PrefixCommand;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.entities.Emote;
@@ -33,6 +34,7 @@ public class CommandHandler {
 
         //MANAGEMENT COMMANDS
         registerCommand(new PrefixCommand(discordBot).setDescriptionId(248).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT).setPermission(Permission.MANAGE_SERVER));
+        registerCommand(new LanguageCommand(discordBot).setDescriptionId(253).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT).setPermission(Permission.MANAGE_SERVER));
     }
 
     private void registerCommand(ICommand iCommand) {
@@ -67,7 +69,7 @@ public class CommandHandler {
 
         CommandSender sender = new CommandSender(command.getAuthor(), command);
 
-        logger.info("Command '" + command.getRaw() + "' executed by " + sender.getName() + "#" + sender.getDiscriminator() + (command.getGuild() == null ? " in DMs" : " in channel #" + command.getChannel().getName() + " (" + command.getChannel().getId() + ") " + " in guild " + command.getGuild().getName() + " (" + command.getGuild().getId() + ")"));
+        logger.info("Command '" + command.getRaw() + "' executed by " + sender.getName() + "#" + sender.getDiscriminator() + (command.getGuild() == null ? " in DMs" : " in channel #" + command.getChannel().getName() + " (" + command.getChannel().getId() + ")" + " in guild " + command.getGuild().getName() + " (" + command.getGuild().getId() + ")"));
         iCommand.execute(sender, command);
     }
 

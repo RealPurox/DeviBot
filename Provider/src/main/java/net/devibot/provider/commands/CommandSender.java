@@ -103,7 +103,7 @@ public class CommandSender implements User {
     }
 
     public void reply(Object message, Consumer<? super Message> success) {
-        reply(message, null, null);
+        reply(message, success, null);
     }
 
     public void reply(Object message, Consumer<? super Message> success, Consumer<? super Throwable> failure) {

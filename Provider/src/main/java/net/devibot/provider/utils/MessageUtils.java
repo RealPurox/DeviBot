@@ -69,7 +69,7 @@ public class MessageUtils {
 
             if (object instanceof MessageEmbed) {
                 user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((MessageEmbed) object).queue(done -> {
-                    success.accept(done);
+                    if (success != null) success.accept(done);
                     privateChannel.close().queue();
                     }, failure), failure);
             } else if (object instanceof String) {
@@ -79,12 +79,12 @@ public class MessageUtils {
                 }, failure), failure);
             } else if (object instanceof  Message) {
                 user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((Message) object).queue(done -> {
-                    success.accept(done);
+                    if (success != null) success.accept(done);
                     privateChannel.close().queue();
                 }, failure), failure);
             } else {
                 user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(object.toString()).queue(done -> {
-                    success.accept(done);
+                    if (success != null) success.accept(done);
                     privateChannel.close().queue();
                 }, failure), failure);
             }

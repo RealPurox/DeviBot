@@ -3,6 +3,8 @@ package net.devibot.provider.core;
 import net.devibot.core.request.RequestBuilder;
 import net.devibot.provider.Config;
 import net.devibot.provider.Provider;
+import net.devibot.provider.commands.CommandHandler;
+import net.devibot.provider.listener.CommandListener;
 import net.devibot.provider.listener.GuildJoinLeaveListener;
 import net.devibot.provider.listener.ReadyListener;
 import net.devibot.provider.manager.AgentManager;
@@ -22,6 +24,7 @@ public class DiscordBot {
 
     private final Logger logger = LoggerFactory.getLogger(DiscordBot.class);
 
+    private CommandHandler commandHandler;
     private AgentManager agentManager;
 
     private Provider provider;
@@ -33,6 +36,7 @@ public class DiscordBot {
         this.provider = provider;
 
         //initialize manager, translator, etc before starting the bot
+        this.commandHandler = new CommandHandler(this);
         this.agentManager = new AgentManager(this);
         Translator.initialize();
 
@@ -50,6 +54,7 @@ public class DiscordBot {
             //listener
             builder.addEventListeners(new ReadyListener(this));
             builder.addEventListeners(new GuildJoinLeaveListener(this));
+            builder.addEventListeners(new CommandListener(this));
 
             this.shardManager = builder.build();
         } catch (Exception e) {
@@ -87,5 +92,9 @@ public class DiscordBot {
 
     public CacheManager getCacheManager() {
         return provider.getCacheManager();
+    }
+
+    public CommandHandler getCommandHandler() {
+        return commandHandler;
     }
 }

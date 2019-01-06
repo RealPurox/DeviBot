@@ -2,9 +2,12 @@ package net.devibot.provider.entities;
 
 public enum Emote {
 
-    //error/success
+    // error/success
     ERROR("<:error:455049961831268354>"),
     SUCCESS("<:success:455049950930403348>"),
+    // misc stuff
+    BAN("<:ban:531406340187488259>"),
+    TWITCH("<:twitch:531406978409431052>"),
     // statuses
     ONLINE("<:online:473958665725149194>"),
     AWAY("<:away:473958590844108801>"),

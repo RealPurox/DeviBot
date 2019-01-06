@@ -42,6 +42,10 @@ public class Config {
         return discordBotsDotOrgToken;
     }
 
+    public String getDefaultPrefix() {
+        return defaultPrefix;
+    }
+
     static Config loadConfig() {
         File file = new File("provider_config.json");
         Config config = new Config();

@@ -66,8 +66,8 @@ public class DiscordBot {
         return new RequestBuilder(okHttpClient, getThreadPool());
     }
 
-    public Color getColor() {
-        return getConfig().isDevMode() ? Color.decode("#F48924") : Color.decode("#7289DA");
+    public int getColor() {
+        return getConfig().isDevMode() ? 0xF48924 : 0x7289DA;
     }
 
     public MainframeManager getMainframeManager() {

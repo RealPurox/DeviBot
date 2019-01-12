@@ -53,8 +53,8 @@ public class JavaUtils {
     }
 
     public static Boolean getBoolean(String input) {
-        if (input.equalsIgnoreCase("true") || input.equalsIgnoreCase("on")) return true;
-        if (input.equalsIgnoreCase("false") || input.equalsIgnoreCase("off")) return false;
+        if (input.equalsIgnoreCase("true") || input.equalsIgnoreCase("on") || input.equalsIgnoreCase("yes")) return true;
+        if (input.equalsIgnoreCase("false") || input.equalsIgnoreCase("off") || input.equalsIgnoreCase("no")) return false;
         return null;
     }
 

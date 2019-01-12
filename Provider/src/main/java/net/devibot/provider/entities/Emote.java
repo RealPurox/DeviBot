@@ -9,6 +9,10 @@ public enum Emote {
     INFO("<:info:458663927568400397>"),
     BAN("<:ban:531406340187488259>"),
     TWITCH("<:twitch:531406978409431052>"),
+    AUTO_MOD("<:auto_mod:533766584003723311>"),
+    ADVERTISING("<:advertising:533771147091771402>"),
+    CAPSLOCK("<:capslock:533773043173163038>"),
+    EMOJI("<:emoji:533773944285560832>"),
     // statuses
     ONLINE("<:online:473958665725149194>"),
     AWAY("<:away:473958590844108801>"),

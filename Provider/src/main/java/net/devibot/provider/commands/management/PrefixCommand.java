@@ -18,7 +18,7 @@ public class PrefixCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         if (command.getArgs().length < 1) {
-            sender.reply(Emote.ERROR + " | " + Translator.getTranslation(command.getLanguage(), 12, "`" + command.getPrefix() + "prefix <prefix>`"));
+            sender.reply(Emote.ERROR + " | " + Translator.getTranslation(command.getLanguage(), 12, "`" + command.getDeviGuild().getPrefix() + "prefix <prefix>`"));
             return;
         }
 

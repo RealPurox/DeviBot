@@ -22,7 +22,6 @@ public class Provider {
 
     public static void main(String[] args) {
         Core.setup();
-
         try {
             provider = new Provider();
         } catch (Exception e) {

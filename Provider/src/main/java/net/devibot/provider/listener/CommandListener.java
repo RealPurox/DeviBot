@@ -38,7 +38,7 @@ public class CommandListener extends ListenerAdapter {
 
         //ok .. message starts with the prefix
         if (message.startsWith(prefix)) {
-            String invoke = message.substring(prefix.length()).split(" ")[0].toLowerCase();
+            String invoke = message.substring(prefix.length()).replace("\n", " ").split(" ")[0].toLowerCase();
             //it's a command!
             if (discordBot.getCommandHandler().getCommands().containsKey(invoke)) {
                 discordBot.getCommandHandler().handleCommand(new ICommand.Command(event, prefix, discordBot));

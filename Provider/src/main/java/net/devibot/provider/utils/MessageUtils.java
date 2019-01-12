@@ -42,10 +42,15 @@ public class MessageUtils {
                     channel.sendMessage(Emote.ERROR + " | " + Translator.getTranslation(language, 150)).queue(success, failure);
                 } else channel.sendMessage((MessageEmbed) object).queue(success, failure);
             } else if (object instanceof String) {
-                channel.sendMessage((String) object).queue(success, failure);
+                String message = (String) object;
+                if (message.length() >= 2000)
+                    message = message.substring(message.length() - 2000);
+                channel.sendMessage(message).queue(success, failure);
             } else if (object instanceof Message) {
                 channel.sendMessage((Message) object).queue(success, failure);
             } else {
+                if (object.toString().length() >= 2000)
+                    object = object.toString().substring(object.toString().length() - 2000);
                 channel.sendMessage(object.toString()).queue(success, failure);
             }
 
@@ -73,7 +78,11 @@ public class MessageUtils {
                     privateChannel.close().queue();
                     }, failure), failure);
             } else if (object instanceof String) {
-                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((String) object).queue(done -> {
+                String message = (String) object;
+                if (message.length() >= 2000)
+                    message = message.substring(message.length() - 2000);
+                String finalMessage = message;
+                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(finalMessage).queue(done -> {
                     success.accept(done);
                     privateChannel.close().queue();
                 }, failure), failure);
@@ -83,7 +92,11 @@ public class MessageUtils {
                     privateChannel.close().queue();
                 }, failure), failure);
             } else {
-                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(object.toString()).queue(done -> {
+                Object message = object;
+                if (message.toString().length() >= 2000)
+                    message = object.toString().substring(message.toString().length() - 2000);
+                Object finalMessage = message;
+                user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(finalMessage.toString()).queue(done -> {
                     if (success != null) success.accept(done);
                     privateChannel.close().queue();
                 }, failure), failure);

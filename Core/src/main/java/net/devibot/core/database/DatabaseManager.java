@@ -1,17 +1,19 @@
 package net.devibot.core.database;
 
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import net.devibot.core.Core;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +32,12 @@ public class DatabaseManager {
     }
 
     public DatabaseManager() {
-        this.client = MongoClients.create(Core.CONFIG.getMongoUrl());
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applicationName("Devi")
+                .applyConnectionString(new ConnectionString(Core.CONFIG.getMongoUrl()))
+                .build();
+
+        this.client = MongoClients.create(settings);
         this.database = client.getDatabase(Core.CONFIG.isDevMode() ? "development" : "master");
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::pushLogs, 0, 15, TimeUnit.SECONDS);

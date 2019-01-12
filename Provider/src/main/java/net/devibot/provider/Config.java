@@ -18,6 +18,8 @@ public class Config {
 
     private String discordBotsDotOrgToken = "";
 
+    private String[] developers = new String[0];
+
     public String getMainframeIp() {
         return mainframeIp;
     }
@@ -44,6 +46,10 @@ public class Config {
 
     public String getDefaultPrefix() {
         return defaultPrefix;
+    }
+
+    public String[] getDevelopers() {
+        return developers;
     }
 
     static Config loadConfig() {

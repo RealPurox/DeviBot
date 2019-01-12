@@ -1,6 +1,7 @@
 package net.devibot.provider.commands;
 
 import net.devibot.core.entities.DeviGuild;
+import net.devibot.provider.commands.dev.EvalCommand;
 import net.devibot.provider.commands.dev.TestCommand;
 import net.devibot.provider.commands.management.LanguageCommand;
 import net.devibot.provider.commands.management.PrefixCommand;
@@ -14,6 +15,7 @@ import net.dv8tion.jda.core.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 public class CommandHandler {
@@ -31,6 +33,7 @@ public class CommandHandler {
 
         //DEV COMMANDS
         registerCommand(new TestCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
+        registerCommand(new EvalCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
 
         //MANAGEMENT COMMANDS
         registerCommand(new PrefixCommand(discordBot).setDescriptionId(248).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT).setPermission(Permission.MANAGE_SERVER));
@@ -51,6 +54,9 @@ public class CommandHandler {
         ICommand iCommand = command.getICommand();
         //command not registered
         if (iCommand == null) return;
+
+        //dev command
+        if (iCommand.getModuleType() == ModuleType.DEV && !Arrays.asList(discordBot.getConfig().getDevelopers()).contains(command.getAuthor().getId())) return;
 
         //perms check
         if (command.getGuild() != null && iCommand.getPermission() != null) {

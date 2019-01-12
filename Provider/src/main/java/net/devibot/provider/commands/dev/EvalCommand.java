@@ -41,7 +41,6 @@ public class EvalCommand extends ICommand {
         ISimpleCompiler compiler = CompilerFactoryFactory.getDefaultCompilerFactory().newSimpleCompiler();
         compiler.cook(createDummyClassSource(source));
         evaluateDummyClassMethod(sender, command, compiler.getClassLoader());
-        Translator.getTranslation(Language.ENGLISH, 15);
     }
 
     private static String createDummyClassSource(String source) {

@@ -31,7 +31,7 @@ public class Provider {
     }
 
     private Config config;
-    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1000);
+    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(100);
 
     private MainframeManager mainframeManager;
     private CacheManager cacheManager;

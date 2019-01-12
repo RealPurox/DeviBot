@@ -13,7 +13,6 @@ import net.devibot.core.Core;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;

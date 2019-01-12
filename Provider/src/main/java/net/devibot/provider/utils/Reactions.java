@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 public class Reactions {
 
     public static void reactionGUI(JDA jda, String issuerId, ReactionAwaiterUserType type, Message message, Consumer<String> callback, Consumer<String> timeOut, Collection<String> emotes) {
-        System.out.println(emotes);
         emotes.forEach(emote -> message.addReaction(emote).queue());
         jda.addEventListener(new ReactionAwaiter(jda, issuerId, type, message.getId(), emotes, callback, timeOut));
     }

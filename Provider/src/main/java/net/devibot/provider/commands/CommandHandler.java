@@ -2,6 +2,8 @@ package net.devibot.provider.commands;
 
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.provider.commands.dev.EvalCommand;
+import net.devibot.provider.commands.dev.GuildDataCommand;
+import net.devibot.provider.commands.dev.PerformanceCommand;
 import net.devibot.provider.commands.dev.TestCommand;
 import net.devibot.provider.commands.management.LanguageCommand;
 import net.devibot.provider.commands.management.PrefixCommand;
@@ -34,6 +36,8 @@ public class CommandHandler {
         //DEV COMMANDS
         registerCommand(new TestCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
         registerCommand(new EvalCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
+        registerCommand(new GuildDataCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
+        registerCommand(new PerformanceCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
 
         //MANAGEMENT COMMANDS
         registerCommand(new PrefixCommand(discordBot).setDescriptionId(248).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT).setPermission(Permission.MANAGE_SERVER));

@@ -30,6 +30,26 @@ public class DatabaseManager {
         return instance == null ? instance = new DatabaseManager() : instance;
     }
 
+    /*public static void main(String[] args) {
+        Core.setup();
+
+        DatabaseManager databaseManager = DatabaseManager.getInstance();
+        Document document = new Document();
+        document.put("name", "stevyb0t");
+        document.put("discriminator", "0008");
+        document.put("avatar", "/data/images/profile_pictures/191598787410526208.gif");
+
+        Document ban = new Document();
+        ban.put("active", true);
+        ban.put("punisher", "222753093559910400");
+        ban.put("time", 1547402441107L);
+        ban.put("reason", "Homophobia");
+
+        document.put("ban", ban);
+        databaseManager.saveToDatabase("users", document, "191598787410526208");
+        System.out.println("DONE");
+    }*/
+
     public DatabaseManager() {
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applicationName("Devi")

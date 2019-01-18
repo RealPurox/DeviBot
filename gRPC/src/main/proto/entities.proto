@@ -10,21 +10,46 @@ message DeviGuild {
     string prefix = 2;
     string language = 3;
 
-    string mute_role = 4;
+    AutoMod auto_mod = 4;
+}
 
-    bool mod_log_enabled = 5;
-    string mod_log_channel = 6;
-    bool mod_log_mutes = 7;
-    bool mod_log_bans = 8;
-    bool mod_log_kicks = 9;
-    bool mod_log_voice_kicks = 10;
-    bool mod_log_message_edited = 11;
-    bool mod_log_message_deleted = 12;
+message AutoMod {
+    bool enabled = 1;
+    AutoModAntiInvites anti_invites = 2;
+    AutoModAntiAdvertising anti_advertising = 3;
+    AutoModAntiSpam anti_spam = 4;
+    AutoModAntiMassMention anti_mass_mention = 5;
+}
 
-    bool auto_mod_enabled = 13;
-    bool auto_mod_anti_ads = 14;
-    bool auto_mod_anti_caps = 15;
-    bool auto_mod_anti_emoji_spam = 16;
+message AutoModAntiInvites {
+    bool enabled = 1;
+    bool strikes = 2;
+}
+
+message AutoModAntiAdvertising {
+    bool enabled = 1;
+    bool strikes = 2;
+    repeated AutoModAntiAdvertisingLink links = 3;
+}
+
+message AutoModAntiAdvertisingLink {
+    bool enabled = 1;
+    string name = 2;
+    string regex = 3;
+}
+
+message AutoModAntiSpam {
+    bool enabled = 1;
+    bool strikes = 2;
+    int32 amount = 3;
+    int32 period = 4;
+}
+
+message AutoModAntiMassMention {
+    bool enabled = 1;
+    bool strikes = 2;
+    int32 amount = 5;
+    int32 period = 10;
 }
 
 message Translation {

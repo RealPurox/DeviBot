@@ -18,6 +18,7 @@ public class Core {
     public static Config CONFIG;
     //GSON
     public static final Gson GSON = new GsonBuilder().create();
+    public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
     //Core Type
     public static Type TYPE;
 

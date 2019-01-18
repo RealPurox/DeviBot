@@ -112,7 +112,9 @@ public class MainframeManager {
             public void onNext(DefaultSuccessResponse defaultSuccessResponse) { }
 
             @Override
-            public void onError(Throwable throwable) { }
+            public void onError(Throwable throwable) {
+                logger.error("", throwable);
+            }
 
             @Override
             public void onCompleted() { }

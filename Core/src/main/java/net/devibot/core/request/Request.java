@@ -83,7 +83,7 @@ public class Request {
     private OkHttpClient okHttpClient;
     private ScheduledExecutorService threadPool;
 
-    public Request(OkHttpClient okHttpClient, ScheduledExecutorService threadPool, String url, HashMap<String, String> headers, Type requestType, JSONObject body, String stringBody) {
+    Request(OkHttpClient okHttpClient, ScheduledExecutorService threadPool, String url, HashMap<String, String> headers, Type requestType, JSONObject body, String stringBody) {
         JavaUtils.notNull(url, "URL");
         JavaUtils.notNull(requestType, "RequestType");
         JavaUtils.notNull(okHttpClient, "OkHttpClient");

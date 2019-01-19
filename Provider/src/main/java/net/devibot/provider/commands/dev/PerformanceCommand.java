@@ -7,8 +7,6 @@ import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.entities.Emote;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;

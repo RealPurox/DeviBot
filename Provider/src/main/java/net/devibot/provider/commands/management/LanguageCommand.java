@@ -5,7 +5,6 @@ import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.entities.Emote;
 import net.devibot.provider.entities.Language;
-import net.devibot.provider.utils.MessageUtils;
 import net.devibot.provider.utils.Reactions;
 import net.devibot.provider.utils.Translator;
 import net.dv8tion.jda.core.MessageBuilder;

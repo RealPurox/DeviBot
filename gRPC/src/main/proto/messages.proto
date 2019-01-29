@@ -40,3 +40,11 @@ message ExtendedSuccessResponse {
     bool success = 1;
     string message = 2;
 }
+
+message StrikeRequest {
+    string user = 1;
+}
+
+message StrikeResponse {
+    repeated Strike strikes = 1;
+}

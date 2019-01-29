@@ -1,5 +1,6 @@
 package net.devibot.provider.commands.management;
 
+import net.devibot.core.entities.automod.AutoModAntiAdvertising;
 import net.devibot.core.entities.automod.AutoModAntiInvites;
 import net.devibot.core.utils.JavaUtils;
 import net.devibot.provider.commands.CommandSender;
@@ -85,8 +86,6 @@ public class AutoModCommand extends ICommand {
             }
         }
         //</editor-fold>
-
-
 
         //if everything fails
         sender.reply(getDefaultEmbed(command));

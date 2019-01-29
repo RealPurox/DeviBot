@@ -89,4 +89,15 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
         responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(true).build());
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void getStrikes(StrikeRequest request, StreamObserver<StrikeResponse> responseObserver) {
+        try {
+
+            // TODO: 29/01/2019 implement
+
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+    }
 }

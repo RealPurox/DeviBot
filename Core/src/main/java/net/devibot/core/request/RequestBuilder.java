@@ -5,10 +5,14 @@ import okhttp3.OkHttpClient;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class RequestBuilder {
 
+    private static final OkHttpClient DEFAULT_HTTP_CLIENT = new OkHttpClient();
+    private static final ScheduledExecutorService DEFAULT_THREAD_POOL = Executors.newScheduledThreadPool(5);
 
     private HashMap<String, String> headers = null;
 
@@ -20,6 +24,11 @@ public class RequestBuilder {
 
     private OkHttpClient okHttpClient;
     private ScheduledExecutorService threadPool;
+
+    public RequestBuilder() {
+        this.okHttpClient = DEFAULT_HTTP_CLIENT;
+        this.threadPool = DEFAULT_THREAD_POOL;
+    }
 
     public RequestBuilder(OkHttpClient client, ScheduledExecutorService threadPool) {
         this.okHttpClient = client;

@@ -56,3 +56,10 @@ message Translation {
     int32 id = 1;
     string text = 2;
 }
+
+message Strike {
+    string user = 1;
+    string guild = 2;
+    string reason = 3;
+    int64 time = 4;
+}

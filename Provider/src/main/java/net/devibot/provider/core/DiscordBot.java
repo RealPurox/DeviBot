@@ -7,6 +7,7 @@ import net.devibot.provider.commands.CommandHandler;
 import net.devibot.provider.listener.CommandListener;
 import net.devibot.provider.listener.GuildJoinLeaveListener;
 import net.devibot.provider.listener.ReadyListener;
+import net.devibot.provider.listener.automod.AutoModListener;
 import net.devibot.provider.manager.AgentManager;
 import net.devibot.provider.manager.CacheManager;
 import net.devibot.provider.manager.MainframeManager;
@@ -54,6 +55,7 @@ public class DiscordBot {
             builder.addEventListeners(new ReadyListener(this));
             builder.addEventListeners(new GuildJoinLeaveListener(this));
             builder.addEventListeners(new CommandListener(this));
+            builder.addEventListeners(new AutoModListener(this));
 
             this.shardManager = builder.build();
         } catch (Exception e) {

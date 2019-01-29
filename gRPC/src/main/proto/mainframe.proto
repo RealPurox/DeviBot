@@ -8,6 +8,7 @@ import "entities.proto";
 import "messages.proto";
 
 service MainframeService {
+
     rpc connectionAttempt (ConnectToMainframeRequest) returns (ConnectToMainframeResponse);
 
     rpc getDeviGuild (DeviGuildRequest) returns (DeviGuild);
@@ -15,5 +16,8 @@ service MainframeService {
     rpc getTranslations (TranslationRequest) returns (TranslationResponse);
 
     rpc requestDeviGuildSettingsSave (DeviGuildSettingsSaveRequest) returns (DefaultSuccessResponse);
+
+    rpc getStrikes(StrikeRequest) returns (StrikeResponse);
+
 }
 

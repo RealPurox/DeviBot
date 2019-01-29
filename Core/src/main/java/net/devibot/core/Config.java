@@ -7,6 +7,7 @@ import java.io.FileWriter;
 public class Config {
 
     private String mongoUrl = "";
+    private String errorWebhook = "";
 
     private boolean devMode = true;
 
@@ -16,6 +17,10 @@ public class Config {
 
     public boolean isDevMode() {
         return devMode;
+    }
+
+    public String getErrorWebhook() {
+        return errorWebhook;
     }
 
     static Config loadConfig() {

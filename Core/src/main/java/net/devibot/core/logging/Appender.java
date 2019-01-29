@@ -8,9 +8,13 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import net.devibot.core.Config;
 import net.devibot.core.Core;
 import net.devibot.core.database.DatabaseManager;
+import net.devibot.core.utils.DiscordWebhook;
 import org.bson.Document;
+import org.json.JSONObject;
 import org.slf4j.Marker;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -55,5 +59,28 @@ public class Appender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         if (stackTrace.size() > 1) {
             log.put("stacktrace", stackTrace.subList(1, stackTrace.size()));
         }
+        sendWebhook(stackTrace);
+    }
+
+    private void sendWebhook(List<String> exceptions) {
+        StringBuilder fixedDescription = new StringBuilder();
+
+        fixedDescription.append(!Core.CONFIG.isDevMode() ? "@everyone " : "").append("__**An exception has occurred!**__\n\n");
+
+        fixedDescription.append(exceptions.get(0)).append("\n\n```");
+
+        for (int i = 1; i < exceptions.size(); i++) {
+            if (fixedDescription.length() > 2000) {
+                fixedDescription.substring(0, fixedDescription.length() - (fixedDescription.length() - 2005));
+                break;
+            }
+            fixedDescription.append("  - ").append(exceptions.get(i)).append("\n");
+        }
+        fixedDescription.append("```");
+
+        DiscordWebhook webhook = new DiscordWebhook(Core.CONFIG.getErrorWebhook());
+        webhook.setContent(fixedDescription.toString());
+
+        webhook.execute();
     }
 }

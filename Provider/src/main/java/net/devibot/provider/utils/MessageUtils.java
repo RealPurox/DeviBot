@@ -71,7 +71,7 @@ public class MessageUtils {
         if (user.isBot()) return;
 
         try {
-
+            // TODO: 29/01/2019 maybe clear this mess?
             if (object instanceof MessageEmbed) {
                 user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage((MessageEmbed) object).queue(done -> {
                     if (success != null) success.accept(done);

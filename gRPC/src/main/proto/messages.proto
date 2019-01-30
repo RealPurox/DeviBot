@@ -43,6 +43,7 @@ message ExtendedSuccessResponse {
 
 message StrikeRequest {
     string user = 1;
+    string guild = 2;
 }
 
 message StrikeResponse {

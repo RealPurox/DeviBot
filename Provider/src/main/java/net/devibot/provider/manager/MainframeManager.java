@@ -5,15 +5,19 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.entities.DeviGuild;
+import net.devibot.core.entities.Strike;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
 import net.devibot.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class MainframeManager {
 
@@ -114,10 +118,33 @@ public class MainframeManager {
             @Override
             public void onError(Throwable throwable) {
                 logger.error("", throwable);
+                logger.warn("Failed to request guild settings save");
             }
 
             @Override
             public void onCompleted() { }
+        });
+    }
+
+    public void getStrikes(String user, String guild, Consumer<? super List<Strike>> consumer) {
+        mainframeStub.getStrikes(StrikeRequest.newBuilder().setUser(user).setGuild(guild).build(), new StreamObserver<StrikeResponse>() {
+            @Override
+            public void onNext(StrikeResponse strikeResponse) {
+                List<Strike> strikes = strikeResponse.getStrikesList().stream().map(Strike::new).collect(Collectors.toList());
+                consumer.accept(strikes);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                logger.error("", throwable);
+                logger.warn("Failed to retrieve strike data. See exception above.");
+                consumer.accept(new ArrayList<>());
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
         });
     }
 }

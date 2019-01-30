@@ -2,8 +2,10 @@ package net.devibot.core.database;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
@@ -16,6 +18,7 @@ import org.bson.types.ObjectId;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Filter;
 
 public class DatabaseManager {
 
@@ -92,6 +95,14 @@ public class DatabaseManager {
 
     public List<Document> getDocuments(String key, String value, String collection) {
         return database.getCollection(collection).find(Filters.eq(key, value)).into(new ArrayList<>());
+    }
+
+    public List<Document> getDocuments(String key, String value, Map<String, String> filter, String collection) {
+        FindIterable<Document> entry = database.getCollection(collection).find(Filters.eq(key, value));
+        for (Map.Entry<String, String> filterEntry : filter.entrySet()) {
+            entry = entry.filter(Filters.eq(filterEntry.getKey(), filterEntry.getValue()));
+        }
+        return entry.into(new ArrayList<>());
     }
 
     public MongoDatabase getDatabase() {

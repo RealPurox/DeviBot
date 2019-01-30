@@ -1,10 +1,10 @@
 package net.devibot.mainframe.service;
 
-import com.mongodb.Block;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.database.DatabaseManager;
 import net.devibot.grpc.entities.DeviGuild;
+import net.devibot.grpc.entities.Strike;
 import net.devibot.grpc.entities.Translation;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
@@ -16,7 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplBase {
 
@@ -93,11 +96,21 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
     @Override
     public void getStrikes(StrikeRequest request, StreamObserver<StrikeResponse> responseObserver) {
         try {
+            String user = request.getUser();
+            String guild = request.getGuild();
 
-            // TODO: 29/01/2019 implement
+            Map<String, String> filter = new HashMap<>();
+            filter.put("guild", guild);
 
+            List<Document> result = DatabaseManager.getInstance().getDocuments("user", user, filter, "strikes");
+            List<Strike> strikes = result.stream().map(res -> Core.GSON.fromJson(res.toJson(), net.devibot.core.entities.Strike.class).toGrpc()).collect(Collectors.toList());
+
+            responseObserver.onNext(StrikeResponse.newBuilder().addAllStrikes(strikes).build());
         } catch (Exception e) {
             logger.error("", e);
+            responseObserver.onNext(StrikeResponse.newBuilder().build());
+        } finally {
+            responseObserver.onCompleted();
         }
     }
 }

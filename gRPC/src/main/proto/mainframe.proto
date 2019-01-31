@@ -17,7 +17,7 @@ service MainframeService {
 
     rpc requestDeviGuildSettingsSave (DeviGuildSettingsSaveRequest) returns (DefaultSuccessResponse);
 
-    rpc getStrikes(StrikeRequest) returns (StrikeResponse);
+    rpc getUser(UserRequest) returns (User);
 
 }
 

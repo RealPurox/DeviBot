@@ -4,8 +4,8 @@ import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.database.DatabaseManager;
 import net.devibot.grpc.entities.DeviGuild;
-import net.devibot.grpc.entities.Strike;
 import net.devibot.grpc.entities.Translation;
+import net.devibot.grpc.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
 import net.devibot.mainframe.Mainframe;
@@ -16,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplBase {
 
@@ -94,21 +91,21 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
     }
 
     @Override
-    public void getStrikes(StrikeRequest request, StreamObserver<StrikeResponse> responseObserver) {
+    public void getUser(UserRequest request, StreamObserver<User> responseObserver) {
         try {
-            String user = request.getUser();
-            String guild = request.getGuild();
+            String userId = request.getUser();
 
-            Map<String, String> filter = new HashMap<>();
-            filter.put("guild", guild);
+            //general data & ban
+            Document data = DatabaseManager.getInstance().getDocument(userId, "users");
 
-            List<Document> result = DatabaseManager.getInstance().getDocuments("user", user, filter, "strikes");
-            List<Strike> strikes = result.stream().map(res -> Core.GSON.fromJson(res.toJson(), net.devibot.core.entities.Strike.class).toGrpc()).collect(Collectors.toList());
+            //strikes
+            List<Document> strikeDocs = DatabaseManager.getInstance().getDocuments("user", userId, "strikes");
+            data.put("strikes", strikeDocs);
 
-            responseObserver.onNext(StrikeResponse.newBuilder().addAllStrikes(strikes).build());
+            responseObserver.onNext(Core.GSON.fromJson(data.toJson(), net.devibot.core.entities.User.class).toGrpc());
         } catch (Exception e) {
             logger.error("", e);
-            responseObserver.onNext(StrikeResponse.newBuilder().build());
+            responseObserver.onNext(User.newBuilder().build());
         } finally {
             responseObserver.onCompleted();
         }

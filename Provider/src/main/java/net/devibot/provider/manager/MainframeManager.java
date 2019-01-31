@@ -6,6 +6,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.core.entities.Strike;
+import net.devibot.core.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
 import net.devibot.provider.Provider;
@@ -126,25 +127,22 @@ public class MainframeManager {
         });
     }
 
-    public void getStrikes(String user, String guild, Consumer<? super List<Strike>> consumer) {
-        mainframeStub.getStrikes(StrikeRequest.newBuilder().setUser(user).setGuild(guild).build(), new StreamObserver<StrikeResponse>() {
+    public void getUser(String user, Consumer<? super User> consumer) {
+        mainframeStub.getUser(UserRequest.newBuilder().setUser(user).build(), new StreamObserver<net.devibot.grpc.entities.User>() {
             @Override
-            public void onNext(StrikeResponse strikeResponse) {
-                List<Strike> strikes = strikeResponse.getStrikesList().stream().map(Strike::new).collect(Collectors.toList());
-                consumer.accept(strikes);
+            public void onNext(net.devibot.grpc.entities.User user) {
+                consumer.accept(new User(user));
             }
 
             @Override
             public void onError(Throwable throwable) {
                 logger.error("", throwable);
                 logger.warn("Failed to retrieve strike data. See exception above.");
-                consumer.accept(new ArrayList<>());
+                consumer.accept(new User());
             }
 
             @Override
-            public void onCompleted() {
-
-            }
+            public void onCompleted() { }
         });
     }
 }

@@ -41,11 +41,6 @@ message ExtendedSuccessResponse {
     string message = 2;
 }
 
-message StrikeRequest {
+message UserRequest {
     string user = 1;
-    string guild = 2;
-}
-
-message StrikeResponse {
-    repeated Strike strikes = 1;
 }

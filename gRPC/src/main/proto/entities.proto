@@ -63,3 +63,19 @@ message Strike {
     string reason = 3;
     int64 time = 4;
 }
+
+message Ban {
+    bool active = 1;
+    string punisher = 2;
+    string reason = 3;
+    int64 time = 4;
+}
+
+message User {
+    string _id = 1;
+    string name = 2;
+    string discriminator = 3;
+    string avatar = 4;
+    Ban ban = 5;
+    repeated Strike strikes = 6;
+}

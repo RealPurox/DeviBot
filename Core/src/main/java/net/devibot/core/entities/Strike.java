@@ -16,7 +16,7 @@ public class Strike {
         this.time = 0L;
     }
 
-    public Strike(@NotNull String user, @NotNull String guild, @Nullable String reason, @NotNull long time) {
+    public Strike(@NotNull String user, @NotNull String guild, @Nullable String reason, long time) {
         this.user = user;
         this.guild = guild;
         if (reason != null)

@@ -21,7 +21,7 @@ public class StatsPusherAgent extends Agent {
 
     public StatsPusherAgent(DiscordBot discordBot) {
         this.discordBot = discordBot;
-        this.threadPool = discordBot.getThreadPool();
+        this.threadPool = discordBot.getScheduledThreadPool();
     }
 
     private class WebsiteStatsPusherAgent implements Runnable {

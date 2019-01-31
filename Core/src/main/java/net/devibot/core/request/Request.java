@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
@@ -81,9 +82,9 @@ public class Request {
     private String url;
     private Request.Type requestType;
     private OkHttpClient okHttpClient;
-    private ScheduledExecutorService threadPool;
+    private ExecutorService threadPool;
 
-    Request(OkHttpClient okHttpClient, ScheduledExecutorService threadPool, String url, HashMap<String, String> headers, Type requestType, JSONObject body, String stringBody) {
+    Request(OkHttpClient okHttpClient, ExecutorService threadPool, String url, HashMap<String, String> headers, Type requestType, JSONObject body, String stringBody) {
         JavaUtils.notNull(url, "URL");
         JavaUtils.notNull(requestType, "RequestType");
         JavaUtils.notNull(okHttpClient, "OkHttpClient");

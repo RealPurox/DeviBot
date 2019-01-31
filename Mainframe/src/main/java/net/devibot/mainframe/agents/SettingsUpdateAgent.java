@@ -9,6 +9,7 @@ import org.bson.Document;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,7 @@ public class SettingsUpdateAgent extends Agent {
 
     public SettingsUpdateAgent(Mainframe mainframe) {
         this.mainframe = mainframe;
-        this.threadPool = mainframe.getThreadPool();
+        this.threadPool = mainframe.getScheduledThreadPool();
     }
 
     private class GuildSettingsUpdateAgent implements Runnable {

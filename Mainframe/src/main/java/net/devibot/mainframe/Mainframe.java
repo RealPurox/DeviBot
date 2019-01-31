@@ -8,6 +8,7 @@ import net.devibot.mainframe.service.MainframeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -29,7 +30,8 @@ public class Mainframe {
     }
 
     private Config config;
-    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(1000);
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
+    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(100);
 
     public Mainframe() {
         this.config = Config.loadConfig();
@@ -70,8 +72,12 @@ public class Mainframe {
         return config;
     }
 
-    public ScheduledExecutorService getThreadPool() {
+    public ExecutorService getThreadPool() {
         return threadPool;
+    }
+
+    public ScheduledExecutorService getScheduledThreadPool() {
+        return scheduledThreadPool;
     }
 
     public AgentManager getAgentManager() {

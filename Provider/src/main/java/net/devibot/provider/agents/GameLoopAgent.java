@@ -22,7 +22,7 @@ public class GameLoopAgent extends Agent {
 
     public GameLoopAgent(DiscordBot discordBot) {
         this.discordBot = discordBot;
-        this.threadPool = discordBot.getThreadPool();
+        this.threadPool = discordBot.getScheduledThreadPool();
     }
 
     private class GameUpdateAgent implements Runnable {

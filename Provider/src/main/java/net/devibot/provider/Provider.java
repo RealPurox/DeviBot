@@ -4,11 +4,14 @@ import net.devibot.core.Core;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.manager.CacheManager;
 import net.devibot.provider.manager.MainframeManager;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 
 public class Provider {
 
@@ -31,7 +34,8 @@ public class Provider {
     }
 
     private Config config;
-    private ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(100);
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
+    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(100);
 
     private MainframeManager mainframeManager;
     private CacheManager cacheManager;
@@ -67,8 +71,12 @@ public class Provider {
         return config;
     }
 
-    public ScheduledExecutorService getThreadPool() {
+    public ExecutorService getThreadPool() {
         return threadPool;
+    }
+
+    public ScheduledExecutorService getScheduledThreadPool() {
+        return scheduledThreadPool;
     }
 
     public MainframeManager getMainframeManager() {

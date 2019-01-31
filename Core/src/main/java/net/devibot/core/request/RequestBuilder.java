@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class RequestBuilder {
 
     private static final OkHttpClient DEFAULT_HTTP_CLIENT = new OkHttpClient();
-    private static final ScheduledExecutorService DEFAULT_THREAD_POOL = Executors.newScheduledThreadPool(5);
+    private static final ExecutorService DEFAULT_THREAD_POOL = Executors.newScheduledThreadPool(5);
 
     private HashMap<String, String> headers = null;
 
@@ -23,14 +23,14 @@ public class RequestBuilder {
     private Request.Type requestType = null;
 
     private OkHttpClient okHttpClient;
-    private ScheduledExecutorService threadPool;
+    private ExecutorService threadPool;
 
     public RequestBuilder() {
         this.okHttpClient = DEFAULT_HTTP_CLIENT;
         this.threadPool = DEFAULT_THREAD_POOL;
     }
 
-    public RequestBuilder(OkHttpClient client, ScheduledExecutorService threadPool) {
+    public RequestBuilder(OkHttpClient client, ExecutorService threadPool) {
         this.okHttpClient = client;
         this.threadPool = threadPool;
     }

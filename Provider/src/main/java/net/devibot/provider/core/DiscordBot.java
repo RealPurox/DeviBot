@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class DiscordBot {
@@ -75,8 +76,12 @@ public class DiscordBot {
         return this.provider.getMainframeManager();
     }
 
-    public ScheduledExecutorService getThreadPool() {
+    public ExecutorService getThreadPool() {
         return this.provider.getThreadPool();
+    }
+
+    public ScheduledExecutorService getScheduledThreadPool() {
+        return this.provider.getScheduledThreadPool();
     }
 
     public Config getConfig() {

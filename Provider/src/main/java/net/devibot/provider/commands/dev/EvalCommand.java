@@ -10,7 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EvalCommand extends ICommand {
 
@@ -25,17 +32,58 @@ public class EvalCommand extends ICommand {
 
     @Override
     public void execute(CommandSender sender, ICommand.Command command) {
-        Executors.newSingleThreadScheduledExecutor().submit(() -> {
-            try {
-                evaluate(command.getMessage().getContentRaw().substring(command.getPrefix().length() + "eval".length()), sender, command);
-                sender.reply(Emote.SUCCESS + " Evaluation executed successfully");
-            } catch (Exception e) {
-                sender.reply(Emote.ERROR + " | Evaluation threw an exception: `" + e.toString() + "`");
-            }
+        List<Thread> threadList = new ArrayList<>();
+
+
+        ExecutorService singleThreadPool = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r);
+            threadList.add(t);
+            return t;
         });
+
+        Future<Object> future = null;
+
+
+
+        try {
+
+            AtomicBoolean failure = new AtomicBoolean(false);
+
+            Runnable runnable = () -> {
+                try {
+                    evaluate(command.getMessage().getContentRaw().substring(command.getPrefix().length() + "eval".length()), sender, command);
+                } catch (Exception e) {
+                    failure.set(true);
+
+                    if (!(e.getCause() instanceof ThreadDeath))
+                        sender.reply(Emote.ERROR + " | Evaluation threw an exception: `" + e.toString() + "`");
+                }
+            };
+
+            future = singleThreadPool.submit(runnable, Object.class);
+
+            future.get(5, TimeUnit.SECONDS);
+
+            if (failure.get()) return;
+
+            if (!command.getMessage().getContentRaw().toLowerCase().contains("sender.reply("))
+                sender.reply(Emote.SUCCESS + " Evaluation executed successfully");
+
+        } catch (Exception e) {
+            if (e instanceof TimeoutException) {
+                sender.reply(Emote.ERROR + " | Evaluation took more than 5 seconds to be executed and was therefore cancelled.");
+            } else {
+                sender.reply(Emote.ERROR + " | Evaluation threw an exception: `" + e.getCause().toString() + "`");
+            }
+            //noinspection ConstantConditions
+            future.cancel(true);
+            singleThreadPool.shutdownNow();
+            threadList.forEach(Thread::stop);
+        }
     }
 
-    private static void evaluate(String source, CommandSender sender, ICommand.Command command) throws Exception {
+
+    private static void evaluate(String source, CommandSender sender, Command command) throws Exception {
         ISimpleCompiler compiler = CompilerFactoryFactory.getDefaultCompilerFactory().newSimpleCompiler();
         compiler.cook(createDummyClassSource(source));
         evaluateDummyClassMethod(sender, command, compiler.getClassLoader());
@@ -68,6 +116,7 @@ public class EvalCommand extends ICommand {
                 "import net.dv8tion.jda.core.utils.*;\n" +
                 "import java.util.regex.*;\n" +
                 "import java.awt.*;\n" +
+                "\n" +
                 "class DummyEvalClass {\n" +
                 "   public static void eval(CommandSender sender, ICommand.Command command) {\n" +
                 "       " + source + "\n" +
@@ -75,7 +124,7 @@ public class EvalCommand extends ICommand {
                 "}\n";
     }
 
-    private static void evaluateDummyClassMethod(CommandSender sender, ICommand.Command command, final ClassLoader classLoader) throws Exception {
+    private static void evaluateDummyClassMethod(CommandSender sender, Command command, final ClassLoader classLoader) throws Exception {
         final Class<?> dummy = classLoader.loadClass("DummyEvalClass");
         final Method eval = dummy.getDeclaredMethod("eval", CommandSender.class, ICommand.Command.class);
         eval.setAccessible(true);

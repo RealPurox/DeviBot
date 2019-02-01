@@ -48,6 +48,7 @@ public class Mainframe {
             //start service
             server = ServerBuilder.forPort(this.config.getPort())
                     .addService(new MainframeService(this))
+                    .executor(threadPool)
                     .build().start();
             //block a thread
             threadPool.submit(() -> {

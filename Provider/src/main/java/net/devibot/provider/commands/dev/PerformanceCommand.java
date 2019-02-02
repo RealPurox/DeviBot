@@ -96,15 +96,15 @@ public class PerformanceCommand extends ICommand {
     }
 
     private String getRamBar() {
-        StringBuilder ram = new StringBuilder("[|");
+        StringBuilder ram = new StringBuilder("[‖");
         int percent = getRamPercent();
 
-        for (int i = 0; i < percent / 2; i++) {
-            ram.append("|");
+        for (int i = 0; i < percent / 4; i++) {
+            ram.append("‖");
         }
         ram.append("](https://www.devibot.net/)");
-        for (int i = 0; i < 50 - percent / 2; i++) {
-            ram.append("|");
+        for (int i = 0; i < 25 - percent / 2; i++) {
+            ram.append("‖");
         }
 
         return ram.toString();

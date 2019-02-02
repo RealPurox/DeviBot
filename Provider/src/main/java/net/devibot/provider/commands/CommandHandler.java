@@ -1,6 +1,5 @@
 package net.devibot.provider.commands;
 
-import net.devibot.core.entities.DeviGuild;
 import net.devibot.provider.commands.dev.EvalCommand;
 import net.devibot.provider.commands.dev.GuildDataCommand;
 import net.devibot.provider.commands.dev.PerformanceCommand;
@@ -9,18 +8,19 @@ import net.devibot.provider.commands.dev.UserDataCommand;
 import net.devibot.provider.commands.management.AutoModCommand;
 import net.devibot.provider.commands.management.LanguageCommand;
 import net.devibot.provider.commands.management.PrefixCommand;
+import net.devibot.provider.commands.predicates.CommandModulePredicate;
+import net.devibot.provider.commands.predicates.GuildOnlyPredicate;
+import net.devibot.provider.commands.predicates.PermissionPredicate;
 import net.devibot.provider.core.DiscordBot;
-import net.devibot.provider.entities.Emote;
-import net.devibot.provider.entities.Language;
 import net.devibot.provider.entities.ModuleType;
-import net.devibot.provider.utils.MessageUtils;
-import net.devibot.provider.utils.Translator;
 import net.dv8tion.jda.core.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class CommandHandler {
 
@@ -30,8 +30,15 @@ public class CommandHandler {
     private LinkedHashMap<String, ICommand> commands = new LinkedHashMap<>();
     private LinkedHashMap<String, ICommand> unmodifiedCommands = new LinkedHashMap<>();
 
+    private List<Predicate<ICommand.Command>> predicates = new ArrayList<>();
+
     public CommandHandler(DiscordBot discordBot) {
         this.discordBot  = discordBot;
+
+        //register predicates here
+        predicates.add(new GuildOnlyPredicate());
+        predicates.add(new CommandModulePredicate());
+        predicates.add(new PermissionPredicate());
 
         //register commands here
 
@@ -39,7 +46,7 @@ public class CommandHandler {
         registerCommand(new TestCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
         registerCommand(new EvalCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
         registerCommand(new GuildDataCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
-        registerCommand(new UserDataCommand(discordBot));
+        registerCommand(new UserDataCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
         registerCommand(new PerformanceCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
 
         //MANAGEMENT COMMANDS
@@ -63,22 +70,9 @@ public class CommandHandler {
         //command not registered
         if (iCommand == null) return;
 
-        //dev command
-        if (iCommand.getModuleType() == ModuleType.DEV && !Arrays.asList(discordBot.getConfig().getDevelopers()).contains(command.getAuthor().getId())) return;
-
-        //perms check
-        if (command.getGuild() != null && iCommand.getPermission() != null) {
-            if (!command.getMember().hasPermission(command.getTextChannel(), iCommand.getPermission())) { //todo admins
-                DeviGuild deviGuild = discordBot.getCacheManager().getDeviGuildCache().getDeviGuild(command.getGuild().getId());
-                MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslation(Language.getLanguage(deviGuild.getLanguage()), 31));
-                return;
-            }
-        }
-
-        //guild only check
-        if (iCommand.isGuildOnly() && command.getGuild() == null) {
-            MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslation(Language.ENGLISH, 1));
-            return;
+        for (Predicate<ICommand.Command> predicate : predicates) {
+            if (!predicate.test(command))
+                return; //predicate failed
         }
 
         CommandSender sender = new CommandSender(command.getAuthor(), command);

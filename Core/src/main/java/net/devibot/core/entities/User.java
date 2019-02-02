@@ -20,6 +20,13 @@ public class User {
 
     public User() { }
 
+
+    public User(String id, String name, String discriminator) {
+        this.id = id;
+        this.name = name;
+        this.discriminator = discriminator;
+    }
+
     public User(net.devibot.grpc.entities.User user) {
         this.id = user.getId();
         this.name = user.getName();
@@ -38,6 +45,38 @@ public class User {
                 .setBan(this.ban.toGrpc())
                 .addAllStrikes(this.strikes.stream().map(Strike::toGrpc).collect(Collectors.toList()))
                 .build();
+    }
+
+    public boolean isError() {
+        return this.id.equals("error");
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDiscriminator() {
+        return discriminator;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public Ban getBan() {
+        return ban;
+    }
+
+    public void setBan(Ban ban) {
+        this.ban = ban;
+    }
+
+    public List<Strike> getStrikes() {
+        return strikes;
     }
 
 }

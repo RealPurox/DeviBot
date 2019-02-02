@@ -15,8 +15,12 @@ public class Ban {
     }
 
     public Ban(String punisher, String reason) {
-        this.active = true;
-        this.time = System.currentTimeMillis();
+        this(punisher, reason, true, System.currentTimeMillis());
+    }
+
+    public Ban(String punisher, String reason, boolean active, long time) {
+        this.active = active;
+        this.time = time;
         this.punisher = punisher;
         this.reason = reason;
     }
@@ -37,4 +41,19 @@ public class Ban {
                 .build();
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public String getPunisher() {
+        return punisher;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public long getTime() {
+        return time;
+    }
 }

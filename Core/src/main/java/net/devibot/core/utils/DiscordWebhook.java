@@ -26,7 +26,18 @@ public class DiscordWebhook {
     }
 
     public void setContent(String content) {
-        this.content = content;
+        String fixedContent = content;
+
+        if (content.length() > 2000) {
+            fixedContent = content.substring(0, 1995);
+            if (content.endsWith("```")) {
+                fixedContent += "```";
+            } else if (content.endsWith("`")) {
+                fixedContent += "`";
+            }
+        }
+
+        this.content = fixedContent;
     }
 
     public void setUsername(String username) {
@@ -133,17 +144,13 @@ public class DiscordWebhook {
             json.put("embeds", embedObjects.toArray());
         }
 
-        System.out.println(json.toString());
 
         new RequestBuilder()
                 .setRequestType(Request.Type.POST)
                 .setURL(this.url)
                 .addHeader("Content-Type", "application/json")
                 .setStringBody(json.toString())
-                .build().execute(done -> {
-            System.out.println(done.getStatus());
-            System.out.println(done.getBody());
-        }, Throwable::printStackTrace);
+                .build().execute(placeHolder -> { }, Throwable::printStackTrace);
     }
 
     public static class EmbedObject {

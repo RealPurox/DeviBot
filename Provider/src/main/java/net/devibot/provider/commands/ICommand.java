@@ -1,6 +1,8 @@
 package net.devibot.provider.commands;
 
 import net.devibot.core.entities.DeviGuild;
+import net.devibot.core.entities.User;
+import net.devibot.provider.Provider;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.entities.Language;
 import net.devibot.provider.entities.ModuleType;
@@ -80,6 +82,7 @@ public abstract class ICommand {
         private String raw;
         private String[] args;
         private DiscordBot discordBot;
+        private User user;
 
         public Command(MessageReceivedEvent event, String prefix, DiscordBot discordBot) {
             super(event.getJDA(), event.getResponseNumber(), event.getMessage());
@@ -95,6 +98,7 @@ public abstract class ICommand {
             this.prefix = prefix;
             this.deviGuild = event.getGuild() == null ? null : discordBot.getCacheManager().getDeviGuildCache().getDeviGuild(event.getGuild().getId());
             this.language = event.getGuild() == null ? Language.ENGLISH : Language.getLanguage(deviGuild.getLanguage());
+            this.user = Provider.getInstance().getCacheManager().getUserCache().getUser(event.getAuthor().getId());
         }
 
         @Nullable
@@ -120,6 +124,10 @@ public abstract class ICommand {
 
         public String getRaw() {
             return raw;
+        }
+
+        public User getUser() {
+            return user;
         }
     }
 

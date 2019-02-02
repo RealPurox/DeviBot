@@ -1,6 +1,8 @@
 package net.devibot.provider.commands;
 
 import net.devibot.provider.commands.dev.EvalCommand;
+import net.devibot.provider.commands.dev.GlobalBanCommand;
+import net.devibot.provider.commands.dev.GlobalPardonCommand;
 import net.devibot.provider.commands.dev.GuildDataCommand;
 import net.devibot.provider.commands.dev.PerformanceCommand;
 import net.devibot.provider.commands.dev.TestCommand;
@@ -11,6 +13,7 @@ import net.devibot.provider.commands.management.PrefixCommand;
 import net.devibot.provider.commands.predicates.CommandModulePredicate;
 import net.devibot.provider.commands.predicates.GuildOnlyPredicate;
 import net.devibot.provider.commands.predicates.PermissionPredicate;
+import net.devibot.provider.commands.predicates.UserBannedPredicate;
 import net.devibot.provider.core.DiscordBot;
 import net.devibot.provider.entities.ModuleType;
 import net.dv8tion.jda.core.Permission;
@@ -39,6 +42,7 @@ public class CommandHandler {
         predicates.add(new GuildOnlyPredicate());
         predicates.add(new CommandModulePredicate());
         predicates.add(new PermissionPredicate());
+        predicates.add(new UserBannedPredicate());
 
         //register commands here
 
@@ -48,6 +52,8 @@ public class CommandHandler {
         registerCommand(new GuildDataCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
         registerCommand(new UserDataCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
         registerCommand(new PerformanceCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
+        registerCommand(new GlobalBanCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
+        registerCommand(new GlobalPardonCommand(discordBot).setDescriptionId(0).setGuildOnly(false).setModuleType(ModuleType.DEV).setPermission(null));
 
         //MANAGEMENT COMMANDS
         registerCommand(new PrefixCommand(discordBot).setDescriptionId(248).setGuildOnly(true).setModuleType(ModuleType.MANAGEMENT).setPermission(Permission.MANAGE_SERVER));

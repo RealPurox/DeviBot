@@ -44,3 +44,7 @@ message ExtendedSuccessResponse {
 message UserRequest {
     string user = 1;
 }
+
+message UserDataSaveRequest {
+    User user = 1;
+}

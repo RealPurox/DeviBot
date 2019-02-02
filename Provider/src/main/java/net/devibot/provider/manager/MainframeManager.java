@@ -4,6 +4,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+import net.devibot.core.Core;
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.core.entities.Strike;
 import net.devibot.core.entities.User;
@@ -112,9 +113,13 @@ public class MainframeManager {
     }
 
     public void requestDeviGuildSettingsSave(DeviGuild deviGuild) {
-        mainframeStub.requestDeviGuildSettingsSave(DeviGuildSettingsSaveRequest.newBuilder().setGuild(deviGuild.toGrpc()).build(), new StreamObserver<DefaultSuccessResponse>() {
+        mainframeStub.saveDeviGuild(DeviGuildSettingsSaveRequest.newBuilder().setGuild(deviGuild.toGrpc()).build(), new StreamObserver<DefaultSuccessResponse>() {
             @Override
-            public void onNext(DefaultSuccessResponse defaultSuccessResponse) { }
+            public void onNext(DefaultSuccessResponse defaultSuccessResponse) {
+                //we weren't successful .. try again
+                if (!defaultSuccessResponse.getSuccess())
+                    requestDeviGuildSettingsSave(deviGuild);
+            }
 
             @Override
             public void onError(Throwable throwable) {
@@ -127,18 +132,52 @@ public class MainframeManager {
         });
     }
 
-    public void getUser(String user, Consumer<? super User> consumer) {
-        mainframeStub.getUser(UserRequest.newBuilder().setUser(user).build(), new StreamObserver<net.devibot.grpc.entities.User>() {
+    public void getUser(String userId, Consumer<? super User> consumer) {
+        mainframeStub.getUser(UserRequest.newBuilder().setUser(userId).build(), new StreamObserver<net.devibot.grpc.entities.User>() {
             @Override
             public void onNext(net.devibot.grpc.entities.User user) {
-                consumer.accept(new User(user));
+                User entityUser = new User(user);
+
+                //no db entry .. let's se if we have the user cached in the ShardManager
+                if (entityUser.isError()) {
+                    logger.info("error");
+                    net.dv8tion.jda.core.entities.User jdaUser = provider.getDiscordBot().getShardManager().getUserById(userId);
+                    //they're cached inside the ShardManager
+                    if (jdaUser != null) {
+                        logger.info("cached");
+                        entityUser = new User(jdaUser.getId(), jdaUser.getName(), jdaUser.getDiscriminator());
+                    }
+                }
+
+                logger.info(Core.GSON.toJson(entityUser));
+                consumer.accept(entityUser);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 logger.error("", throwable);
-                logger.warn("Failed to retrieve strike data. See exception above.");
+                logger.warn("Failed to retrieve user data. See exception above.");
                 consumer.accept(new User());
+            }
+
+            @Override
+            public void onCompleted() { }
+        });
+    }
+
+    public void saveUser(User user) {
+        mainframeStub.saveUser(UserDataSaveRequest.newBuilder().setUser(user.toGrpc()).build(), new StreamObserver<DefaultSuccessResponse>() {
+            @Override
+            public void onNext(DefaultSuccessResponse defaultSuccessResponse) {
+                //we weren't successful .. try again
+                if (!defaultSuccessResponse.getSuccess())
+                    saveUser(user);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                logger.error("", throwable);
+                logger.warn("Failed to request user data save");
             }
 
             @Override

@@ -1,5 +1,7 @@
 package net.devibot.mainframe.service;
 
+import com.mongodb.client.result.UpdateResult;
+import com.mongodb.util.JSON;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.database.DatabaseManager;
@@ -9,9 +11,8 @@ import net.devibot.grpc.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
 import net.devibot.mainframe.Mainframe;
-import net.devibot.mainframe.agents.SettingsUpdateAgent;
-import net.devibot.mainframe.manager.AgentManager;
 import org.bson.Document;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,9 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
             }
 
             Document guildData = results.get(0);
-            deviGuild = Core.GSON.fromJson(guildData.toJson(), net.devibot.core.entities.DeviGuild.class).toGrpc();
+
+            String json = JSON.serialize(guildData);
+            deviGuild = Core.GSON.fromJson(json, net.devibot.core.entities.DeviGuild.class).toGrpc();
         } catch (Exception e) {
             logger.error("", e);
             deviGuild = new net.devibot.core.entities.DeviGuild(guildId).toGrpc();
@@ -83,10 +86,12 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
     }
 
     @Override
-    public void requestDeviGuildSettingsSave(DeviGuildSettingsSaveRequest request, StreamObserver<DefaultSuccessResponse> responseObserver) {
-        ((SettingsUpdateAgent)mainframe.getAgentManager().getAgents(AgentManager.Type.SETTINGS_UPDATE).get(0))
-                .appendQueue(new net.devibot.core.entities.DeviGuild(request.getGuild()));
-        responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(true).build());
+    public void saveDeviGuild(DeviGuildSettingsSaveRequest request, StreamObserver<DefaultSuccessResponse> responseObserver) {
+        net.devibot.core.entities.DeviGuild deviGuild = new net.devibot.core.entities.DeviGuild(request.getGuild());
+        Document document = new Document(new JSONObject(Core.GSON.toJson(deviGuild)).toMap());
+        UpdateResult result = databaseManager.saveToDatabase("guilds", document, deviGuild.getId());
+
+        responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(result.wasAcknowledged()).build());
         responseObserver.onCompleted();
     }
 
@@ -102,12 +107,24 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
             List<Document> strikeDocs = DatabaseManager.getInstance().getDocuments("user", userId, "strikes");
             data.put("strikes", strikeDocs);
 
-            responseObserver.onNext(Core.GSON.fromJson(data.toJson(), net.devibot.core.entities.User.class).toGrpc());
+
+            String json = JSON.serialize(data);
+            responseObserver.onNext(Core.GSON.fromJson(json, net.devibot.core.entities.User.class).toGrpc());
         } catch (Exception e) {
             logger.error("", e);
             responseObserver.onNext(User.newBuilder().build());
         } finally {
             responseObserver.onCompleted();
         }
+    }
+
+    @Override
+    public void saveUser(UserDataSaveRequest request, StreamObserver<DefaultSuccessResponse> responseObserver) {
+        net.devibot.core.entities.User user = new net.devibot.core.entities.User(request.getUser());
+        Document document = new Document(new JSONObject(Core.GSON.toJson(user)).toMap());
+        UpdateResult result = databaseManager.saveToDatabase("users", document, user.getId());
+
+        responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(result.wasAcknowledged()).build());
+        responseObserver.onCompleted();
     }
 }

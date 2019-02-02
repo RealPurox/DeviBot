@@ -46,7 +46,7 @@ public class GlobalBanCommand extends ICommand {
         Ban newBan = new Ban(sender.getId(), reason);
         user.setBan(newBan);
         discordBot.getMainframeManager().saveUser(user);
-        sender.reply(Emote.SUCCESS + " | User with id is now prohibited from using Devi.");
+        sender.reply(Emote.SUCCESS + " | User with id `" + command.getArgs()[0] + "` is now prohibited from using Devi.");
 
         DiscordWebhook webhook = new DiscordWebhook(discordBot.getConfig().getControlRoomWebhook());
         webhook.setContent(user.getName() +  "#" + user.getDiscriminator() + " `(" + user.getId() + ")` has been globally banned by " + sender.getName() + "#"  + sender.getDiscriminator() + "\nReason: " + reason);

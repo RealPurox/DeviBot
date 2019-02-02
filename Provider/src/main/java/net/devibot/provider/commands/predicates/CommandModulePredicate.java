@@ -14,7 +14,11 @@ public class CommandModulePredicate implements Predicate<ICommand.Command> {
         ICommand iCommand = command.getICommand();
         if (iCommand == null) return false;
 
-        return iCommand.getModuleType() == ModuleType.DEV && Arrays.asList(Provider.getInstance().getDiscordBot().getConfig().getDevelopers()).contains(command.getAuthor().getId());
+        if (iCommand.getModuleType() == ModuleType.DEV) {
+            return Arrays.asList(Provider.getInstance().getDiscordBot().getConfig().getDevelopers()).contains(command.getAuthor().getId());
+        }
+
+        return true;
     }
 
 }

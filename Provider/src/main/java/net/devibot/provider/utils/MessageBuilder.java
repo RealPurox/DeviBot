@@ -16,6 +16,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.impl.DataMessage;
 import net.dv8tion.jda.core.utils.Checks;
 
+import javax.annotation.CheckReturnValue;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -77,21 +78,25 @@ public class MessageBuilder implements Appendable {
         this.language = language;
     }
 
+    @CheckReturnValue
     public MessageBuilder setTTS(boolean tts) {
         this.isTTS = tts;
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder setEmbed(MessageEmbed embed) {
         this.embed = embed;
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder setNonce(String nonce) {
         this.nonce = nonce;
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder setContent(String content) {
         if (content == null) {
             builder.setLength(0);
@@ -103,16 +108,19 @@ public class MessageBuilder implements Appendable {
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder setLanguage(Language language) {
         this.language = language;
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder setChannel(MessageChannel channel) {
         this.channel = channel;
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder appendTranslation(String key) {
         if (this.language == null)
             throw new UnsupportedOperationException("Can't request translation for language null");
@@ -120,6 +128,7 @@ public class MessageBuilder implements Appendable {
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder appendTranslation(String key, Object ... args) {
         if (this.language == null)
             throw new UnsupportedOperationException("Can't request translation for language null");
@@ -127,33 +136,39 @@ public class MessageBuilder implements Appendable {
         return this;
     }
 
+    @CheckReturnValue
     @Override
     public MessageBuilder append(CharSequence text) {
         builder.append(text);
         return this;
     }
 
+    @CheckReturnValue
     @Override
     public MessageBuilder append(CharSequence text, int start, int end) {
         builder.append(text, start, end);
         return this;
     }
 
+    @CheckReturnValue
     @Override
     public MessageBuilder append(char c) {
         builder.append(c);
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder append(Object object) {
         return append(String.valueOf(object));
     }
 
+    @CheckReturnValue
     public MessageBuilder append(IMentionable mention) {
         builder.append(mention.getAsMention());
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder append(CharSequence text, MessageBuilder.Formatting... format) {
         boolean blockPresent = false;
         for (MessageBuilder.Formatting formatting : format) {
@@ -177,30 +192,36 @@ public class MessageBuilder implements Appendable {
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder appendFormat(String format, Object... args) {
         Checks.notEmpty(format, "Format String");
         this.append(String.format(format, args));
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder appendCodeLine(CharSequence text) {
         this.append(text, MessageBuilder.Formatting.BLOCK);
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder appendCodeBlock(CharSequence text, CharSequence language) {
         builder.append("```").append(language).append('\n').append(text).append("\n```");
         return this;
     }
 
+    @CheckReturnValue
     public int length() {
         return builder.length();
     }
 
+    @CheckReturnValue
     public boolean isEmpty() {
         return builder.length() == 0 && embed == null;
     }
 
+    @CheckReturnValue
     public MessageBuilder replace(String target, String replacement) {
         int index = builder.indexOf(target);
         while (index != -1) {
@@ -210,6 +231,7 @@ public class MessageBuilder implements Appendable {
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder replaceFirst(String target, String replacement) {
         int index = builder.indexOf(target);
         if (index != -1) {
@@ -218,6 +240,7 @@ public class MessageBuilder implements Appendable {
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder replaceLast(String target, String replacement) {
         int index = builder.lastIndexOf(target);
         if (index != -1) {
@@ -226,26 +249,31 @@ public class MessageBuilder implements Appendable {
         return this;
     }
 
+    @CheckReturnValue
     public MessageBuilder stripMentions(JDA jda) {
         // Note: Users can rename to "everyone" or "here", so those
         // should be stripped after the USER mention is stripped.
         return this.stripMentions(jda, null, Message.MentionType.values());
     }
 
+    @CheckReturnValue
     public MessageBuilder stripMentions(Guild guild) {
         // Note: Users can rename to "everyone" or "here", so those
         // should be stripped after the USER mention is stripped.
         return this.stripMentions(guild.getJDA(), guild, Message.MentionType.values());
     }
 
+    @CheckReturnValue
     public MessageBuilder stripMentions(Guild guild, Message.MentionType... types) {
         return this.stripMentions(guild.getJDA(), guild, types);
     }
 
+    @CheckReturnValue
     public MessageBuilder stripMentions(JDA jda, Message.MentionType... types) {
         return this.stripMentions(jda, null, types);
     }
 
+    @CheckReturnValue
     private MessageBuilder stripMentions(JDA jda, Guild guild, Message.MentionType... types) {
         if (types == null)
             return this;

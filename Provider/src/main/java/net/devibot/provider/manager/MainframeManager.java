@@ -7,11 +7,13 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.entities.DeviGuild;
+import net.devibot.core.entities.Language;
 import net.devibot.core.entities.Translation;
 import net.devibot.core.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
 import net.devibot.provider.Provider;
+import net.devibot.provider.utils.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,8 +94,42 @@ public class MainframeManager {
         });
     }
 
-    public void registerTranslation(String key, String text, Consumer<? super Boolean> consumer) {
-        mainframeStub.registerTranslation(RegisterTranslationRequest.newBuilder().setKey(key).setText(text).build(), new StreamObserver<DefaultSuccessResponse>() {
+    public void getTranslationsForLanguageOLD(String language, Consumer<HashMap<Integer, String>> consumer) {
+        mainframeStub.getTranslationsOLD(TranslationRequest.newBuilder().setLanguage(language).build(), new StreamObserver<TranslationResponseOLD>() {
+            @Override
+            public void onNext(TranslationResponseOLD translationResponseOLD) {
+                HashMap<Integer, String> translations = new HashMap<>();
+                translationResponseOLD.getTranslationsList().forEach(translation -> {
+                    if (!translation.getText().equals("none") || translation.getText() == null)
+                        translations.put(translation.getId(), translation.getText());
+                });
+                consumer.accept(translations);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                logger.warn("Failed to retrieve OLD translation data. See exception above.");
+                consumer.accept(new HashMap<>());
+            }
+
+            @Override
+            public void onCompleted() { }
+        });
+    }
+
+    public void registerTranslation(String key, String text, int idOld, Consumer<? super Boolean> consumer) {
+        List<net.devibot.grpc.entities.Translation> old = new ArrayList<>();
+
+        if (idOld != -1) {
+            for (Language trans : Language.values()) {
+                if (trans == Language.ENGLISH) continue;
+                if (Translator.hasTranslationOLD(trans, idOld))
+                    old.add(new Translation(trans.getRegistry(), Translator.getTranslationOLD(trans, idOld)).toGrpc());
+                else old.add(new Translation(trans.getRegistry(), "none").toGrpc());
+            }
+        }
+
+        mainframeStub.registerTranslation(RegisterTranslationRequest.newBuilder().setKey(key).setText(text).addAllOld(old).build(), new StreamObserver<DefaultSuccessResponse>() {
             @Override
             public void onNext(DefaultSuccessResponse defaultSuccessResponse) {
                  consumer.accept(defaultSuccessResponse.getSuccess());

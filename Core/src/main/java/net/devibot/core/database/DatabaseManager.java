@@ -74,13 +74,12 @@ public class DatabaseManager {
     }
 
     public UpdateResult saveToDatabase(String collection, Document document, String key, String value) {
-        ObjectId objectId = new ObjectId();
-        return database.getCollection(collection).replaceOne(Filters.eq(key, value), document.append("_id", objectId), new ReplaceOptions().upsert(true));
+        return database.getCollection(collection).replaceOne(Filters.eq(key, value), document, new ReplaceOptions().upsert(true));
     }
 
     public UpdateResult saveToDatabase(String collection, Document document) {
         ObjectId objectId = new ObjectId();
-        return database.getCollection(collection).replaceOne(Filters.eq("_id", objectId.toString()), document.append("_id", objectId.toString()), new ReplaceOptions().upsert(true));
+        return database.getCollection(collection).replaceOne(Filters.eq("_id", objectId), document.append("_id", objectId), new ReplaceOptions().upsert(true));
     }
 
     public DeleteResult removeFromDatabase(String collection, String id) {

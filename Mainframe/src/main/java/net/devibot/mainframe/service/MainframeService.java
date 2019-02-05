@@ -8,6 +8,7 @@ import net.devibot.core.database.DatabaseManager;
 import net.devibot.core.entities.Language;
 import net.devibot.grpc.entities.DeviGuild;
 import net.devibot.grpc.entities.Translation;
+import net.devibot.grpc.entities.TranslationOLD;
 import net.devibot.grpc.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
@@ -148,10 +149,10 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
 
     private int getLatestTranslationId() {
         if (latestTranslationId != -1)
-            return latestTranslationId;
+            return latestTranslationId + 1;
         else {
             Document doc = DatabaseManager.getInstance().getDatabase().getCollection("translations").find().sort(new Document("_id", -1)).limit(1).first();
-            latestTranslationId = doc == null ? 1 : doc.getInteger("_id") + 1;
+            latestTranslationId = doc == null ? 1 : Integer.valueOf(doc.getString("id")) + 1;
             return latestTranslationId;
         }
     }
@@ -168,17 +169,34 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
 
         document.put("id", id);
         document.put("key", key);
+        document.put("eng", text);
 
-        for (Language value : Language.values()) {
-            if (value == Language.ENGLISH)
-                document.put(value.getRegistry(), text);
-            else
-                document.put(value.getRegistry(), "none");
-        }
+        request.getOldList().forEach(translation -> document.put(translation.getLang(), translation.getText()));
 
-        UpdateResult updateResult = databaseManager.saveToDatabase("translations", document);
+        UpdateResult updateResult = databaseManager.saveToDatabase("translations", document, "key", key);
 
         responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(updateResult.wasAcknowledged()).build());
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void getTranslationsOLD(TranslationRequest request, StreamObserver<TranslationResponseOLD> responseObserver) {
+        String language = request.getLanguage();
+
+        try {
+            DatabaseManager databaseManager = DatabaseManager.getInstance();
+
+            List<TranslationOLD> grpcTranslations = new ArrayList<>();
+            for (Document document : databaseManager.getDatabase().getCollection("translations_old").find()) {
+                grpcTranslations.add(TranslationOLD.newBuilder().setId(Integer.parseInt(document.getString("_id"))).setText(document.getString(language) == null ? "none" : document.getString(language)).build());
+            }
+            responseObserver.onNext(TranslationResponseOLD.newBuilder().addAllTranslations(grpcTranslations).build());
+        } catch (Exception e) {
+            logger.error("", e);
+            responseObserver.onNext(TranslationResponseOLD.newBuilder().build());
+        } finally {
+            responseObserver.onCompleted();
+        }
+    }
+
 }

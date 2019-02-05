@@ -1,6 +1,5 @@
 package net.devibot.provider.commands.dev;
 
-import net.devibot.core.entities.Emote;
 import net.devibot.provider.commands.CommandSender;
 import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
@@ -19,19 +18,28 @@ public class RegisterTranslationCommand extends ICommand {
 
     @Override
     public void execute(CommandSender sender, Command command) {
-        if (command.getArgs().length < 2) {
-            sender.reply(Emote.ERROR + " | Correct Usage: `" + command.getPrefix() + "registertranslation <key> <text>`");
+        if (command.getArgs().length < 3) {
+            sender.errorMessage().append("Correct Usage: `").append(command.getPrefix()).append("registertranslation <old id> <key> <text>`").execute();
             return;
         }
 
-        String key = command.getArgs()[0];
-        String text = Arrays.stream(command.getArgs()).skip(1).collect(Collectors.joining(" "));
+        int oldId;
 
-        discordBot.getMainframeManager().registerTranslation(key, text, success -> {
+        try {
+            oldId = Integer.valueOf(command.getArgs()[0]);
+        } catch (NumberFormatException e) {
+            sender.errorMessage().append("`").append(command.getArgs()[0]).append("is not a valid id. Use -1 to use no old id.").execute();
+            return;
+        }
+
+        String key = oldId == -1 ? command.getArgs()[1] : command.getArgs()[1];
+        String text = Arrays.stream(command.getArgs()).skip(oldId == -1 ? 1 : 2).collect(Collectors.joining(" "));
+
+        discordBot.getMainframeManager().registerTranslation(key, text, oldId, success -> {
             if (!success) {
-                sender.reply(Emote.ERROR + " | Database update was not acknowledged!");
+                sender.errorMessage().append("Database update was not acknowledged!").execute();
             } else {
-                sender.reply(Emote.SUCCESS + " | Translation with key `" + key + "` was registered successfully!");
+                sender.successMessage().append("Translation with key `").append(key).append("` was registered successfully!\n\n").append("Text: ").append(text).execute();
             }
         });
     }

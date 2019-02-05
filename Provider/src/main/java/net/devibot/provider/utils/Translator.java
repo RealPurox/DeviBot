@@ -20,7 +20,9 @@ public class Translator {
     public static void initialize() {
         // TODO: 05/02/2019 start: remove
         for (Language language : Language.values()) {
-            translationsOLD.put(language, new HashMap<>());
+            Provider.getInstance().getMainframeManager().getTranslationsForLanguageOLD(language.getRegistry(), retrieved -> {
+                translationsOLD.put(language, retrieved);
+            });
         }
         // TODO: 05/02/2019 end
 
@@ -41,6 +43,10 @@ public class Translator {
                         receivedTranslation.getText() == null ? "none" : receivedTranslation.getText());
             }
         });
+    }
+
+    public static boolean hasTranslationOLD(Language language, int id) {
+        return translationsOLD.get(language).containsKey(id);
     }
 
     public static String getTranslationOLD(Language language, int id, Object ... args) {

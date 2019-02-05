@@ -18,19 +18,19 @@ public class PrefixCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         if (command.getArgs().length < 1) {
-            sender.reply(Emote.ERROR + " | " + Translator.getTranslationOLD(command.getLanguage(), 12, "`" + command.getDeviGuild().getPrefix() + "prefix <prefix>`"));
+            sender.errorMessage().appendTranslation("commands.general.error.arguments", "`" + command.getDeviGuild().getPrefix() + "prefix <prefix>`").execute();
             return;
         }
 
         String prefix = command.getArgs()[0];
         if (prefix.length() > 10) {
-            sender.reply(Emote.ERROR + " | " + Translator.getTranslationOLD(command.getLanguage(), 627));
+            sender.errorMessage().appendTranslation("commands.prefix.error.limit").execute();
             return;
         }
 
         command.getDeviGuild().setPrefix(prefix);
         discordBot.getMainframeManager().saveDeviGuild(command.getDeviGuild());
 
-        sender.reply(Emote.SUCCESS + " | " + Translator.getTranslationOLD(command.getLanguage(), 251, "`" + prefix + "`"));
+        sender.errorMessage().appendTranslation("commands.prefix.success.changed", "`" + prefix + "`").execute();
     }
 }

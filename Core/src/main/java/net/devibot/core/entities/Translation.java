@@ -10,7 +10,10 @@ public class Translation {
     private String lang;
     private String text = "none";
 
-    public Translation() { }
+    public Translation(String lang, String text) {
+        this.lang = lang;
+        this.text = text;
+    }
 
     public Translation(net.devibot.grpc.entities.Translation translation) {
         this.id = translation.getId();
@@ -21,8 +24,8 @@ public class Translation {
 
     public net.devibot.grpc.entities.Translation toGrpc() {
         return net.devibot.grpc.entities.Translation.newBuilder()
-                .setId(this.id)
-                .setKey(this.key)
+                .setId(this.id == null ? "" : this.id)
+                .setKey(this.key == null ? "" : this.id)
                 .setLang(this.lang)
                 .setText(this.text)
                 .build();

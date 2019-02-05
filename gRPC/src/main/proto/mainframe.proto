@@ -24,5 +24,7 @@ service MainframeService {
     rpc registerTranslation (RegisterTranslationRequest) returns (DefaultSuccessResponse);
 
     rpc deleteTranslation (DeleteTranslationRequest) returns (DefaultSuccessResponse);
+
+    rpc getTranslationsOLD (TranslationRequest) returns (TranslationResponseOLD);
 }
 

@@ -59,6 +59,11 @@ message Translation {
     string text = 4;
 }
 
+message TranslationOLD {
+    int32 id = 1;
+    string text = 2;
+}
+
 message Strike {
     string user = 1;
     string guild = 2;

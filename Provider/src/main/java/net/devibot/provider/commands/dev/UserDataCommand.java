@@ -1,12 +1,11 @@
 package net.devibot.provider.commands.dev;
 
 import net.devibot.core.Core;
-import net.devibot.core.entities.DeviGuild;
 import net.devibot.core.entities.User;
 import net.devibot.provider.commands.CommandSender;
 import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
-import net.devibot.provider.entities.Emote;
+import net.devibot.core.entities.Emote;
 
 public class UserDataCommand extends ICommand {
 

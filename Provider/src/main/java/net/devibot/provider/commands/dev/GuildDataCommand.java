@@ -5,7 +5,7 @@ import net.devibot.core.entities.DeviGuild;
 import net.devibot.provider.commands.CommandSender;
 import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
-import net.devibot.provider.entities.Emote;
+import net.devibot.core.entities.Emote;
 
 public class GuildDataCommand extends ICommand {
 

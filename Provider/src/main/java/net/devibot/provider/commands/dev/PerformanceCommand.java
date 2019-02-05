@@ -5,7 +5,7 @@ import net.devibot.core.utils.TimeUtils;
 import net.devibot.provider.commands.CommandSender;
 import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
-import net.devibot.provider.entities.Emote;
+import net.devibot.core.entities.Emote;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 import java.lang.management.ManagementFactory;

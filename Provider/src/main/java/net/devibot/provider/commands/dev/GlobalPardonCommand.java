@@ -6,7 +6,7 @@ import net.devibot.core.utils.DiscordWebhook;
 import net.devibot.provider.commands.CommandSender;
 import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
-import net.devibot.provider.entities.Emote;
+import net.devibot.core.entities.Emote;
 
 public class GlobalPardonCommand extends ICommand {
 

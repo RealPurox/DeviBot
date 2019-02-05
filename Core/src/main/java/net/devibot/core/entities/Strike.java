@@ -1,8 +1,5 @@
 package net.devibot.core.entities;
 
-import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nullable;
-
 public class Strike {
 
     private String user;
@@ -16,7 +13,7 @@ public class Strike {
         this.time = 0L;
     }
 
-    public Strike(@NotNull String user, @NotNull String guild, @Nullable String reason, long time) {
+    public Strike(String user, String guild, String reason, long time) {
         this.user = user;
         this.guild = guild;
         if (reason != null)

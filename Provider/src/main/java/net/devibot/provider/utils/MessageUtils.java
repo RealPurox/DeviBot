@@ -2,8 +2,8 @@ package net.devibot.provider.utils;
 
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.provider.Provider;
-import net.devibot.provider.entities.Emote;
-import net.devibot.provider.entities.Language;
+import net.devibot.core.entities.Emote;
+import net.devibot.core.entities.Language;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.PermissionUtil;
@@ -39,7 +39,7 @@ public class MessageUtils {
                 if (!PermissionUtil.checkPermission((TextChannel) channel, ((TextChannel) channel).getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
                     DeviGuild deviGuild = Provider.getInstance().getCacheManager().getDeviGuildCache().getDeviGuild(((TextChannel) channel).getGuild().getId());
                     Language language = Language.getLanguage(deviGuild.getLanguage());
-                    channel.sendMessage(Emote.ERROR + " | " + Translator.getTranslation(language, 150)).queue(success, failure);
+                    channel.sendMessage(Emote.ERROR + " | " + Translator.getTranslationOLD(language, 150)).queue(success, failure);
                 } else channel.sendMessage((MessageEmbed) object).queue(success, failure);
             } else if (object instanceof String) {
                 String message = (String) object;

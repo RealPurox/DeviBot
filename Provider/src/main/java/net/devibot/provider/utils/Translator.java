@@ -1,114 +1,107 @@
 package net.devibot.provider.utils;
 
+import net.devibot.core.Core;
+import net.devibot.core.entities.Language;
+import net.devibot.core.entities.Translation;
+import net.devibot.core.utils.DiscordWebhook;
 import net.devibot.provider.Provider;
-import net.devibot.provider.entities.Language;
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.HashMap;
 
 public class Translator {
 
     private static Logger logger = LoggerFactory.getLogger(Translator.class);
 
-    private static HashMap<Language, HashMap<Integer, String>> translations = new HashMap<>();
-
-    private static JSONArray usedTranslationIds;
+    private static HashMap<Language, HashMap<Integer, String>> translationsOLD = new HashMap<>();
+    private static HashMap<Language, HashMap<String, String>> translations = new HashMap<>();
 
     public static void initialize() {
-        usedTranslationIds = loadUsedTranslationIds();
+        // TODO: 05/02/2019 start: remove
         for (Language language : Language.values()) {
-            Provider.getInstance().getMainframeManager().getTranslationsForLanguage(language.getRegistry(), retrieved -> {
-                translations.put(language, retrieved);
-            });
+            translationsOLD.put(language, new HashMap<>());
         }
+        // TODO: 05/02/2019 end
+
+        Provider.getInstance().getMainframeManager().getAllTranslations(translationsList -> {
+            if (translationsList.isEmpty())
+                //throw new UnsupportedOperationException("translation list empty");
+                return;
+            //get language
+            Language language = Language.getLanguage(translationsList.get(0).getLang());
+
+            if (language == null)
+                throw new UnsupportedOperationException("Invalid language received! " + translationsList.get(0).getLang());
+
+            translations.put(language, new HashMap<>());
+
+            for (Translation receivedTranslation : translationsList) {
+                translations.get(language).put(receivedTranslation.getKey(),
+                        receivedTranslation.getText() == null ? "none" : receivedTranslation.getText());
+            }
+        });
     }
 
-    public static String getTranslation(Language language, int id, Object ... args) {
-        String translation = getTranslation(language, id);
+    public static String getTranslationOLD(Language language, int id, Object ... args) {
+        String translation = getTranslationOLD(language, id);
         for (int i = 0; i < args.length; i++) {
             translation = translation.replace("{" + i  + "}", String.valueOf(args[i]));
         }
         return translation;
     }
 
-    public static String getTranslation(Language language, int id) {
-        //todo remove this after development
-        if (!hasArrayValue(usedTranslationIds, id)) {
-            usedTranslationIds.put(id);
-            saveUsedTranslationIds(usedTranslationIds);
-        }
-
-        String translation = translations.get(language).get(id);
+    public static String getTranslationOLD(Language language, int id) {
+        String translation = translationsOLD.get(language).get(id);
         if (translation == null) {
             if (language == Language.ENGLISH) {
                 //todo report
                 logger.error("Translation for id=" + id + " and language=" + language.getName() + " not found.");
                 return "Failed to lookup the the translation for id `" + id + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
             }
-            return translations.get(Language.ENGLISH).get(id);
+            return translationsOLD.get(Language.ENGLISH).get(id);
         }
         return translation;
     }
 
-    public static HashMap<Language, HashMap<Integer, String>> getTranslations() {
-        return translations;
+    public static String getTranslation(Language language, String key, Object ... args) {
+        String translation = getTranslation(language, key);
+        for (int i = 0; i < args.length; i++) {
+            translation = translation.replace("{" + i + "}", String.valueOf(args[i]));
+        }
+        return translation;
     }
 
-    private static JSONArray loadUsedTranslationIds() {
-        File file = new File("translations.json");
-        JSONArray jsonArray = new JSONArray();
-
-        if (!file.exists()) {
-            try {
-                FileWriter writer = new FileWriter(file);
-
-                writer.write(jsonArray.toString());
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+    public static String getTranslation(Language language, String key) {
+        String translation = translations.get(language).get(key);
+        if (translation == null) {
+            if (language == Language.ENGLISH) {
+                sendWebhook(language, key);
+                logger.error("Translation for key=" + key + " and language=" + language.getName() + " not found.");
+                return "Failed to lookup translation for key=`" + key + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
             }
+            return getTranslation(Language.ENGLISH, key);
         }
-
-        try {
-            FileReader fileReader = new FileReader(file);
-            StringBuilder stringBuffer = new StringBuilder();
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            while ((numCharsRead = fileReader.read(charArray)) > 0) {
-                stringBuffer.append(charArray, 0, numCharsRead);
-            }
-            fileReader.close();
-            jsonArray = new JSONArray(stringBuffer.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return jsonArray;
+        return translation;
     }
 
-    private static void saveUsedTranslationIds(JSONArray jsonArray) {
-        try {
-
-            FileWriter writer = new FileWriter(new File("translations.json"));
-
-            writer.write(jsonArray.toString());
-            writer.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static HashMap<Language, HashMap<Integer, String>> getTranslationsOLD() {
+        return translationsOLD;
     }
-    
-    private static boolean hasArrayValue(JSONArray array, int value) {
-        for (int i = 0; i < array.length(); i++) {
-            if (array.getInt(i) == value)
-                return true;
-        }
-        return false;
+
+    private static void sendWebhook(Language language, String key) {
+        StringBuilder fixedDescription = new StringBuilder();
+
+        fixedDescription.append(!Core.CONFIG.isDevMode() ? "@everyone " : "").append("__**Translation not found!**__\n\n");
+
+        fixedDescription.append("```");
+        fixedDescription.append("Translation for key=\"").append(key).append("\" and language=\"").append(language.getName()).append("\" could not found.\n\nPlease register the translation ASAP.");
+        fixedDescription.append("```");
+
+        DiscordWebhook webhook = new DiscordWebhook(Core.CONFIG.getErrorWebhook());
+        webhook.setContent(fixedDescription.toString());
+
+        webhook.execute();
     }
+
 }

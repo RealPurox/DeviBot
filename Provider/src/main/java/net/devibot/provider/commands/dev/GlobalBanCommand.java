@@ -1,13 +1,12 @@
 package net.devibot.provider.commands.dev;
 
-import net.devibot.core.Core;
 import net.devibot.core.entities.Ban;
 import net.devibot.core.entities.User;
 import net.devibot.core.utils.DiscordWebhook;
 import net.devibot.provider.commands.CommandSender;
 import net.devibot.provider.commands.ICommand;
 import net.devibot.provider.core.DiscordBot;
-import net.devibot.provider.entities.Emote;
+import net.devibot.core.entities.Emote;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

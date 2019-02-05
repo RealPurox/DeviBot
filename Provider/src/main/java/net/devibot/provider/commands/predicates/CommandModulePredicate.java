@@ -2,7 +2,7 @@ package net.devibot.provider.commands.predicates;
 
 import net.devibot.provider.Provider;
 import net.devibot.provider.commands.ICommand;
-import net.devibot.provider.entities.ModuleType;
+import net.devibot.core.entities.ModuleType;
 
 import java.util.Arrays;
 import java.util.function.Predicate;

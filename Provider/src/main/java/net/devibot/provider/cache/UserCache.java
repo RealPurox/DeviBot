@@ -15,7 +15,7 @@ public class UserCache {
 
     private Logger logger = LoggerFactory.getLogger(UserCache.class);
 
-    private AsyncLoadingCache<String, User> userAsyncLoadingCache = Caffeine.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES).buildAsync(getAsyncCacheLoader());
+    private AsyncLoadingCache<String, User> userAsyncLoadingCache = Caffeine.newBuilder().expireAfterAccess(2, TimeUnit.MINUTES).buildAsync(getAsyncCacheLoader());
 
     private Provider provider;
 

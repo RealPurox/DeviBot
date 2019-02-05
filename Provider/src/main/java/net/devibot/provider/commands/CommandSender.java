@@ -1,5 +1,6 @@
 package net.devibot.provider.commands;
 
+import net.devibot.provider.utils.MessageBuilder;
 import net.devibot.provider.utils.MessageUtils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
@@ -12,11 +13,11 @@ import java.util.function.Consumer;
 public class CommandSender implements User {
 
     private User user;
-    private MessageReceivedEvent event;
+    private ICommand.Command command;
 
-    public CommandSender (User user, MessageReceivedEvent event) {
+    public CommandSender (User user, ICommand.Command command) {
         this.user = user;
-        this.event = event;
+        this.command = command;
     }
 
     @Override
@@ -95,20 +96,38 @@ public class CommandSender implements User {
     }
 
     public Member getMember() {
-        return event.getGuild().getMember(this);
+        return command.getGuild().getMember(this);
     }
 
+    @Deprecated
     public void reply(Object message) {
         reply(message, null, null);
     }
 
+    @Deprecated
     public void reply(Object message, Consumer<? super Message> success) {
         reply(message, success, null);
     }
 
+    @Deprecated
     public void reply(Object message, Consumer<? super Message> success, Consumer<? super Throwable> failure) {
-        MessageUtils.sendMessage(event.getChannel(), message, success, failure);
+        MessageUtils.sendMessage(command.getChannel(), message, success, failure);
     }
 
+    public MessageBuilder errorMessage() {
+        return new MessageBuilder(MessageBuilder.FAILURE_TEMPLATE).setChannel(command.getChannel()).setLanguage(command.getLanguage());
+    }
+
+    public MessageBuilder successMessage() {
+        return new MessageBuilder(MessageBuilder.SUCCESS_TEMPLATE).setChannel(command.getChannel()).setLanguage(command.getLanguage());
+    }
+
+    public MessageBuilder infoMessage() {
+        return new MessageBuilder(MessageBuilder.INFO_TEMPLATE).setChannel(command.getChannel()).setLanguage(command.getLanguage());
+    }
+
+    public MessageBuilder message() {
+        return new MessageBuilder().setChannel(command.getChannel()).setLanguage(command.getLanguage());
+    }
 
 }

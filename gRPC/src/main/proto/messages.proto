@@ -28,9 +28,19 @@ message TranslationResponse {
     repeated Translation translations = 1;
 }
 
+message RegisterTranslationRequest {
+    string key = 1;
+    string text = 2;
+}
+
+message DeleteTranslationRequest {
+    string key = 1;
+}
 message DeviGuildSettingsSaveRequest {
     DeviGuild guild = 1;
 }
+
+message Empty { }
 
 message DefaultSuccessResponse {
     bool success = 1;

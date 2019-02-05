@@ -53,8 +53,10 @@ message AutoModAntiMassMention {
 }
 
 message Translation {
-    int32 id = 1;
-    string text = 2;
+    string id = 1;
+    string key = 2;
+    string lang = 3;
+    string text = 4;
 }
 
 message Strike {

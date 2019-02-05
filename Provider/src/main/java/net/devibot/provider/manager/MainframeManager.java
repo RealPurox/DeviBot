@@ -1,12 +1,13 @@
 package net.devibot.provider.manager;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.entities.DeviGuild;
-import net.devibot.core.entities.Strike;
+import net.devibot.core.entities.Translation;
 import net.devibot.core.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
@@ -69,6 +70,46 @@ public class MainframeManager {
         }
     }
 
+    public void getAllTranslations(Consumer<List<Translation>> consumer) {
+        mainframeStub.getAllTranslations(Empty.newBuilder().build(), new StreamObserver<TranslationResponse>() {
+            @Override
+            public void onNext(TranslationResponse translationResponse) {
+                List<Translation> translations = translationResponse.getTranslationsList().stream()
+                        .map(Translation::new)
+                        .collect(Collectors.toList());
+
+                consumer.accept(translations);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                logger.error("", throwable);
+                System.exit(1);
+            }
+
+            @Override
+            public void onCompleted() { }
+        });
+    }
+
+    public void registerTranslation(String key, String text, Consumer<? super Boolean> consumer) {
+        mainframeStub.registerTranslation(RegisterTranslationRequest.newBuilder().setKey(key).setText(text).build(), new StreamObserver<DefaultSuccessResponse>() {
+            @Override
+            public void onNext(DefaultSuccessResponse defaultSuccessResponse) {
+                 consumer.accept(defaultSuccessResponse.getSuccess());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                logger.error("" , throwable);
+                consumer.accept(false);
+            }
+
+            @Override
+            public void onCompleted() { }
+        });
+    }
+
     public void getDeviGuild(String id, Consumer<? super DeviGuild> consumer) {
         mainframeStub.getDeviGuild(DeviGuildRequest.newBuilder().setId(id).build(), new StreamObserver<net.devibot.grpc.entities.DeviGuild>() {
             @Override
@@ -88,37 +129,13 @@ public class MainframeManager {
         });
     }
 
-    public void getTranslationsForLanguage(String language, Consumer<HashMap<Integer, String>> consumer) {
-        mainframeStub.getTranslations(TranslationRequest.newBuilder().setLanguage(language).build(), new StreamObserver<TranslationResponse>() {
-            @Override
-            public void onNext(TranslationResponse translationResponse) {
-                HashMap<Integer, String> translations = new HashMap<>();
-                translationResponse.getTranslationsList().forEach(translation -> {
-                    if (!translation.getText().equals("none") || translation.getText() == null)
-                        translations.put(translation.getId(), translation.getText());
-                });
-                consumer.accept(translations);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                logger.error("", throwable);
-                logger.warn("Failed to retrieve translation data. See exception above.");
-                consumer.accept(new HashMap<>());
-            }
-
-            @Override
-            public void onCompleted() { }
-        });
-    }
-
-    public void requestDeviGuildSettingsSave(DeviGuild deviGuild) {
+    public void saveDeviGuild(DeviGuild deviGuild) {
         mainframeStub.saveDeviGuild(DeviGuildSettingsSaveRequest.newBuilder().setGuild(deviGuild.toGrpc()).build(), new StreamObserver<DefaultSuccessResponse>() {
             @Override
             public void onNext(DefaultSuccessResponse defaultSuccessResponse) {
                 //we weren't successful .. try again
                 if (!defaultSuccessResponse.getSuccess())
-                    requestDeviGuildSettingsSave(deviGuild);
+                    saveDeviGuild(deviGuild);
             }
 
             @Override
@@ -149,7 +166,6 @@ public class MainframeManager {
                     }
                 }
 
-                logger.info(Core.GSON.toJson(entityUser));
                 consumer.accept(entityUser);
             }
 

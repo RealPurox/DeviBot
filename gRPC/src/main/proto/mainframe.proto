@@ -13,12 +13,16 @@ service MainframeService {
 
     rpc getDeviGuild (DeviGuildRequest) returns (DeviGuild);
 
-    rpc getTranslations (TranslationRequest) returns (TranslationResponse);
-
     rpc saveDeviGuild (DeviGuildSettingsSaveRequest) returns (DefaultSuccessResponse);
 
     rpc getUser(UserRequest) returns (User);
 
     rpc saveUser (UserDataSaveRequest) returns (DefaultSuccessResponse);
+
+    rpc getAllTranslations (Empty) returns (stream TranslationResponse);
+
+    rpc registerTranslation (RegisterTranslationRequest) returns (DefaultSuccessResponse);
+
+    rpc deleteTranslation (DeleteTranslationRequest) returns (DefaultSuccessResponse);
 }
 

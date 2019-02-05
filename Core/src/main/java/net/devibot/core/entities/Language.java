@@ -1,4 +1,4 @@
-package net.devibot.provider.entities;
+package net.devibot.core.entities;
 
 import java.util.Arrays;
 import java.util.Collection;

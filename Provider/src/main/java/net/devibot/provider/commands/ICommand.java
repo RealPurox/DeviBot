@@ -4,8 +4,8 @@ import net.devibot.core.entities.DeviGuild;
 import net.devibot.core.entities.User;
 import net.devibot.provider.Provider;
 import net.devibot.provider.core.DiscordBot;
-import net.devibot.provider.entities.Language;
-import net.devibot.provider.entities.ModuleType;
+import net.devibot.core.entities.Language;
+import net.devibot.core.entities.ModuleType;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 

@@ -5,6 +5,7 @@ import com.mongodb.util.JSON;
 import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.database.DatabaseManager;
+import net.devibot.core.entities.Language;
 import net.devibot.grpc.entities.DeviGuild;
 import net.devibot.grpc.entities.Translation;
 import net.devibot.grpc.entities.User;
@@ -66,27 +67,8 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
     }
 
     @Override
-    public void getTranslations(TranslationRequest request, StreamObserver<TranslationResponse> responseObserver) {
-        String language = request.getLanguage();
-
-        try {
-            DatabaseManager databaseManager = DatabaseManager.getInstance();
-
-            List<Translation> grpcTranslations = new ArrayList<>();
-            for (Document document : databaseManager.getDatabase().getCollection("translations").find()) {
-                grpcTranslations.add(Translation.newBuilder().setId(Integer.parseInt(document.getString("_id"))).setText(document.getString(language) == null ? "none" : document.getString(language)).build());
-            }
-            responseObserver.onNext(TranslationResponse.newBuilder().addAllTranslations(grpcTranslations).build());
-        } catch (Exception e) {
-            logger.error("", e);
-            responseObserver.onNext(TranslationResponse.newBuilder().build());
-        } finally {
-            responseObserver.onCompleted();
-        }
-    }
-
-    @Override
     public void saveDeviGuild(DeviGuildSettingsSaveRequest request, StreamObserver<DefaultSuccessResponse> responseObserver) {
+        // TODO: 05/02/2019 collect and bulk insert
         net.devibot.core.entities.DeviGuild deviGuild = new net.devibot.core.entities.DeviGuild(request.getGuild());
         Document document = new Document(new JSONObject(Core.GSON.toJson(deviGuild)).toMap());
         UpdateResult result = databaseManager.saveToDatabase("guilds", document, deviGuild.getId());
@@ -120,11 +102,83 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
 
     @Override
     public void saveUser(UserDataSaveRequest request, StreamObserver<DefaultSuccessResponse> responseObserver) {
+        // TODO: 05/02/2019 collect and bulk insert
         net.devibot.core.entities.User user = new net.devibot.core.entities.User(request.getUser());
         Document document = new Document(new JSONObject(Core.GSON.toJson(user)).toMap());
         UpdateResult result = databaseManager.saveToDatabase("users", document, user.getId());
 
         responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(result.wasAcknowledged()).build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getAllTranslations(Empty request, StreamObserver<TranslationResponse> responseObserver) {
+        try {
+            DatabaseManager databaseManager = DatabaseManager.getInstance();
+
+            List<Document> translations = databaseManager.getDatabase().getCollection("translations").find().into(new ArrayList<>());
+
+            //stream every language separate so we don't send as much at once
+            for (Language language : Language.values()) {
+                List<Translation> grpcTranslations = new ArrayList<>();
+                String registry = language.getRegistry();
+
+                for (Document translation : translations) {
+                    grpcTranslations.add(Translation.newBuilder()
+                            .setId(translation.getString("_id"))
+                            .setKey(translation.getString("key"))
+                            .setLang(registry)
+                            .setText(translation.getString(registry))
+                            .build());
+                }
+
+                responseObserver.onNext(TranslationResponse.newBuilder().addAllTranslations(grpcTranslations).build());
+            }
+
+        } catch (Exception e) {
+            logger.error("", e);
+            responseObserver.onError(e);
+        } finally {
+            responseObserver.onCompleted();
+        }
+    }
+
+
+    private int latestTranslationId = -1;
+
+    private int getLatestTranslationId() {
+        if (latestTranslationId != -1)
+            return latestTranslationId;
+        else {
+            Document doc = DatabaseManager.getInstance().getDatabase().getCollection("translations").find().sort(new Document("_id", -1)).limit(1).first();
+            latestTranslationId = doc == null ? 1 : doc.getInteger("_id") + 1;
+            return latestTranslationId;
+        }
+    }
+
+    @Override
+    public void registerTranslation(RegisterTranslationRequest request, StreamObserver<DefaultSuccessResponse> responseObserver) {
+        String id = String.valueOf(getLatestTranslationId());
+        String key = request.getKey();
+        String text = request.getText();
+
+        DatabaseManager databaseManager = DatabaseManager.getInstance();
+
+        Document document = new Document();
+
+        document.put("id", id);
+        document.put("key", key);
+
+        for (Language value : Language.values()) {
+            if (value == Language.ENGLISH)
+                document.put(value.getRegistry(), text);
+            else
+                document.put(value.getRegistry(), "none");
+        }
+
+        UpdateResult updateResult = databaseManager.saveToDatabase("translations", document);
+
+        responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(updateResult.wasAcknowledged()).build());
         responseObserver.onCompleted();
     }
 }

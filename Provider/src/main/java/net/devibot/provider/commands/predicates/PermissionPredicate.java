@@ -3,8 +3,8 @@ package net.devibot.provider.commands.predicates;
 import net.devibot.core.entities.DeviGuild;
 import net.devibot.provider.Provider;
 import net.devibot.provider.commands.ICommand;
-import net.devibot.provider.entities.Emote;
-import net.devibot.provider.entities.Language;
+import net.devibot.core.entities.Emote;
+import net.devibot.core.entities.Language;
 import net.devibot.provider.utils.MessageUtils;
 import net.devibot.provider.utils.Translator;
 
@@ -25,7 +25,7 @@ public class PermissionPredicate implements Predicate<ICommand.Command> {
         if (command.getGuild() != null && iCommand.getPermission() != null) {
             if (!command.getMember().hasPermission(command.getTextChannel(), iCommand.getPermission())) {
                 DeviGuild deviGuild = Provider.getInstance().getDiscordBot().getCacheManager().getDeviGuildCache().getDeviGuild(command.getGuild().getId());
-                MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslation(Language.getLanguage(deviGuild.getLanguage()), 31));
+                MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslationOLD(Language.getLanguage(deviGuild.getLanguage()), 31));
                 return false;
             }
         }

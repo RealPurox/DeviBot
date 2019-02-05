@@ -1,4 +1,4 @@
-package net.devibot.provider.entities;
+package net.devibot.core.entities;
 
 public enum ModuleType {
 

@@ -149,7 +149,7 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
 
     private int getLatestTranslationId() {
         if (latestTranslationId != -1)
-            return latestTranslationId + 1;
+            return latestTranslationId += 1;
         else {
             Document doc = DatabaseManager.getInstance().getDatabase().getCollection("translations").find().sort(new Document("_id", -1)).limit(1).first();
             latestTranslationId = doc == null ? 1 : Integer.valueOf(doc.getString("id")) + 1;

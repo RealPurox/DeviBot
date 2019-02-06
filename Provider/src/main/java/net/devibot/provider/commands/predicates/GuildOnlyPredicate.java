@@ -17,7 +17,7 @@ public class GuildOnlyPredicate implements Predicate<ICommand.Command> {
             return false;
 
         if (iCommand.isGuildOnly() && command.getGuild() == null) {
-            MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslationOLD(Language.ENGLISH, 1));
+            MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslation(Language.ENGLISH, "general.serveronly"));
             return false;
         }
         return true;

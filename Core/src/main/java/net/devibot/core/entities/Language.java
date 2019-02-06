@@ -6,20 +6,20 @@ import java.util.stream.Collectors;
 
 public enum Language {
 
-    ENGLISH("eng", "\uD83C\uDDEC\uD83C\uDDE7", 163),
-    ITALIAN("ita", "\uD83C\uDDEE\uD83C\uDDF9", 164),
-    GERMAN("ger", "\uD83C\uDDE9\uD83C\uDDEA", 165),
-    SPANISH("esp", "\uD83C\uDDEA\uD83C\uDDF8", 166),
-    SWEDISH("swe", "\uD83C\uDDF8\uD83C\uDDEA", 167),
-    TURKISH("trk", "\uD83C\uDDF9\uD83C\uDDF7", 168),
-    FRENCH("fra", "\uD83C\uDDEB\uD83C\uDDF7", 169),
-    NORWEGIAN("nor", "\uD83C\uDDF3\uD83C\uDDF4", 624);
+    ENGLISH("eng", "\uD83C\uDDEC\uD83C\uDDE7", "language.english"),
+    ITALIAN("ita", "\uD83C\uDDEE\uD83C\uDDF9", "language.italian"),
+    GERMAN("ger", "\uD83C\uDDE9\uD83C\uDDEA", "language.german"),
+    SPANISH("esp", "\uD83C\uDDEA\uD83C\uDDF8", "language.spanish"),
+    SWEDISH("swe", "\uD83C\uDDF8\uD83C\uDDEA", "language.swedish"),
+    TURKISH("trk", "\uD83C\uDDF9\uD83C\uDDF7", "language.turkish"),
+    FRENCH("fra", "\uD83C\uDDEB\uD83C\uDDF7", "language.french"),
+    NORWEGIAN("nor", "\uD83C\uDDF3\uD83C\uDDF4", "language.norwegian");
 
     private String registry;
     private String emojiFlag;
-    private int translationId;
+    private String translationId;
 
-    Language(String registry, String emojiFlag, int translationId) {
+    Language(String registry, String emojiFlag, String translationId) {
         this.registry = registry;
         this.emojiFlag = emojiFlag;
         this.translationId = translationId;
@@ -33,7 +33,7 @@ public enum Language {
         return emojiFlag;
     }
 
-    public int getTranslationId() {
+    public String getTranslationKey() {
         return translationId;
     }
 

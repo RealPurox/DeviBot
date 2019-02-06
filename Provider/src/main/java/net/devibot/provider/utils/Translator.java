@@ -39,35 +39,15 @@ public class Translator {
             translations.put(language, new HashMap<>());
 
             for (Translation receivedTranslation : translationsList) {
-                translations.get(language).put(receivedTranslation.getKey(),
-                        receivedTranslation.getText() == null ? "none" : receivedTranslation.getText());
+                if (receivedTranslation.getText() == null || receivedTranslation.getText().equals("none")) continue;
+                translations.get(language).put(receivedTranslation.getKey(), receivedTranslation.getText());
             }
         });
     }
 
+    @Deprecated
     public static boolean hasTranslationOLD(Language language, int id) {
         return translationsOLD.get(language).containsKey(id);
-    }
-
-    public static String getTranslationOLD(Language language, int id, Object ... args) {
-        String translation = getTranslationOLD(language, id);
-        for (int i = 0; i < args.length; i++) {
-            translation = translation.replace("{" + i  + "}", String.valueOf(args[i]));
-        }
-        return translation;
-    }
-
-    public static String getTranslationOLD(Language language, int id) {
-        String translation = translationsOLD.get(language).get(id);
-        if (translation == null) {
-            if (language == Language.ENGLISH) {
-                //todo report
-                logger.error("Translation for id=" + id + " and language=" + language.getName() + " not found.");
-                return "Failed to lookup the the translation for id `" + id + "`. This issue has been reported to our developers and will be fixed as soon as they see it.";
-            }
-            return translationsOLD.get(Language.ENGLISH).get(id);
-        }
-        return translation;
     }
 
     public static String getTranslation(Language language, String key, Object ... args) {
@@ -91,8 +71,13 @@ public class Translator {
         return translation;
     }
 
+    @Deprecated
     public static HashMap<Language, HashMap<Integer, String>> getTranslationsOLD() {
         return translationsOLD;
+    }
+
+    public static HashMap<Language, HashMap<String, String>> getTranslations() {
+        return translations;
     }
 
     private static void sendWebhook(Language language, String key) {

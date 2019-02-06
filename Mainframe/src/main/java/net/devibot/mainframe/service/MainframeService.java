@@ -126,7 +126,7 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
 
                 for (Document translation : translations) {
                     grpcTranslations.add(Translation.newBuilder()
-                            .setId(translation.getString("_id"))
+                            .setId(translation.getString("id"))
                             .setKey(translation.getString("key"))
                             .setLang(registry)
                             .setText(translation.getString(registry))

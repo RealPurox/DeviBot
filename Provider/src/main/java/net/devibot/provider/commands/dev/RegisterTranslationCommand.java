@@ -12,7 +12,7 @@ public class RegisterTranslationCommand extends ICommand {
     private DiscordBot discordBot;
 
     public RegisterTranslationCommand(DiscordBot discordBot) {
-        super("registertranslation");
+        super("registertranslation", "regtrans");
         this.discordBot = discordBot;
     }
 

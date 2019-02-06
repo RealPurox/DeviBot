@@ -39,7 +39,7 @@ public class MessageUtils {
                 if (!PermissionUtil.checkPermission((TextChannel) channel, ((TextChannel) channel).getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
                     DeviGuild deviGuild = Provider.getInstance().getCacheManager().getDeviGuildCache().getDeviGuild(((TextChannel) channel).getGuild().getId());
                     Language language = Language.getLanguage(deviGuild.getLanguage());
-                    channel.sendMessage(Emote.ERROR + " | " + Translator.getTranslationOLD(language, 150)).queue(success, failure);
+                    channel.sendMessage(Emote.ERROR + " | " + Translator.getTranslation(language, "general.noembedpermission")).queue(success, failure);
                 } else channel.sendMessage((MessageEmbed) object).queue(success, failure);
             } else if (object instanceof String) {
                 String message = (String) object;

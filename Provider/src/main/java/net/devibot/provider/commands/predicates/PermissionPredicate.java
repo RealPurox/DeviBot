@@ -25,7 +25,7 @@ public class PermissionPredicate implements Predicate<ICommand.Command> {
         if (command.getGuild() != null && iCommand.getPermission() != null) {
             if (!command.getMember().hasPermission(command.getTextChannel(), iCommand.getPermission())) {
                 DeviGuild deviGuild = Provider.getInstance().getDiscordBot().getCacheManager().getDeviGuildCache().getDeviGuild(command.getGuild().getId());
-                MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslationOLD(Language.getLanguage(deviGuild.getLanguage()), 31));
+                MessageUtils.sendMessage(command.getTextChannel(), Emote.ERROR + " | " + Translator.getTranslation(Language.getLanguage(deviGuild.getLanguage()), "general.nopermission"));
                 return false;
             }
         }

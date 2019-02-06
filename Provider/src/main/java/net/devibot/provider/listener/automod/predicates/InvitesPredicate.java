@@ -21,6 +21,7 @@ public class InvitesPredicate implements Predicate<Message> {
 
         String input = message.getContentRaw();
 
+        // TODO: 06/02/2019 ignored roles and devi developer
         return DISCORD_LINK.matcher(input).matches() && !DISCORD_ASSETS.matcher(input).matches();
     }
 }

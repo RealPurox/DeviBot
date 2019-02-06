@@ -53,10 +53,6 @@ public class AutoModCommand extends ICommand {
                             : (Emote.ERROR + " | " + Translator.getTranslation(command.getLanguage(), "commands.automod.module.status.disabled", "\n", "`" + command.getPrefix() + "automod invites on`")), false);
 
             builder.addField(Translator.getTranslation(command.getLanguage(), "general.status"), antiInvites.isStrikes()
-                    ? Emote.SUCCESS + " | This module will strike users when it detects them.\nUse `" + command.getPrefix() + "automod invites strikes off` to disable strikes for this module."
-                    : Emote.ERROR + " | This module won't strike users.\nUse `" + command.getPrefix() + "automod invites strikes on` to enable strikes for this module.", false);
-
-            builder.addField(Translator.getTranslation(command.getLanguage(), "general.status"), antiInvites.isStrikes()
                     ? Emote.SUCCESS + " | " + Translator.getTranslation(command.getLanguage(), "commands.automod.module.strikes.enabled", "\n", "`" + command.getPrefix() + "automod invites strikes off`")
                     : Emote.ERROR + " | " + Translator.getTranslation(command.getLanguage(), "commands.automod.module.strikes.disabled", "\n", "`" + command.getPrefix() + "automod invites strikes on`"), false);
 
@@ -126,38 +122,4 @@ public class AutoModCommand extends ICommand {
         return builder.build();
     }
 
-    /*@Override
-    public void execute(CommandSender sender, Command command) {
-        String[] args = command.getArgs();
-
-        if (args.length == 0) {
-            sender.reply(getDefaultEmbed(command));
-            return;
-        }
-
-        Boolean bool = JavaUtils.getBoolean(args[0]);
-        //its a boolean so enable / disable auto-mod
-        if (bool != null) {
-            command.getDeviGuild().setAutoModEnabled(bool);
-            discordBot.getMainframeManager().saveDeviGuild(command.getDeviGuild());
-            sender.reply(Emote.AUTO_MOD +  " | " + Translator.getTranslationOLD(command.getLanguage(), command.getDeviGuild().isAutoModEnabled() ? 286 : 287));
-            return;
-        }
-
-        if (args[0].equalsIgnoreCase("invites")) {
-
-            EmbedBuilder builder = new EmbedBuilder()
-                    .setColor(0x7289DA)
-                    .setAuthor(Translator.getTranslationOLD(command.getLanguage(), 631));
-
-            builder.setDescription("This Auto-Mod module will delete discord invite links and give the sender a strike, if strikes are enabled for this module.");
-            builder.addField("Status", command.getDeviGuild().isAutoModAntiInvites() ? Emote.SUCCESS + " | This module is currently enabled" : Emote.ERROR + " | This module is currently disabled" , false);
-
-            sender.reply(builder.build());
-
-
-        } else {
-            sender.reply(getDefaultEmbed(command));
-        }
-    }*/
 }

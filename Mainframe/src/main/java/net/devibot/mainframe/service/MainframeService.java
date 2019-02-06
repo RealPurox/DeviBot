@@ -171,7 +171,14 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
         document.put("key", key);
         document.put("eng", text);
 
-        request.getOldList().forEach(translation -> document.put(translation.getLang(), translation.getText()));
+        if (!request.getOldList().isEmpty()) {
+            request.getOldList().forEach(translation -> document.put(translation.getLang(), translation.getText()));
+        } else {
+            for (Language language : Language.values()) {
+                if (language == Language.ENGLISH) continue;
+                document.put(language.getRegistry(), "none");
+            }
+        }
 
         UpdateResult updateResult = databaseManager.saveToDatabase("translations", document, "key", key);
 

@@ -33,7 +33,7 @@ public class RegisterTranslationCommand extends ICommand {
         }
 
         String key = oldId == -1 ? command.getArgs()[1] : command.getArgs()[1];
-        String text = Arrays.stream(command.getArgs()).skip(oldId == -1 ? 1 : 2).collect(Collectors.joining(" "));
+        String text = Arrays.stream(command.getArgs()).skip(2).collect(Collectors.joining(" "));
 
         discordBot.getMainframeManager().registerTranslation(key, text, oldId, success -> {
             if (!success) {

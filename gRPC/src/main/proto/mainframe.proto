@@ -26,5 +26,8 @@ service MainframeService {
     rpc deleteTranslation (DeleteTranslationRequest) returns (DefaultSuccessResponse);
 
     rpc getTranslationsOLD (TranslationRequest) returns (TranslationResponseOLD);
+
+    rpc onUserVote (UserVote) returns (DefaultSuccessResponse);
+
 }
 

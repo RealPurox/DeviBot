@@ -8,6 +8,7 @@ public class Config {
 
     private String mongoUrl = "";
     private String errorWebhook = "";
+    private String controlRoomWebhook = "";
 
     private boolean devMode = true;
 
@@ -21,6 +22,10 @@ public class Config {
 
     public String getErrorWebhook() {
         return errorWebhook;
+    }
+
+    public String getControlRoomWebhook() {
+        return controlRoomWebhook;
     }
 
     static Config loadConfig() {

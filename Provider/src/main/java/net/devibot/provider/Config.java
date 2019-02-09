@@ -20,8 +20,6 @@ public class Config {
 
     private String[] developers = new String[0];
 
-    private String controlRoomWebhook = "";
-
     public String getMainframeIp() {
         return mainframeIp;
     }
@@ -52,10 +50,6 @@ public class Config {
 
     public String[] getDevelopers() {
         return developers;
-    }
-
-    public String getControlRoomWebhook() {
-        return controlRoomWebhook;
     }
 
     static Config loadConfig() {

@@ -6,12 +6,14 @@ import io.grpc.stub.StreamObserver;
 import net.devibot.core.Core;
 import net.devibot.core.database.DatabaseManager;
 import net.devibot.core.entities.Language;
+import net.devibot.core.utils.DiscordWebhook;
 import net.devibot.grpc.entities.DeviGuild;
 import net.devibot.grpc.entities.Translation;
 import net.devibot.grpc.entities.TranslationOLD;
 import net.devibot.grpc.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
+import net.devibot.mainframe.Config;
 import net.devibot.mainframe.Mainframe;
 import org.bson.Document;
 import org.json.JSONObject;
@@ -206,4 +208,15 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
         }
     }
 
+    @Override
+    public void onUserVote(UserVote request, StreamObserver<DefaultSuccessResponse> responseObserver) {
+        String content = (request.getWeekend() ? "(+2) votes (Weekend Boost)" : "(+1) vote") + " from " + request.getUser() + "!";
+
+        DiscordWebhook webhook = new DiscordWebhook(Core.CONFIG.getControlRoomWebhook());
+        webhook.setContent(content);
+        webhook.execute();
+
+        responseObserver.onNext(DefaultSuccessResponse.newBuilder().setSuccess(true).build());
+        responseObserver.onCompleted();
+    }
 }

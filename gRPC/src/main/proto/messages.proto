@@ -64,3 +64,9 @@ message UserRequest {
 message UserDataSaveRequest {
     User user = 1;
 }
+
+message UserVote {
+    string bot  = 1;
+    string user = 2;
+    bool weekend = 3;
+}

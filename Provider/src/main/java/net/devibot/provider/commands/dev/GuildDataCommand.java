@@ -20,7 +20,7 @@ public class GuildDataCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         if (command.getGuild() == null && command.getArgs().length == 0) {
-            sender.reply(Emote.ERROR + " | Please provider a guild id or execute this command in a guild");
+            sender.errorMessage().append("Please provider a guild id or execute this command in a guild").execute();
             return;
         }
 
@@ -29,7 +29,7 @@ public class GuildDataCommand extends ICommand {
 
         String message = Core.GSON_PRETTY.toJson(deviGuild);
 
-        sender.reply("GuildData for id=" + id + "```json\nSettings:\n\n" + message + "```");
+        sender.message().append("GuildData for id=").append(id).appendCodeBlock("Settings:\n\n" + message, "json").execute();
     }
 
 }

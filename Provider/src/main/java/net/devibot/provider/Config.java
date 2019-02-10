@@ -20,6 +20,8 @@ public class Config {
 
     private String[] developers = new String[0];
 
+    private int port;
+
     public String getMainframeIp() {
         return mainframeIp;
     }
@@ -50,6 +52,10 @@ public class Config {
 
     public String[] getDevelopers() {
         return developers;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     static Config loadConfig() {

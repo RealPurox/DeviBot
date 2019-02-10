@@ -19,7 +19,7 @@ public class UserDataCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         if (command.getArgs().length == 0) {
-            sender.reply(Emote.ERROR + " | Please provider a user id");
+            sender.errorMessage().append("Please provider a user id").execute();
             return;
         }
 
@@ -28,6 +28,6 @@ public class UserDataCommand extends ICommand {
 
         String message = Core.GSON_PRETTY.toJson(user);
 
-        sender.reply("UserData for id=" + id + "```json\nData:\n\n" + message + "```");
+        sender.message().append("UserData for id=").append(id).appendCodeBlock("Data:\n\n" + message, "json").execute();
     }
 }

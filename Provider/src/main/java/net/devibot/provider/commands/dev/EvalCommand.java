@@ -34,7 +34,6 @@ public class EvalCommand extends ICommand {
     public void execute(CommandSender sender, ICommand.Command command) {
         List<Thread> threadList = new ArrayList<>();
 
-
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r);
             threadList.add(t);
@@ -42,8 +41,6 @@ public class EvalCommand extends ICommand {
         });
 
         Future<Object> future = null;
-
-
 
         try {
 
@@ -56,24 +53,22 @@ public class EvalCommand extends ICommand {
                     failure.set(true);
 
                     if (!(e.getCause() instanceof ThreadDeath))
-                        sender.reply(Emote.ERROR + " | Evaluation threw an exception: `" + e.toString() + "`");
+                        sender.errorMessage().append("Evaluation threw an exception: `").append(e.toString()).append("`").execute();
                 }
             };
 
             future = singleThreadPool.submit(runnable, Object.class);
-
             future.get(5, TimeUnit.SECONDS);
 
             if (failure.get()) return;
-
             if (!command.getMessage().getContentRaw().toLowerCase().contains("sender.reply("))
-                sender.reply(Emote.SUCCESS + " Evaluation executed successfully");
+                sender.successMessage().append("Evaluation executed successfully").execute();
 
         } catch (Exception e) {
             if (e instanceof TimeoutException) {
-                sender.reply(Emote.ERROR + " | Evaluation took more than 5 seconds to be executed and was therefore cancelled.");
+                sender.errorMessage().append("Evaluation took more than 5 seconds to be executed and was therefore cancelled.").execute();
             } else {
-                sender.reply(Emote.ERROR + " | Evaluation threw an exception: `" + e.getCause().toString() + "`");
+                sender.errorMessage().append("Evaluation threw an exception: `").append(e.getCause().toString()).append("`").execute();
             }
             //noinspection ConstantConditions
             future.cancel(true);
@@ -81,7 +76,6 @@ public class EvalCommand extends ICommand {
             threadList.forEach(Thread::stop);
         }
     }
-
 
     private static void evaluate(String source, CommandSender sender, Command command) throws Exception {
         ISimpleCompiler compiler = CompilerFactoryFactory.getDefaultCompilerFactory().newSimpleCompiler();

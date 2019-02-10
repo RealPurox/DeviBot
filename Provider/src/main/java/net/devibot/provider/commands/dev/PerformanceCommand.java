@@ -50,7 +50,7 @@ public class PerformanceCommand extends ICommand {
         builder.addField("Response time", discordBot.getShardManager().getAveragePing() + " ms", true);
         builder.addField("Uptime", uptime, false);
 
-        sender.reply(builder.build());
+        sender.message().setEmbed(builder.build()).execute();
     }
 
     private String getServerStatus() {

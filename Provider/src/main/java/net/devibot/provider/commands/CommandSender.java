@@ -99,21 +99,6 @@ public class CommandSender implements User {
         return command.getGuild().getMember(this);
     }
 
-    @Deprecated
-    public void reply(Object message) {
-        reply(message, null, null);
-    }
-
-    @Deprecated
-    public void reply(Object message, Consumer<? super Message> success) {
-        reply(message, success, null);
-    }
-
-    @Deprecated
-    public void reply(Object message, Consumer<? super Message> success, Consumer<? super Throwable> failure) {
-        MessageUtils.sendMessage(command.getChannel(), message, success, failure);
-    }
-
     public MessageBuilder errorMessage() {
         return new MessageBuilder(MessageBuilder.FAILURE_TEMPLATE).setChannel(command.getChannel()).setLanguage(command.getLanguage());
     }

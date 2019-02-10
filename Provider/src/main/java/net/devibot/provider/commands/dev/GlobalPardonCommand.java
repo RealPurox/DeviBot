@@ -1,5 +1,6 @@
 package net.devibot.provider.commands.dev;
 
+import net.devibot.core.Core;
 import net.devibot.core.entities.Ban;
 import net.devibot.core.entities.User;
 import net.devibot.core.utils.DiscordWebhook;
@@ -20,29 +21,29 @@ public class GlobalPardonCommand extends ICommand {
     @Override
     public void execute(CommandSender sender, Command command) {
         if (command.getArgs().length == 0) {
-            sender.reply(Emote.ERROR + " | Correct usage: `" + command.getPrefix() + "globalpardon <user id> [reason]`");
+            sender.errorMessage().append("Correct usage: `").append(command.getPrefix()).append("globalpardon <user id> [reason]`").execute();
             return;
         }
 
         try {
             Long.valueOf(command.getArgs()[0]);
         } catch (NumberFormatException e) {
-            sender.reply(Emote.ERROR + " | `" + command.getArgs()[0] + "` doesn't seem to be an user id.");
+            sender.errorMessage().append("`").append(command.getArgs()[0]).append("` doesn't seem to be an user id.").execute();
         }
 
         User user = discordBot.getCacheManager().getUserCache().getUser(command.getArgs()[0]);
 
         if (!user.getBan().isActive()) {
-            sender.reply(Emote.ERROR + " | User with id `" + command.getArgs()[0] + "` is currently not prohibited from using Devi.");
+            sender.errorMessage().append("| User with id `").append(command.getArgs()[0]).append("` is currently not prohibited from using Devi.").execute();
             return;
         }
 
         Ban newBan = new Ban();
         user.setBan(newBan);
         discordBot.getMainframeManager().saveUser(user);
-        sender.reply(Emote.SUCCESS + " | User with id `" + command.getArgs()[0] + "`is no longer prohibited from using Devi.");
+        sender.successMessage().append("User with id `").append(command.getArgs()[0]).append("`is no longer prohibited from using Devi.").execute();
 
-        DiscordWebhook webhook = new DiscordWebhook(discordBot.getConfig().getControlRoomWebhook());
+        DiscordWebhook webhook = new DiscordWebhook(Core.CONFIG.getControlRoomWebhook());
         webhook.setContent(user.getName() +  "#" + user.getDiscriminator() + " `(" + user.getId() + ")` has been globally unbanned by " + sender.getName() + "#"  + sender.getDiscriminator());
         webhook.execute();
     }

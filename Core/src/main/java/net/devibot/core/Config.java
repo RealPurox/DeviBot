@@ -9,6 +9,7 @@ public class Config {
     private String mongoUrl = "";
     private String errorWebhook = "";
     private String controlRoomWebhook = "";
+    private String monitoringRoomWebhook = "";
 
     private boolean devMode = true;
 
@@ -26,6 +27,10 @@ public class Config {
 
     public String getControlRoomWebhook() {
         return controlRoomWebhook;
+    }
+
+    public String getMonitoringRoomWebhook() {
+        return monitoringRoomWebhook;
     }
 
     static Config loadConfig() {

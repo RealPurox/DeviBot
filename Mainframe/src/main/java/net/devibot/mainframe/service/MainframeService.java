@@ -13,8 +13,8 @@ import net.devibot.grpc.entities.TranslationOLD;
 import net.devibot.grpc.entities.User;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
-import net.devibot.mainframe.Config;
 import net.devibot.mainframe.Mainframe;
+import net.devibot.mainframe.entities.Provider;
 import org.bson.Document;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -35,12 +35,22 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
         this.mainframe = mainframe;
     }
 
-    //Provider uses this to determine whether mainframe is online or offline
     @Override
     public void connectionAttempt(ConnectToMainframeRequest request, StreamObserver<ConnectToMainframeResponse> responseObserver) {
-        logger.info("(X) Provider initialized connection.");
-        responseObserver.onNext(ConnectToMainframeResponse.newBuilder().setSuccess(true).build());
-        responseObserver.onCompleted();
+        try {
+            logger.info("(X) Provider initialized connection.");
+
+            Provider provider = mainframe.getProviderManager().registerProvider(request.getIp(), request.getPort());
+
+            logger.info("(X) Provider was assigned to ID " + provider.toString());
+
+            responseObserver.onNext(ConnectToMainframeResponse.newBuilder().setProviderId(provider.getId()).setSuccess(true).build());
+        } catch (Exception e) {
+            logger.error("", e);
+            responseObserver.onNext(ConnectToMainframeResponse.newBuilder().setProviderId(-1).setSuccess(false).build());
+        } finally {
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
@@ -153,7 +163,7 @@ public class MainframeService extends MainframeServiceGrpc.MainframeServiceImplB
         if (latestTranslationId != -1)
             return latestTranslationId += 1;
         else {
-            Document doc = DatabaseManager.getInstance().getDatabase().getCollection("translations").find().sort(new Document("_id", -1)).limit(1).first();
+            Document doc = DatabaseManager.getInstance().getDatabase().getCollection("translations").find().sort(new Document("id", -1)).limit(1).first();
             latestTranslationId = doc == null ? 1 : Integer.valueOf(doc.getString("id")) + 1;
             return latestTranslationId;
         }

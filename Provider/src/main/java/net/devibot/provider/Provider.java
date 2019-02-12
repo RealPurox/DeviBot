@@ -1,7 +1,10 @@
 package net.devibot.provider;
 
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
 import net.devibot.core.Core;
 import net.devibot.provider.core.DiscordBot;
+import net.devibot.provider.service.ProviderService;
 import net.devibot.provider.manager.CacheManager;
 import net.devibot.provider.manager.MainframeManager;
 import org.slf4j.Logger;
@@ -23,6 +26,7 @@ public class Provider {
 
     public static void main(String[] args) {
         Core.setup();
+
         try {
             provider = new Provider();
         } catch (Exception e) {
@@ -45,12 +49,19 @@ public class Provider {
         connect();
     }
 
+    private Server server;
+
     private void connect() {
         //create server
         try {
-            logger.info("(X) Initializing Mainframe ... ");
+            logger.info("(X) Initializing Provider ... ");
             //define cacheManager
             cacheManager = new CacheManager(this);
+            //start service
+            this.server = ServerBuilder.forPort(this.config.getPort())
+                    .addService(new ProviderService(this))
+                    .executor(threadPool)
+                    .build().start();
 
             //define mainframe
             mainframeManager = new MainframeManager(this);

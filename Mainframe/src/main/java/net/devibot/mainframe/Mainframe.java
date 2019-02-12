@@ -3,6 +3,8 @@ package net.devibot.mainframe;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import net.devibot.core.Core;
+import net.devibot.mainframe.manager.AgentManager;
+import net.devibot.mainframe.manager.ProviderManager;
 import net.devibot.mainframe.service.MainframeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +34,13 @@ public class Mainframe {
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(100);
 
+    private ProviderManager providerManager;
+    private AgentManager agentManager;
+
     public Mainframe() {
         this.config = Config.loadConfig();
+        this.providerManager = new ProviderManager(this);
+        this.agentManager = new AgentManager(this);
         connect();
     }
 
@@ -42,6 +49,7 @@ public class Mainframe {
     private void connect() {
         //create server
         try {
+            logger.info("(X) Initializing Mainframe ... ");
             //start service
             server = ServerBuilder.forPort(this.config.getPort())
                     .addService(new MainframeService(this))
@@ -56,6 +64,7 @@ public class Mainframe {
                 }
             });
 
+            agentManager.startAllAgents();
             logger.info("Mainframe running on port " + config.getPort() + ".");
         } catch (Exception e) {
             logger.error("", e);
@@ -75,4 +84,7 @@ public class Mainframe {
         return scheduledThreadPool;
     }
 
+    public ProviderManager getProviderManager() {
+        return providerManager;
+    }
 }

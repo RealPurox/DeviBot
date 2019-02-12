@@ -6,3 +6,9 @@ option java_package = "net.devibot.grpc.provider";
 
 import "entities.proto";
 import "messages.proto";
+
+service ProviderService {
+
+    rpc keepAlive (Empty) returns (DefaultSuccessResponse);
+
+}

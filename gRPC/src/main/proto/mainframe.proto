@@ -9,13 +9,13 @@ import "messages.proto";
 
 service MainframeService {
 
-    rpc connectionAttempt (ConnectToMainframeRequest) returns (ConnectToMainframeResponse);
+    rpc connectionAttempt (ConnectToMainframeRequest) returns (stream ConnectToMainframeResponse);
 
-    rpc getDeviGuild (DeviGuildRequest) returns (DeviGuild);
+    rpc getDeviGuild (DeviGuildRequest) returns (stream DeviGuild);
 
     rpc saveDeviGuild (DeviGuildSettingsSaveRequest) returns (DefaultSuccessResponse);
 
-    rpc getUser(UserRequest) returns (User);
+    rpc getUser(UserRequest) returns (stream User);
 
     rpc saveUser (UserDataSaveRequest) returns (DefaultSuccessResponse);
 
@@ -25,7 +25,7 @@ service MainframeService {
 
     rpc deleteTranslation (DeleteTranslationRequest) returns (DefaultSuccessResponse);
 
-    rpc getTranslationsOLD (TranslationRequest) returns (TranslationResponseOLD);
+    rpc getTranslationsOLD (TranslationRequest) returns (stream TranslationResponseOLD);
 
     rpc onUserVote (UserVote) returns (DefaultSuccessResponse);
 

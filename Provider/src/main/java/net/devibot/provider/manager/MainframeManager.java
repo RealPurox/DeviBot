@@ -1,6 +1,5 @@
 package net.devibot.provider.manager;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
@@ -10,6 +9,8 @@ import net.devibot.core.entities.DeviGuild;
 import net.devibot.core.entities.Language;
 import net.devibot.core.entities.Translation;
 import net.devibot.core.entities.User;
+import net.devibot.core.request.Request;
+import net.devibot.core.request.RequestBuilder;
 import net.devibot.grpc.mainframe.MainframeServiceGrpc;
 import net.devibot.grpc.messages.*;
 import net.devibot.provider.Provider;
@@ -43,19 +44,29 @@ public class MainframeManager {
         try {
             AtomicBoolean block = new AtomicBoolean(true);
 
-            mainframeStub.connectionAttempt(ConnectToMainframeRequest.newBuilder().build(), new StreamObserver<ConnectToMainframeResponse>() {
+            Request.Response response = new RequestBuilder().setURL("http://checkip.amazonaws.com/").setRequestType(Request.Type.GET).build().executeSync();
+            if (response == null)
+                throw new Exception("Couldn't figure out IP.");
+
+            String ip = Core.CONFIG.isDevMode() ? "127.0.0.1" : response.getBody().replace("\n", "");
+
+            mainframeStub.connectionAttempt(ConnectToMainframeRequest.newBuilder().setIp(ip).setPort(provider.getConfig().getPort()).build(), new StreamObserver<ConnectToMainframeResponse>() {
                 @Override
                 public void onNext(ConnectToMainframeResponse connectToMainframeResponse) {
                     block.set(false);
-                    logger.info("(X) Mainframe initialized successfully");
-                    provider.initializeDiscordBot();
+
+                    if (connectToMainframeResponse.getSuccess()) {
+                        logger.info("(X) Mainframe initialized successfully. ");
+                        provider.initializeDiscordBot();
+                    } else {
+                        logger.error("!!! --- !!! Mainframe denied connection !!! --- !!!");
+                        System.exit(0);
+                    }
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
                     if (throwable instanceof StatusRuntimeException && ((StatusRuntimeException) throwable).getStatus().getCode() == Status.Code.UNAVAILABLE) {
-                        logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
-                        logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
                         logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
                     } else logger.error("", throwable);
                     System.exit(0);
@@ -69,6 +80,7 @@ public class MainframeManager {
             while (block.get());
         } catch (Exception e) {
             logger.error("", e);
+            System.exit(0);
         }
     }
 

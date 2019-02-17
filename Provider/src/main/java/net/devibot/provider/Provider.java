@@ -35,6 +35,8 @@ public class Provider {
         }
     }
 
+    private String string;
+
     private Config config;
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(100);
@@ -62,10 +64,11 @@ public class Provider {
                     .addService(new ProviderService(this))
                     .executor(threadPool)
                     .build().start();
+            Core.setServer(server);
 
             //define mainframe
             mainframeManager = new MainframeManager(this);
-            mainframeManager.initialRequest();
+            mainframeManager.initialRequest(true);
         } catch (Exception e) {
             logger.error("", e);
             System.exit(0);
@@ -98,5 +101,14 @@ public class Provider {
 
     public CacheManager getCacheManager() {
         return cacheManager;
+    }
+
+    public void setString(String string) {
+        this.string = string;
+    }
+
+    @Override
+    public String toString() {
+        return this.string;
     }
 }

@@ -2,6 +2,7 @@ package net.devibot.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.grpc.Server;
 import net.devibot.core.database.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,9 @@ public class Core {
     //Core Type
     public static Type TYPE;
 
+    //Server
+    private static Server server;
+
     public static void setup() {
         //load config
         CONFIG = Config.loadConfig();
@@ -38,6 +42,18 @@ public class Core {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Shutting down ..");
             DatabaseManager.getInstance().pushLogs();
+
+            if (server != null) {
+                server.shutdown();
+            }
         }));
+    }
+
+    public static void setServer(Server server) {
+        Core.server = server;
+    }
+
+    public static Server getServer() {
+        return Core.server;
     }
 }

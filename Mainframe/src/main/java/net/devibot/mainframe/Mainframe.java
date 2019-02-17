@@ -55,6 +55,7 @@ public class Mainframe {
                     .addService(new MainframeService(this))
                     .executor(threadPool)
                     .build().start();
+            Core.setServer(server);
             //block a thread
             threadPool.submit(() -> {
                 try {

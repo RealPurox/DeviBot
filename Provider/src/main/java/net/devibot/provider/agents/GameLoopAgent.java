@@ -29,19 +29,23 @@ public class GameLoopAgent extends Agent {
         int index = 0;
         @Override
         public void run() {
-            Stats stats = new Stats();
-            List<Game> games = new ArrayList<>();
+            if (!discordBot.isRestrictedMode()) {
+                Stats stats = new Stats();
+                List<Game> games = new ArrayList<>();
 
-            games.add(Game.listening(stats.getUsers() + " users"));
-            games.add(Game.playing("type !help"));
-            games.add(Game.watching(stats.getGuilds() + " guilds"));
-            games.add(Game.watching("www.devibot.net"));
-            games.add(Game.playing("type !invite"));
+                games.add(Game.listening(stats.getUsers() + " users"));
+                games.add(Game.playing("type !help"));
+                games.add(Game.watching(stats.getGuilds() + " guilds"));
+                games.add(Game.watching("www.devibot.net"));
+                games.add(Game.playing("type !invite"));
 
-            discordBot.getShardManager().setGame(games.get(index));
+                discordBot.getShardManager().setGame(games.get(index));
 
-            index++;
-            if (index > games.size() - 1) index = 0;
+                index++;
+                if (index > games.size() - 1) index = 0;
+            } else {
+                discordBot.getShardManager().setGame(Game.watching("Restriction Mode"));
+            }
         }
     }
 

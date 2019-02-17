@@ -33,43 +33,65 @@ public class MainframeManager {
 
     private MainframeServiceGrpc.MainframeServiceStub mainframeStub;
 
+    private String ip;
+    private int port;
+    private int id;
+
     public MainframeManager(Provider provider) {
         this.provider = provider;
 
-        mainframeStub = MainframeServiceGrpc.newStub(ManagedChannelBuilder.forAddress(provider.getConfig().getMainframeIp(),
+        this.mainframeStub = MainframeServiceGrpc.newStub(ManagedChannelBuilder.forAddress(provider.getConfig().getMainframeIp(),
                 provider.getConfig().getMainframePort()).usePlaintext().executor(provider.getThreadPool()).build());
+
+        Request.Response response = new RequestBuilder().setURL("http://checkip.amazonaws.com/").setRequestType(Request.Type.GET).build().executeSync();
+        if (response == null) {
+            logger.error("Couldn't figure out ip!!");
+            System.exit(100);
+        }
+
+        this.ip = Core.CONFIG.isDevMode() ? "127.0.0.1" : response.getBody().replace("\n", "");
+        this.port = provider.getConfig().getPort();
     }
 
-    public void initialRequest() {
+    public void initialRequest(boolean init) {
+        initialRequest(init, null);
+    }
+
+    public void initialRequest(boolean init, Consumer<Boolean> success) {
         try {
-            AtomicBoolean block = new AtomicBoolean(true);
-
-            Request.Response response = new RequestBuilder().setURL("http://checkip.amazonaws.com/").setRequestType(Request.Type.GET).build().executeSync();
-            if (response == null)
-                throw new Exception("Couldn't figure out IP.");
-
-            String ip = Core.CONFIG.isDevMode() ? "127.0.0.1" : response.getBody().replace("\n", "");
+            AtomicBoolean block = new AtomicBoolean(init);
 
             mainframeStub.connectionAttempt(ConnectToMainframeRequest.newBuilder().setIp(ip).setPort(provider.getConfig().getPort()).build(), new StreamObserver<ConnectToMainframeResponse>() {
                 @Override
                 public void onNext(ConnectToMainframeResponse connectToMainframeResponse) {
                     block.set(false);
 
-                    if (connectToMainframeResponse.getSuccess()) {
-                        logger.info("(X) Mainframe initialized successfully. ");
-                        provider.initializeDiscordBot();
+                    if (init) {
+                        if (connectToMainframeResponse.getSuccess()) {
+                            logger.info("(X) Mainframe initialized successfully. ");
+                            provider.setString("[#" + connectToMainframeResponse.getProviderId() + "/" + ip + ":" + provider.getConfig().getPort() + "]");
+                            provider.initializeDiscordBot();
+                        } else {
+                            logger.error("!!! --- !!! Mainframe denied connection !!! --- !!!");
+                            System.exit(0);
+                        }
                     } else {
-                        logger.error("!!! --- !!! Mainframe denied connection !!! --- !!!");
-                        System.exit(0);
+                        if (success != null)
+                            success.accept(connectToMainframeResponse.getSuccess());
                     }
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-                    if (throwable instanceof StatusRuntimeException && ((StatusRuntimeException) throwable).getStatus().getCode() == Status.Code.UNAVAILABLE) {
-                        logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
-                    } else logger.error("", throwable);
-                    System.exit(0);
+                    if (init) {
+                        if (throwable instanceof StatusRuntimeException && ((StatusRuntimeException) throwable).getStatus().getCode() == Status.Code.UNAVAILABLE) {
+                            logger.error("!!! --- !!! Mainframe offline or not reachable !!! --- !!!");
+                        } else logger.error("", throwable);
+                        System.exit(0);
+                    } else {
+                        if (success != null)
+                            success.accept(false);
+                    }
                 }
 
                 @Override
@@ -205,11 +227,9 @@ public class MainframeManager {
 
                 //no db entry .. let's se if we have the user cached in the ShardManager
                 if (entityUser.isError()) {
-                    logger.info("error");
                     net.dv8tion.jda.core.entities.User jdaUser = provider.getDiscordBot().getShardManager().getUserById(userId);
                     //they're cached inside the ShardManager
                     if (jdaUser != null) {
-                        logger.info("cached");
                         entityUser = new User(jdaUser.getId(), jdaUser.getName(), jdaUser.getDiscriminator());
                     }
                 }

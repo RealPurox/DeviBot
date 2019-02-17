@@ -2,6 +2,8 @@ package net.devibot.provider.manager;
 
 import net.devibot.core.agents.Agent;
 import net.devibot.provider.agents.GameLoopAgent;
+import net.devibot.provider.agents.KeepAliveAgent;
+import net.devibot.provider.agents.MainframeInitializerAgent;
 import net.devibot.provider.agents.StatsPusherAgent;
 import net.devibot.provider.core.DiscordBot;
 
@@ -11,8 +13,21 @@ import java.util.List;
 
 public class AgentManager {
 
-    private enum Type {
-        STATS_PUSHER, GAME_LOOP
+    public enum Type {
+        STATS_PUSHER (true),
+        GAME_LOOP (true),
+        KEEP_ALIVE (true),
+        MAINFRAME_INITIALIZER (false);
+
+        private boolean startup;
+
+        Type(boolean startup) {
+            this.startup = startup;
+        }
+
+        public boolean isStartup() {
+            return startup;
+        }
     }
 
     private DiscordBot discordBot;
@@ -23,6 +38,8 @@ public class AgentManager {
         this.discordBot = discordBot;
         registerAgent(Type.STATS_PUSHER, new StatsPusherAgent(discordBot));
         registerAgent(Type.GAME_LOOP, new GameLoopAgent(discordBot));
+        registerAgent(Type.KEEP_ALIVE, new KeepAliveAgent(discordBot));
+        registerAgent(Type.MAINFRAME_INITIALIZER, new MainframeInitializerAgent(discordBot));
     }
 
     private void registerAgent(Type type, Agent agent) {
@@ -31,8 +48,8 @@ public class AgentManager {
     }
 
     public void startAllAgents() {
-        agents.forEach(agent -> {
-            if (!agent.isRunning())
+        agentTypeMap.forEach((type, agent) -> {
+            if (!agent.isRunning() && type.isStartup())
                 agent.start();
         });
 

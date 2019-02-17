@@ -9,8 +9,6 @@ import java.util.concurrent.Executor;
 
 public class Provider {
 
-    private static int globalIds = 1;
-
     private ProviderServiceGrpc.ProviderServiceStub stub;
 
     private String ip;
@@ -20,10 +18,10 @@ public class Provider {
     private int keepAliveFailure = 0;
     private boolean webhookSent = false;
 
-    public Provider (String ip, int port, Executor executor) {
+    public Provider (String ip, int port, int id, Executor executor) {
         this.ip = ip;
         this.port = port;
-        this.id = globalIds++;
+        this.id = id;
 
         this.stub = ProviderServiceGrpc.newStub(ManagedChannelBuilder.forAddress(ip, port).usePlaintext().executor(executor).build());
     }
@@ -62,13 +60,14 @@ public class Provider {
         if (keepAliveFailure >= 2 && !webhookSent) { //didn't respond for 30 seconds
             webhookSent = true;
             DiscordWebhook webhook = new DiscordWebhook(Core.CONFIG.getMonitoringRoomWebhook());
-            webhook.setContent((Core.CONFIG.isDevMode() ? "<@222753093559910400>" : "@everyone") + "\n\n__**Provider " + toString() + "**__ didn't respond to keep alive requests for 30 seconds!");
+            webhook.setContent(":warning:__Something seems to be wrong__:warning:\n" + (Core.CONFIG.isDevMode() ? "<@222753093559910400>\n" : "@everyone\n") + "`mainframe`:\n```Provider " + toString() + " lost communication with Mainframe. Assuming provider crashed or was shut down.```");
             webhook.execute();
         }
+
         if (keepAliveFailure == 0 && webhookSent) {
             webhookSent = false;
             DiscordWebhook webhook = new DiscordWebhook(Core.CONFIG.getMonitoringRoomWebhook());
-            webhook.setContent("Provider " + toString() + " is back online!");
+            webhook.setContent(":white_check_mark:__Issues have been resolved__ :white_check_mark:\n\n`mainframe`:\n```Mainframe restored communication with provider " + toString() + ".```");
             webhook.execute();
         }
     }

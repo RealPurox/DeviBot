@@ -15,6 +15,8 @@ public class ProviderManager {
 
     private static Logger logger = LoggerFactory.getLogger(ProviderManager.class);
 
+    private int globalIds = 1;
+
     private Mainframe mainframe;
     private List<Provider> providers = new ArrayList<>();
 
@@ -23,9 +25,22 @@ public class ProviderManager {
     }
 
     public Provider registerProvider(String ip, int port) {
-        Provider provider = new Provider(ip, port, mainframe.getThreadPool());
+        Provider provider = new Provider(ip, port, figureOutProviderId(ip, port), mainframe.getThreadPool());
         this.providers.add(provider);
         return provider;
+    }
+
+    private int figureOutProviderId(String ip, int port) {
+        int id = -1;
+
+        for (Provider provider : providers) {
+            //provider initialized again so give it the id back
+            if (provider.getIp().equals(ip) && provider.getPort() == port) {
+                id = provider.getId();
+            }
+        }
+
+        return id == -1 ? globalIds++ : id;
     }
 
     public void sendKeepAliveMessage() {
@@ -43,7 +58,6 @@ public class ProviderManager {
 
                 @Override
                 public void onError(Throwable throwable) {
-                    throwable.printStackTrace();
                     provider.increaseKeepAliveFailure();
                 }
 

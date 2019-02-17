@@ -33,6 +33,9 @@ public class DiscordBot {
 
     private OkHttpClient okHttpClient = new OkHttpClient();
 
+    // TODO: 17/02/2019 disable commands and such and don't execute mainframe requests to avoid exceptions 
+    private boolean restrictedMode = false; //will be turned on when communication with mainframe is lost.
+
     public DiscordBot(Provider provider) {
         this.provider = provider;
 
@@ -102,5 +105,25 @@ public class DiscordBot {
 
     public CommandHandler getCommandHandler() {
         return commandHandler;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void enableRestrictedMode() {
+        logger.info("(X) Restriction mode has been enabled.");
+        this.agentManager.getAgent(AgentManager.Type.MAINFRAME_INITIALIZER).start();
+        this.restrictedMode = true;
+    }
+
+    public void disableRestrictedMode() {
+        logger.info("(X) Restriction mode has been disabled.");
+        this.agentManager.getAgent(AgentManager.Type.MAINFRAME_INITIALIZER).stop();
+        this.restrictedMode = false;
+    }
+
+    public boolean isRestrictedMode() {
+        return restrictedMode;
     }
 }
